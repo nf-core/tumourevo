@@ -60,7 +60,6 @@ process SPARSE_SIGNATURES {
     input_data <- multisample_table[,c("Indiv","chr","from","to","ref","alt")]
     input_data <- setNames(input_data, c("sample","chrom","start","end","ref","alt"))
     input_data[["end"]] <- input_data[["start"]]
-    #input_data[["chrom"]] <- substring(input_data[["chrom"]],4,5)
     input_data <- input_data %>% mutate(start = as.integer(start), end = as.integer(end))
 
     #Generate the patient vs mutation count matrix from mutation data
