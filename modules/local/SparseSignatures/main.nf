@@ -60,29 +60,32 @@ process SPARSE_SIGNATURES {
     input_data <- multisample_table[,c("Indiv","chr","from","to","ref","alt")]
     input_data <- setNames(input_data, c("sample","chrom","start","end","ref","alt"))
     input_data[["end"]] <- input_data[["start"]]
-    input_data[["chrom"]] <- substring(input_data[["chrom"]],4,5)
+    #input_data[["chrom"]] <- substring(input_data[["chrom"]],4,5)
     input_data <- input_data %>% mutate(start = as.integer(start), end = as.integer(end))
 
     #Generate the patient vs mutation count matrix from mutation data
-    #Install a reference human-genome specification.
+    #Load reference human-genome specification.
     #The user must select, among the available choices, the reference genome consistent with the mutation dataset.
 
-    load_genome <- function(genome) {
+    load_genome <- function(genome, input_data) {
       if (genome == "GRCh37") {
         library(BSgenome.Hsapiens.1000genomes.hs37d5)
         bsg <- BSgenome.Hsapiens.1000genomes.hs37d5::hs37d5
-    
+        input_data[["chrom"]] <- substring(input_data[["chrom"]], 4, 5)
+
       } else if (genome == "GRCh38") {
         library(BSgenome.Hsapiens.UCSC.hg38)
         bsg <- BSgenome.Hsapiens.UCSC.hg38
+
+        # Leave 'chrom' unchanged for GRCh38
       }
-      return(bsg)
+      return(list(bsg = bsg, input_data = input_data))
     }
 
-    bsg = load_genome("$params.genome") 
+    data_list = load_genome("$params.genome", input_data)
+    bsg <- data_list[["bsg"]]
+    input_data <- data_list[["input_data"]] 
 
-    #bsg = BSgenome.Hsapiens.1000genomes.hs37d5::hs37d5  # or BSgenome.Hsapiens.UCSC.hg38
-    
     
     mut_counts = SparseSignatures::import.trinucleotides.counts(data=input_data, reference=bsg)
 
