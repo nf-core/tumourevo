@@ -23,7 +23,8 @@ workflow QC {
             | groupTuple
             | map{ meta, normal_contamination -> 
                 normal_contamination = normal_contamination.max()
-                [meta, normal_contamination]
+                [ meta, normal_contamination]
+                // meta = meta + [normal_contamination: normal_contamination ]
             }
         
         // contamination.view()
@@ -42,18 +43,21 @@ workflow QC {
         in_cnaqc = CNAQC.out.qc_rds.map{ meta, rds -> 
             sample = meta.tumour_sample
             meta = meta + [id: "${meta.dataset}_${meta.patient}"]
-            [meta, rds, sample]}
+            [meta.subMap('dataset', 'patient', 'id'), rds, sample]}
             | groupTuple
             | join(contamination)
+
+        // in_cnaqc.view()
         
-        pass_tinc = in_cnaqc.map{  meta, rds, sample -> 
+        pass_tinc = in_cnaqc.map{  meta, rds, sample, normal_contamination -> 
+            meta = meta + [nc: normal_contamination] 
                 [meta, rds, sample] }
                 .branch { meta, rds, sample -> 
-                        pass: meta.normal_contamination == 0
-                        not_pass: meta.normal_contamination == 1
+                        pass: meta.nc == '0'
+                        not_pass: meta.nc == '1'
                 }
         
-        pass_tinc.pass.view()
+        // pass_tinc.pass.view()
         // in_cnaqc.view()
         //.join(TINC.out.tinc_csv)
 
@@ -64,14 +68,14 @@ workflow QC {
         //     sample = meta.tumour_sample
         //     [meta.subMap('dataset', 'patient', 'id'), rds, csv, sample]}
         //     | groupTuple
-        
-        // join_cnaqc_out = JOIN_CNAQC(in_join)
         // rds_join = join_cnaqc_out.join(contamination).map{
         //     meta, rds, sample, normal_contamination -> 
         //         meta = meta + [normal_contamination: "${normal_contamination}"]
         //         [meta, rds, sample]
         // }
-        // join_cnaqc_out
+        
+        join_cnaqc_out = JOIN_CNAQC(pass_tinc.pass)
+        join_cnaqc_out
 
     
     emit:
@@ -80,11 +84,11 @@ workflow QC {
         plot_cnaqc_data = CNAQC.out.plot_pdf_data
         plot_cnaqc_qc = CNAQC.out.plot_pdf_qc
 
-        // plot_rds_tinc = TINC.out.plot_rds
-        // rds_tinc = TINC.out.rds
-        // pdf_tinc = TINC.out.plot_pdf
-        // csv_tinc = TINC.out.tinc_csv
+        plot_rds_tinc = TINC.out.plot_rds
+        rds_tinc = TINC.out.rds
+        pdf_tinc = TINC.out.plot_pdf
+        csv_tinc = TINC.out.tinc_csv
 
-        // join_cnaqc_out
+        join_cnaqc_out
         // rds_join
 }
