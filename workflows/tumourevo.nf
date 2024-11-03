@@ -72,9 +72,9 @@ workflow TUMOUREVO {
     vcf_rds = rds_input.concat(out_lifter)
 
     //cds = []
-    //annotation = DRIVER_ANNOTATION(vcf_rds, drivers_table, cds, fasta)
+    annotation = DRIVER_ANNOTATION(vcf_rds, drivers_table) //, cds, fasta)
     
-    annotation = vcf_rds
+    //annotation = vcf_rds
     cna_out = FORMATTER_CNA.out
 
     in_cnaqc = cna_out.join(annotation)
