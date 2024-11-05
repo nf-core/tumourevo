@@ -24,32 +24,18 @@ workflow QC {
             | map{ meta, normal_contamination -> 
                 normal_contamination = normal_contamination.max()
                 [ meta, normal_contamination]
-                // meta = meta + [normal_contamination: normal_contamination ]
             }
         
-        // contamination.view()
-        
-        // TINC_output = QC.out.rds_join.map{  meta, rds, sample -> 
-        //     [meta, rds, sample] }
-        //     .branch { meta, rds, sample -> 
-        //             pass: meta.normal_contamination == '0'
-        //             not_pass: meta.normal_contamination == '1'
-        // }
-        
-        // TINC_output = pass_qc.pass
-        
         CNAQC(input)
-
-        in_cnaqc = CNAQC.out.qc_rds.map{ meta, rds -> 
+        in_join_cnaqc = CNAQC.out.qc_rds.map{ meta, rds -> 
             sample = meta.tumour_sample
             meta = meta + [id: "${meta.dataset}_${meta.patient}"]
             [meta.subMap('dataset', 'patient', 'id'), rds, sample]}
             | groupTuple
             | join(contamination)
 
-        // in_cnaqc.view()
         
-        pass_tinc = in_cnaqc.map{  meta, rds, sample, normal_contamination -> 
+        out_tinc = in_join_cnaqc.map{  meta, rds, sample, normal_contamination -> 
             meta = meta + [nc: normal_contamination] 
                 [meta, rds, sample] }
                 .branch { meta, rds, sample -> 
@@ -57,26 +43,7 @@ workflow QC {
                         not_pass: meta.nc == '1'
                 }
         
-        // pass_tinc.pass.view()
-        // in_cnaqc.view()
-        //.join(TINC.out.tinc_csv)
-
-        // in_cnaqc 
-
-        // in_join = in_cnaqc.map{ meta, rds, csv -> 
-        //     meta = meta + [id: "${meta.dataset}_${meta.patient}"]
-        //     sample = meta.tumour_sample
-        //     [meta.subMap('dataset', 'patient', 'id'), rds, csv, sample]}
-        //     | groupTuple
-        // rds_join = join_cnaqc_out.join(contamination).map{
-        //     meta, rds, sample, normal_contamination -> 
-        //         meta = meta + [normal_contamination: "${normal_contamination}"]
-        //         [meta, rds, sample]
-        // }
-        
-        join_cnaqc_out = JOIN_CNAQC(pass_tinc.pass)
-        join_cnaqc_out
-
+        JOIN_CNAQC(out_tinc.pass)
     
     emit:
         rds_cnaqc = CNAQC.out.qc_rds
@@ -89,6 +56,6 @@ workflow QC {
         pdf_tinc = TINC.out.plot_pdf
         csv_tinc = TINC.out.tinc_csv
 
-        join_cnaqc_out
-        // rds_join
+        join_cnaqc_ALL = JOIN_CNAQC.out.rds_all
+        join_cnaqc_PASS = JOIN_CNAQC.out.rds_pass
 }

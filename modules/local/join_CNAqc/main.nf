@@ -8,7 +8,8 @@ process JOIN_CNAQC {
   
   output:
 
-    tuple val(meta), path("*.rds"), val(tumour_samples), emit: rds, optional: true
+    tuple val(meta), path("*ALL.rds"), val(tumour_samples), emit: rds_all, optional: true
+    tuple val(meta), path("*PASS.rds"), val(tumour_samples), emit: rds_pass, optional: true
 
   script:
 
@@ -35,10 +36,17 @@ process JOIN_CNAQC {
         result[[name]]\$mutations = result[[name]]\$mutations %>% dplyr::rename(Indiv = sample)
     }
       
-    out = CNAqc::multisample_init(result, 
-                              QC_filter = as.logical("$qc_filter"), 
+    out_all = CNAqc::multisample_init(result, 
+                              QC_filter = FALSE, 
                               keep_original = as.logical("$keep_original"), 
                               discard_private = FALSE)
-    saveRDS(object = out, file = paste0("$prefix", "_multi_cnaqc.rds"))
+
+    out_PASS = CNAqc::multisample_init(result, 
+                              QC_filter = TRUE, 
+                              keep_original = as.logical("$keep_original"), 
+                              discard_private = FALSE)
+
+    saveRDS(object = out_all, file = paste0("$prefix", "_multi_cnaqc_ALL.rds"))
+    saveRDS(object = out_PASS, file = paste0("$prefix", "_multi_cnaqc_PASS.rds"))
     """
 }
