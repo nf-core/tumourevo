@@ -2,10 +2,10 @@
 // DRIVER_ANNOTATION SUB-WORKFLOW
 // 
 
-include { BUILD_REFERENCE } from '../../../modules/local/build_reference/main.nf'
-include { DNDSCV } from '../../../modules/local/dndscv/main.nf'
+//include { BUILD_REFERENCE } from '../../../modules/local/build_reference/main.nf'
+//include { DNDSCV } from '../../../modules/local/dndscv/main.nf'
 include { ANNOTATE_DRIVER } from '../../../modules/local/annotate_driver/main.nf'
-include { JOIN_ANNOTATION } from '../../../modules/local/join_annotation/main.nf'
+//include { JOIN_ANNOTATION } from '../../../modules/local/join_annotation/main.nf'
 
 
 workflow DRIVER_ANNOTATION {

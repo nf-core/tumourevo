@@ -71,22 +71,12 @@ workflow TUMOUREVO {
             }
     vcf_rds = rds_input.concat(out_lifter)
 
-    //cds = []
     annotation = DRIVER_ANNOTATION(vcf_rds, drivers_table) //, cds, fasta)
-    
-    //annotation = vcf_rds
     cna_out = FORMATTER_CNA.out
 
     in_cnaqc = cna_out.join(annotation)
     QC(in_cnaqc)
-
-    // pass_qc = QC.out.rds_join.map{  meta, rds, sample -> 
-    //             [meta, rds, sample] }
-    //             .branch { meta, rds, sample -> 
-    //                     pass: meta.normal_contamination == '0'
-    //                     not_pass: meta.normal_contamination == '1'
-    //             }
     
-    SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_out)
-    SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_out)
+    SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_ALL)
+    //SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_ALL)
 }
