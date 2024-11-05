@@ -28,23 +28,23 @@ workflow SUBCLONAL_DECONVOLUTION {
             meta = meta + ["tumour_sample": sample, "id":"${meta.dataset}_${meta.patient}_${sample}"]
             [meta, rds]}
         MOBSTERh(joinCNAqc)
-        in_join = MOBSTERh.out.mobster_best_rds.map{ meta, rds -> 
-            meta = meta + [id: "${meta.dataset}_${meta.patient}"]
-            sample = meta.tumour_sample
-            [meta.subMap("dataset", "patient", "id"), rds, sample]}
-            | groupTuple
-        input_joint_fit = rds_join.map{meta, rds, sample-> [meta, rds]}
-        input_joint_fit.join(in_join).view()
-        rds_join = JOINT_FIT(input_joint_fit.join(in_join))
+        // in_join = MOBSTERh.out.mobster_best_rds.map{ meta, rds -> 
+        //     meta = meta + [id: "${meta.dataset}_${meta.patient}"]
+        //     sample = meta.tumour_sample
+        //     [meta.subMap("dataset", "patient", "id"), rds, sample]}
+        //     | groupTuple
+        // input_joint_fit = rds_join.map{meta, rds, sample-> [meta, rds]}
+        // input_joint_fit.join(in_join).view()
+        // rds_join = JOINT_FIT(input_joint_fit.join(in_join))
 
         CTREE_MOBSTERh(MOBSTERh.out.mobster_best_rds)
 
         mobster_pdf = MOBSTERh.out.mobster_report_pdf
         ctree_mobster_pdf = CTREE_MOBSTERh.out.ctree_report_pdf
 
-    } else if (params.remove_tail && !params.remove_tail.contains("never")){
-        error "None method for tail deconvolution specified"
-    }
+    } // else if (params.remove_tail && !params.remove_tail.contains("never")){
+    //     error "None method for tail deconvolution specified"
+    // }
 
     if (params.tools && params.tools.split(",").contains("viber")) {
         VIBER(rds_join)

@@ -18,7 +18,8 @@ process VIBER {
   script:
     // viber fit params
     def args = task.ext.args ?: ""
-    def prefix = task.ext.prefix ?:"${meta.id}_remove_tail_$args.remove_tail"
+    // def prefix = task.ext.prefix ?:"${meta.id}_remove_tail_$args.remove_tail"
+    def prefix = task.ext.prefix ?:"${meta.id}"
     def K = args!="" && args.K ? "$args.K" : ""
     def alpha_0 = args!="" && args.alpha_0 ? "$args.alpha_0" : ""
     def a_0 = args!="" && args.a_0 ? "$args.a_0" : ""

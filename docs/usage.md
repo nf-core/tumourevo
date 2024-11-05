@@ -3,46 +3,46 @@
 ## Table of contents
 
 - [nf-core/tumourevo: Usage](#nf-coretumourevo-usage)
-  - [Table of contents](#table-of-contents)
+    - [Table of contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Running the pipeline](#running-the-pipeline)
-  - [Quickstart](#quickstart)
-  - [Input: Sample sheet configurations](#input-sample-sheet-configurations)
-    - [Overview: Samplesheet Columns](#overview-samplesheet-columns)
-  - [Pipeline modalities](#pipeline-modalities)
-    - [Variant calling](#variant-calling)
-      - [Multi-sample variant calling](#1-multi-sample-variant-calling)
-      - [Single sample variant calling](#2-single-sample-variant-calling)
-    - [Subclonal deconvolution](#subclonal-deconvolution)
-  - [Driver annotation](#driver-annotation)
-  - [Avaiable tools](#avaiable-tools)
-    - [Updating the pipeline](#updating-the-pipeline)
-    - [Reproducibility](#reproducibility)
-  - [Main arguments](#main-arguments)
-    - [`-profile`](#-profile)
-  - [Job resources](#job-resources)
-    - [Automatic resubmission](#automatic-resubmission)
-    - [Custom resource requests](#custom-resource-requests)
-  - [Other command line parameters](#other-command-line-parameters)
-    - [`--outdir`](#--outdir)
-    - [`--email`](#--email)
-    - [`--email_on_fail`](#--email_on_fail)
-    - [`--max_multiqc_email_size`](#--max_multiqc_email_size)
-    - [`-name`](#-name)
-    - [`-resume`](#-resume)
-    - [`-c`](#-c)
-    - [`--custom_config_version`](#--custom_config_version)
-    - [`--custom_config_base`](#--custom_config_base)
-    - [`--max_memory`](#--max_memory)
-    - [`--max_time`](#--max_time)
-    - [`--max_cpus`](#--max_cpus)
-    - [`--plaintext_email`](#--plaintext_email)
-    - [`--monochrome_logs`](#--monochrome_logs)
-    - [`--multiqc_config`](#--multiqc_config)
+    - [Quickstart](#quickstart)
+    - [Input: Sample sheet configurations](#input-sample-sheet-configurations)
+        - [Overview: Samplesheet Columns](#overview-samplesheet-columns)
+    - [Pipeline modalities](#pipeline-modalities)
+        - [Variant calling](#variant-calling)
+            - [Multi-sample variant calling](#1-multi-sample-variant-calling)
+            - [Single sample variant calling](#2-single-sample-variant-calling)
+        - [Subclonal deconvolution](#subclonal-deconvolution)
+    - [Driver annotation](#driver-annotation)
+    - [Avaiable tools](#avaiable-tools)
+        - [Updating the pipeline](#updating-the-pipeline)
+        - [Reproducibility](#reproducibility)
+    - [Main arguments](#main-arguments)
+        - [`-profile`](#-profile)
+    - [Job resources](#job-resources)
+        - [Automatic resubmission](#automatic-resubmission)
+        - [Custom resource requests](#custom-resource-requests)
+    - [Other command line parameters](#other-command-line-parameters)
+        - [`--outdir`](#--outdir)
+        - [`--email`](#--email)
+        - [`--email_on_fail`](#--email_on_fail)
+        - [`--max_multiqc_email_size`](#--max_multiqc_email_size)
+        - [`-name`](#-name)
+        - [`-resume`](#-resume)
+        - [`-c`](#-c)
+        - [`--custom_config_version`](#--custom_config_version)
+        - [`--custom_config_base`](#--custom_config_base)
+        - [`--max_memory`](#--max_memory)
+        - [`--max_time`](#--max_time)
+        - [`--max_cpus`](#--max_cpus)
+        - [`--plaintext_email`](#--plaintext_email)
+        - [`--monochrome_logs`](#--monochrome_logs)
+        - [`--multiqc_config`](#--multiqc_config)
 
 # Introduction
 
-**tumourevo** is a workflow to infer a tumour evolution model from whole-genome sequencing (WGS) data. 
+**tumourevo** is a workflow to infer a tumour evolution model from whole-genome sequencing (WGS) data.
 
 Through the analysis of variant and copy-number calls, it reconstructs the evolutionary process leading to the observed tumour genome. Most of the analyses can be done at mutliple levels: single sample, multiple samples from the same patient (multi-region/longitudinal assays), and multiple patients from distinct cohorts.
 
@@ -69,7 +69,7 @@ This documentation imply that any `nextflow run nf-core/tumourevo` command is ru
 
 This will launch the pipeline and perform variant calling with the tools specified in `--tools`, see the [parameter section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for details on the available tools.
 
-Unless running with the `test` profile, the paths of input files must be provided within the `<INPUT CSV>` file specified in `--input`, see the [input section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for input requirements. 
+Unless running with the `test` profile, the paths of input files must be provided within the `<INPUT CSV>` file specified in `--input`, see the [input section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for input requirements.
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -88,7 +88,7 @@ It is recommended to use the absolute path of the files, but a relative path sho
 
 For the joint analysis of multiple samples, a tumor BAM file is required for each sample, such that the number of reads of a private mutation can be retrieved for all the samples thorugh `mpileup`.
 
-Multiple samples from the same patient must be specified with the same `dataset` ID, `patient` ID, and a different `tumour_sample` ID. `normal_sample` columns is required. 
+Multiple samples from the same patient must be specified with the same `dataset` ID, `patient` ID, and a different `tumour_sample` ID. `normal_sample` columns is required.
 
 Multiple patients from the same dataset must be specified with the same `dataset` ID, and a different `patient` ID.
 
@@ -109,7 +109,7 @@ Output from different workflows, subworkflows and modules will be in a specific 
 |`cna_caller`| Name of the copy number caller used to generate your data. <br /> _Required_ |
 | `cna_segments` | Full path to the segmentation files and copy number state from copy-number calling. <br /> _Required_ |
 | `cna_extra` | Full path to files including the ploidy and purity estimate from the copy-number caller. <br /> _Required_ |
-| `cancer_type` | Tumour type (either `PANCANCER` or one of the tumor type present in the driver table) <br /> *Required* |
+| `cancer_type` | Tumour type (either `PANCANCER` or one of the tumor type present in the driver table) <br /> _Required_ |
 | `tumour_alignment`  | Full path to the tumour bam file. <br /> _Optional_                                                       |
 | `tumour_alignment_index`  | Full path to the tumour bam index file. <br /> _Optional_                                              |
 
@@ -117,9 +117,8 @@ An [example samplesheet](https://github.com/caravagnalab/tumourevo/blob/dev/test
 
 ## Pipeline modalities
 
-The tumourevo pipeline supports variant annotation, driver annotation, quality control processes, subclonal deconvolution and signature deconvolution analysis through various tools. It can be used to analyse both single sample experiments and longitudinal/multi-region assays, in which multiple samples of the same patient are avaiable. 
+The tumourevo pipeline supports variant annotation, driver annotation, quality control processes, subclonal deconvolution and signature deconvolution analysis through various tools. It can be used to analyse both single sample experiments and longitudinal/multi-region assays, in which multiple samples of the same patient are avaiable.
 As input, you must provide at least information on the samples, the VCF file from one of the supported callers and the output of one of the supported copy number caller. By default, if multiple samples from the same patient are provided, they will be analysed in a multivariate framework (which affects in particular the subclonal deconvolution deconvolution steps) to retrieve information useful in the reconstruction of the evolutionary process. Depending on the variant calling strategy (single sample or multi sample) and the provided input files, different strategies will be applied.
-
 
 <!-- aggiungi un riassunto di cosa voglia dire single e multi sample (analisi multivariata, soprattutto per subclonal deconv)
 E' possibile usarla sia nel caso di vc multi sample che indipendente -->
@@ -128,7 +127,7 @@ E' possibile usarla sia nel caso di vc multi sample che indipendente -->
 
 ### 1. Multi-sample variant calling
 
-Modern tools (ie: Platypus and Mutect2) allow to perform variant calling directly in multisample mode. If the VCFs provided as input are already multisample, no additional step is required. 
+Modern tools (ie: Platypus and Mutect2) allow to perform variant calling directly in multisample mode. If the VCFs provided as input are already multisample, no additional step is required.
 
 <!-- If the variant calling had been performed indepentently on each sample from the same patient, 
 
@@ -147,11 +146,10 @@ nextflow run nf-core/tumourevo \
  -profile <PROFILE> \
  --input <INPUT CSV> \
  --outdir results \
- --remove_tail all \
  --tools pyclonevi,mobster,viber,sparsesignature,sigprofiler
 ```
 
-Minimal input file, two samples from the same patient: 
+Minimal input file, two samples from the same patient:
 
 ```bash
 dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type
@@ -165,22 +163,20 @@ If the variant calling performed independently on each sample, even if coming fr
 
 Input file for two patients without joint variant calling, bam files available:
 
-```bash 
+```bash
 dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type,tumour_bam,tumour_bai
 dataset1,patient1,S1,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1/segments.txt,/CNA/patient1/S1/purity_ploidy.txt,caller,PANCANCER,patient1/BAM/S1.bam,patient1/BAM/S1.bam.bai 
 dataset1,patient1,S2,N1,patient1_S2.vcf.gz,patient1_S2.vcf.gz.tbi,/CNA/patient1/S2/segments.txt,/CNA/patient1/S2/purity_ploidy.txt,caller,PANCANCER,,patient1/BAM/S2.bam,patient1/BAM/S2.bam.bai  
 ```
-If you can not include the bam files in the input csv, the pipeline will run anyway, treating each sample as independent. 
+
+If you can not include the bam files in the input csv, the pipeline will run anyway, treating each sample as independent.
 
 <!-- You can use the `multisample` mode of tumourevo to analyse samples from multi-region and longitudinal assays. This allows you to track in space and time the existing tumor populations, and better understand its heterogeneity. This modality integrates data across multiple samples, thus improving the resolution of subclonal structures and providing insights into the evolutionary dynamics and progression of the tumor.
 Two of the avaiable tools for subclonal deconvolution, `pyclonevi` and `viber` can by-design be run in multi-sample mode, inferring the subclonal structure of samples. If you add `mobster` to the `--tool` parameter when running the pipeline in this modality, it will be run at first on each individual sample (since the tool does not support at the moment multi-sample analysis) in order to recognize neutral tail mutations and remove them. The mutations data manipulated in this way will then be processed by either `pyclone`, `viber` or both using the multivariate subclonal deconvolution as described before.  -->
 
 # Subclonal deconvolution
 
-### The `remove_tail` parameter 
-
-
-
+### The `remove_tail` parameter
 
 #### Example
 
@@ -195,6 +191,7 @@ nextflow run nf-core/tumourevo \
  --mode multisample \
  --tools pyclone,viber,ctree,sparsesignature,sigprofiler
 ```
+
 Running the pipeline with mobster
 
 <!-- mobster lavora single sample, mentre pyclone e viber anche multisample -->
@@ -218,15 +215,16 @@ dataset1,patient1,S2,patient1_S2.vcf.gz,patient1_S2.vcf.gz.tbi,/CNA/patient1/S2,
 ```
 
 ## Driver annotation
-You can retrieve tumor-specific drivers in the driver annotation step by specifying the tumor type in the input csv. Pan-cancer drivers will be retrieved by specifying `PANCANCER` as tumour type in the input csv file. 
-For this step, we currently refer to [IntOGen latest release](https://www.nature.com/articles/s41568-020-0290-x), but you can also provide a custom driver table that will be used in the analysis. 
+
+You can retrieve tumor-specific drivers in the driver annotation step by specifying the tumor type in the input csv. Pan-cancer drivers will be retrieved by specifying `PANCANCER` as tumour type in the input csv file.
+For this step, we currently refer to [IntOGen latest release](https://www.nature.com/articles/s41568-020-0290-x), but you can also provide a custom driver table that will be used in the analysis.
 Please note that the tumor types reported in the input file must correspond to those present in the table used for the annotation (default driver table used can be found [here](https://github.com/caravagnalab/nextflow_modules/blob/main/2023-05-31_IntOGen-Drivers/Unfiltered_drivers.tsv))
 
 <!-- add a snapshot of the driver table -->
 
-Input file: 
+Input file:
 
-```bash 
+```bash
 dataset,patient,sample,vcf,vcf_tbi,cna_dir,cna_caller,tumour_bam,tumour_bai,tumour_type
 dataset1,patient1,S1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1,caller,patient1/BAM/S1,patient1/BAM/S1.bam.bai,BRCA
 dataset1,patient1,S2,patient1_S2.vcf.gz,patient1_S2.vcf.gz.tbi,/CNA/patient1/S2,caller,patient1/BAM/S2,patient1/BAM/S2.bam.bai,BRCA 
@@ -236,11 +234,15 @@ dataset1,patient2,S2,patient2_S2.vcf.gz,patient2_S2.vcf.gz.tbi,/CNA/patient2/S2,
 
 ## Avaiable tools
 
-We report the different tools included in the pipeline. 
+We report the different tools included in the pipeline.
+
 1. **Gene annotation**
+
 - [EnsemblVEP]()
+
 2. **Driver annotation**
-3. **Quality control** 
+3. **Quality control**
+
 - [CNAqc](https://caravagnalab.github.io/CNAqc/)
 
 <!-- #### TINC
@@ -248,17 +250,17 @@ We report the different tools included in the pipeline.
 #### INCOMMON -->
 
 4. **Subclonal deconvolution**
+
 - [MOBSTER](https://caravagnalab.github.io/mobster/)
 - [PyClone-VI](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03919-2)
 - [VIBER](https://caravagnalab.github.io/VIBER/index.html)
 - [Ctree](https://caravagnalab.github.io/ctree/)
 
 5. **Signature deconvolution**
+
 - [SparseSignature]()
 - [SigProfiler]()
 <!-- ### Start with annotation
-
-
 
 Example of the values used for these parameters:
 
@@ -274,13 +276,11 @@ Using VEP plugins:
 `--plugin` - plugin modules should be installed in the Plugin subdirectory of the VEP cache directory (defaults to "$HOME/.vep/").
 To enable specify `--plugin SingleLetterAA`.
 
-
 ### Start with Maftools
 
 `read.maf` function reads multiple MAF files (e.g. multisample/multipatient cohort), summarizes it in various ways and stores it as an MAF object.
 MAF object contains main maf file, summarized data and any associated sample annotations.
 For visualization it uses `plotmafSummary` function to plot the summary of the maf file, which displays number of variants in each sample and variant types summarized by Variant_Classification. Better representation of maf file can be shown as oncoplots using `oncoplot` function. -->
-
 
 <!-- ### Subclonal Deconvolution
 
@@ -396,19 +396,19 @@ They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
 If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended.
 
-* `docker`
-  * A generic configuration profile to be used with [Docker](http://docker.com/)
-  * Pulls software from dockerhub: [`nfcore/tumourevo`](http://hub.docker.com/r/nfcore/tumourevo/)
-* `singularity`
-  * A generic configuration profile to be used with [Singularity](http://singularity.lbl.gov/)
-  * Pulls software from DockerHub: [`nfcore/tumourevo`](http://hub.docker.com/r/nfcore/tumourevo/)
-* `conda`
-  * Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker or Singularity.
-  * A generic configuration profile to be used with [Conda](https://conda.io/docs/)
-  * Pulls most software from [Bioconda](https://bioconda.github.io/)
-* `test`
-  * A profile with a complete configuration for automated testing
-  * Includes links to test data so needs no other parameters
+- `docker`
+    - A generic configuration profile to be used with [Docker](http://docker.com/)
+    - Pulls software from dockerhub: [`nfcore/tumourevo`](http://hub.docker.com/r/nfcore/tumourevo/)
+- `singularity`
+    - A generic configuration profile to be used with [Singularity](http://singularity.lbl.gov/)
+    - Pulls software from DockerHub: [`nfcore/tumourevo`](http://hub.docker.com/r/nfcore/tumourevo/)
+- `conda`
+    - Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker or Singularity.
+    - A generic configuration profile to be used with [Conda](https://conda.io/docs/)
+    - Pulls most software from [Bioconda](https://bioconda.github.io/)
+- `test`
+    - A profile with a complete configuration for automated testing
+    - Includes links to test data so needs no other parameters
 
 <!-- TODO nf-core: Document required command line parameters -->
 
@@ -488,7 +488,7 @@ If you prefer, you can specify the full path to your reference genome when you r
 
 ### `--igenomes_ignore`
 
-Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`. --> 
+Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`. -->
 
 ## Job resources
 

@@ -1,11 +1,10 @@
 # nf-core/tumourevo: Output
+
 ## Introduction
 
 This document describes the output produced by the pipeline. All plots generated in each step are summarised into the final report.
 
-The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to both published and unpublished results. 
-
-
+The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to both published and unpublished results.
 
 ## Pipeline overview
 
@@ -36,12 +35,12 @@ Intermediate steps connetting the main subworkflows will output [unpublished res
 * [Formatter](#formatter)
 * [Lifter](#lifter)
 
-
 ## Variant Annotation
 
 This directory contains results from the variant annotation subworkflow. At the level of individual samples, genomic variants present in the input VCF files are annotated using [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html) and further converted into MAF format using [vcf2maf](https://github.com/mskcc/vcf2maf). Genomic information of samples from the same cohort are summarized into a unique MAF object with [maftools](https://bioconductor.org/packages/release/bioc/html/maftools.html).
 
 ### VEP
+
 [VEP (Variant Effect Predictor)](https://www.ensembl.org/info/docs/tools/vep/index.html) is a `Ensembl` tool that determines the effect of all variants (SNPs, insertions, deletions, CNVs or structural variants) on genes, transcripts, and protein sequence.
 This step starts from VCF files.
 
@@ -50,29 +49,26 @@ This step starts from VCF files.
 
 **Output directory: `{publish_dir}/VariantAnnotation/VEP/<dataset>/<patient>/<sample>/`**
 
-- `{dataset_patient_sample}.vcf.gz`
-  - annotated VCF file
-
+* `{dataset_patient_sample}.vcf.gz`
+    * annotated VCF file
 
 </details>
 
-
 ### vcf2maf
 
-[vcf2maf](https://github.com/mskcc/vcf2maf) convert a VCF file into a MAF (Mutation Annotation Format) file, where each variant is mapped to only one of all possible gene transcripts/isoforms that it might affect. vcf2maf is designed to work with VEP annotation output. 
+[vcf2maf](https://github.com/mskcc/vcf2maf) convert a VCF file into a MAF (Mutation Annotation Format) file, where each variant is mapped to only one of all possible gene transcripts/isoforms that it might affect. vcf2maf is designed to work with VEP annotation output.
 
 > **NB:** While VEP is tolerant of chromosome format mismatches (when the input .VCF file uses the UCSC format chrN and the reference fasta uses Ensembl/NCBI format N), vcf2maf is not.
->  Make sure the reference fasta chromosome format matches that of your input
+> Make sure the reference fasta chromosome format matches that of your input
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/VariantAnnotation/VCF2MAF/<dataset>/<patient>/<sample>/`**
-- `data_vep.maf`
-  - annotated MAF file
+* `data_vep.maf`
+    * annotated MAF file
 
 </details>
-
 
 ### maftools
 
@@ -81,20 +77,20 @@ This step started from annotated MAF files.
 
 MAF fields requirements:
 
-- Mandatory fields: `Hugo_Symbol`, `Chromosome`, `Start_Position`, `End_Position`, `Reference_Allele`, `Tumor_Seq_Allele2`, `Variant_Classification`, `Variant_Type` and `Tumor_Sample_Barcode`.
+* Mandatory fields: `Hugo_Symbol`, `Chromosome`, `Start_Position`, `End_Position`, `Reference_Allele`, `Tumor_Seq_Allele2`, `Variant_Classification`, `Variant_Type` and `Tumor_Sample_Barcode`.
 
-- Optional fields: `VAF` (Variant Allele Frequency), `amino acid change` information.
+* Optional fields: `VAF` (Variant Allele Frequency), `amino acid change` information.
 
 <details markdown="1">
 <summary>Output files for the dataset</summary>
 
 **Output directory: `{publish_dir}/VariantAnnotation/MAFTOOLS/<dataset>/`**
-- `maf_merged.rds`
-  - summarized MAF object
-- `maf_summary.pdf`
-  - summary statistics plot
-- `oncoplot.pdf`
-  - oncoprint plot
+* `maf_merged.rds`
+    * summarized MAF object
+* `maf_summary.pdf`
+    * summary statistics plot
+* `oncoplot.pdf`
+    * oncoprint plot
 
 </details>
 
@@ -116,77 +112,87 @@ In this step, all retrieved mutations are joined with original mutations present
 
 </details> -->
 ## Driver Annotation
+
 Add description of this step
 
 ### Build reference
+
 Add description
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/DriverAnnotation/BuildReference/<dataset>/<patient>/<sample>/`**
-- `fit.rds`
-  - add description
-- `plot.rds`
-  - add description
+* `fit.rds`
+    * add description
+* `plot.rds`
+    * add description
+
 </details>
 
 ### dndsCV
+
 Add description
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/DriverAnnotation/DNDSCV/<dataset>/<patient>/<sample>/`**
-- `dnds.rds`
-  - DNDSCV object in RDS format
+* `dnds.rds`
+    * DNDSCV object in RDS format
+
 </details>
 
 ## QC
+
 The QC subworkflows requires in input a segmentation file from allele-specific copy number callers (either [Sequenza](https://sequenzatools.bitbucket.io/#/home), [ASCAT](https://github.com/VanLoo-lab/ascat)) and the joint VCF file from [join_positions](#join_positions) subworkflow. The QC sub-workflows first conduct quality control on CNV and somatic mutation data for individual samples in [CNAqc](#cnaqc) step, and subsequently summarize validated information at patient level in [join_CNAqc](#join_cnaqc) step.
 The QC subworkflow is a crucial step of the pipeline as it ensures high confidence in identifying clonal and subclonal events while accounting for variations in tumor purity.
 
 ### TINC
+
 [TINC](https://caravagnalab.github.io/TINC/index.html) is a package to calculate the contamination of tumor DNA in a matched normal sample. TINC provides estimates of the proportion of cancer cells, containing the normal sample, and the proportion of cancer cells in the tumor sample (tumor purity).
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/QC/tinc/<dataset>/<patient>/<sample>/`**
-- `{dataset_patient_sample}_fit.rds`
-  - TINC report contianign TIN and TIT estimates in RDS;
-- `{dataset_patient_sample}_plot.rds`
-  - TINC report contianign TIN and TIT estimates in PDF.
+* `{dataset_patient_sample}_fit.rds`
+    * TINC report contianign TIN and TIT estimates in RDS;
+* `{dataset_patient_sample}_plot.rds`
+    * TINC report contianign TIN and TIT estimates in PDF.
+
 </details>
 
-
 ### CNAqc
+
 [CNAqc](https://caravagnalab.github.io/CNAqc/) is a package to quality control (QC) bulk cancer sequencing data for validating copy number segmentations against variant allele frequencies of somatic mutations.
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/QC/CNAqc/<dataset>/<patient>/<sample>/`**
-- `{dataset_patient_sample}_data_plot.rds`
-  - CNAqc report with genome wide mutation and allele specific copy number plots in RDS
+* `{dataset_patient_sample}_data_plot.rds`
+    * CNAqc report with genome wide mutation and allele specific copy number plots in RDS
 <!-- - `{dataset_patient_sample}_data.pdf`
   - CNAqc report with genome wide mutation and allele specific copy number plots in PDF -->
-- `{dataset_patient_sample}_qc_plot.rds`
-  - QC step report resulting from peak analysis in RDS
-- `{dataset_patient_sample}_qc.rds`
-  -  CNAqc RDS object
+* `{dataset_patient_sample}_qc_plot.rds`
+    * QC step report resulting from peak analysis in RDS
+* `{dataset_patient_sample}_qc.rds`
+    * CNAqc RDS object
+
 </details>
 
 ### join_CNAqc
-This module creates a multi-CNAqc object for patient by summarizing the quality check performed at the single sample level. For more information about the strucutre of multi-CNAqc object see [CNAqc documentation]((https://caravagnalab.github.io/CNAqc/)).
 
+This module creates a multi-CNAqc object for patient by summarizing the quality check performed at the single sample level. For more information about the strucutre of multi-CNAqc object see [CNAqc documentation]((https://caravagnalab.github.io/CNAqc/)).
 
 <details markdown="1">
 <summary>Output files for all patients</summary>
 
 **Output directory: `{publish_dir}/QC/join_CNAqc/<dataset>/<patient>/`**
-- `{dataset_patient}_multi_cnaqc.rds`
-  - multi-CNAqc object
+* `{dataset_patient}_multi_cnaqc.rds`
+    * multi-CNAqc object
+
 </details>
 
 ## Signature Deconvolution
@@ -205,20 +211,19 @@ The results of this step are collected in `{pubslish_dir}/signature_deconvolutio
 <summary>Output files for dataset</summary>
 
 **Output directory: `{publish_dir}/signatures_deconvolution/SparseSig/<dataset>/`**
-- `best_params_config.rds`
-  - signatures best configiration object
-- `cv_means_mse.rds`
-  - cross validation output RDS
-- `nmf_Lasso_out.rds`
-  - NMF Lasso output RDS
-- `plot_signatures.pdf`
-  - exposure PDF plot
-- `plot_signatures.rds`
-  - exposure RDS plot
+* `best_params_config.rds`
+    * signatures best configiration object
+* `cv_means_mse.rds`
+    * cross validation output RDS
+* `nmf_Lasso_out.rds`
+    * NMF Lasso output RDS
+* `plot_signatures.pdf`
+    * exposure PDF plot
+* `plot_signatures.rds`
+    * exposure RDS plot
 
 </details>
   
-
 ### SigProfiler
 
 [SigProfiler](https://osf.io/t6j7u/wiki/home/) is a python framework that allows _de novo_ extraction of mutational signatures from data generated in a matrix format. The tool identifies the number of operative mutational signatures, their activities in each sample, and the probability for each signature to cause a specific mutation type in a cancer sample. The tool makes use of `SigProfilerMatrixGenerator` and `SigProfilerPlotting`, seamlessly integrating with other `SigProfiler` tools.
@@ -227,17 +232,17 @@ The results of this step are collected in `{pubslish_dir}/signature_deconvolutio
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/signatures_deconvolution/SigProfiler/<dataset>/`**
-- `<dataset>.` _missing_
-  - _missing_
-</details>
+* `<dataset>.` _missing_
+    * _missing_
 
+</details>
 
 ## Subclonal Deconvolution
 
-The subclonal deconvolution subworkflow requires in input a joint `mCNAqc` object resulting from the [join_CNAqc](#join_cnaqc) step. The subworkflow will perform multi-sample deconvolution if more than one sample for each patient is present. The user can run MOBSTER before performing subclonal deconvolution in three different ways by specifing the parameter `--remove_tail`.
+The subclonal deconvolution subworkflow requires in input a joint `mCNAqc` object resulting from the [join_CNAqc](#join_cnaqc) step. The subworkflow will perform multi-sample deconvolution if more than one sample for each patient is present.
+<!-- The user can run MOBSTER before performing subclonal deconvolution in three different ways by specifing the parameter `--remove_tail`. -->
 
-> **NB:** If `--remove_tail all,once` and MOBSTER is not specified in the tools for subclonal deconvolution, the pipeline will throw an error.
-
+<!-- > **NB:** If `--remove_tail all,once` and MOBSTER is not specified in the tools for subclonal deconvolution, the pipeline will throw an error. -->
 
 <!-- Two different modalities can be specified by the user using `--mode` parameter: single sample and multi sample mode. -->
 <!-- If `--mode singlesample` is provided, each sample is analysed individually providing a snapshot of clonal and subclonal diversity starting from allele frequency of detected somatic variants. When multiple samples from the same patient are provided, the user may take advantage of the multisample modality, by setting `--mode multisample`. -->
@@ -253,25 +258,25 @@ If `--mode singlesample` is provided, each sample is analysed individually provi
 
 ### MOBSTER
 
-[MOBSTER](https://caravagnalab.github.io/mobster/) processes mutant allelic frequencies to identify and remove neutral tails from the input data, so that subclonal reconstruction algorithms can be applied downstream to find subclones from the processed read counts. 
+[MOBSTER](https://caravagnalab.github.io/mobster/) processes mutant allelic frequencies to identify and remove neutral tails from the input data, so that subclonal reconstruction algorithms can be applied downstream to find subclones from the processed read counts.
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/mobster/<dataset>/<patient>/<sample>/`**
 
-- `{dataset_patient_sample}_mobsterh_st_fit.rds`
-  - RDS object contains all fits of subclonal deconvolution
-- `{dataset_patient_sample}_mobsterh_st_best_fit.rds`
-  - RDS object contains best fit of subclonal deconvolution
-- `{dataset_patient_sample}_plots.rds`
-  - summary plots of all and best fits in RDS
-- `{dataset_patient_sample}_REPORT_plots_mobster.rds`
-  - report of mobster deconvolution in RDS
-- `{dataset_patient_sample}_REPORT_plots_mobster.pdf`
-  - report of mobster deconvolution in PDF
-- `{dataset_patient_sample}_REPORT_plots_mobster.png`
-  - report of mobster deconvolution in PNG
+* `{dataset_patient_sample}_mobsterh_st_fit.rds`
+    * RDS object contains all fits of subclonal deconvolution
+* `{dataset_patient_sample}_mobsterh_st_best_fit.rds`
+    * RDS object contains best fit of subclonal deconvolution
+* `{dataset_patient_sample}_plots.rds`
+    * summary plots of all and best fits in RDS
+* `{dataset_patient_sample}_REPORT_plots_mobster.rds`
+    * report of mobster deconvolution in RDS
+* `{dataset_patient_sample}_REPORT_plots_mobster.pdf`
+    * report of mobster deconvolution in PDF
+* `{dataset_patient_sample}_REPORT_plots_mobster.png`
+    * report of mobster deconvolution in PNG
 
 </details>
 
@@ -284,12 +289,13 @@ If `--mode singlesample` is provided, each sample is analysed individually provi
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/pyclonevi/<dataset>/<patient>/<sample>/`**
 
-- `{dataset_patient,dataset_patient_sample}_all_fits.h5`
-  - HDF5 file for all possible fit and summary stats
-- `{dataset_patient,dataset_patient_sample}_best_fit.txt`
-  - TSV file for the best fit
-- `{dataset_patient,dataset_patient_sample}_cluster_table.csv`
-  - CSV file wtih clone assignment
+* `{dataset_patient,dataset_patient_sample}_all_fits.h5`
+    * HDF5 file for all possible fit and summary stats
+* `{dataset_patient,dataset_patient_sample}_best_fit.txt`
+    * TSV file for the best fit
+* `{dataset_patient,dataset_patient_sample}_cluster_table.csv`
+    * CSV file wtih clone assignment
+
 </details>
 
 ### VIBER
@@ -301,24 +307,24 @@ If `--mode singlesample` is provided, each sample is analysed individually provi
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/viber/<dataset>/<patient>/<sample>/`**
 
-- `{dataset_patient,dataset_patient_sample}_viber_best_st_fit.rds`
-  - RDS file for best standard fit
-- `{dataset_patient,dataset_patient_sample}_viber_best_st_heuristic_fit.rds`
-  - RDS file for best standard fit with applied heuristic
-- `{dataset_patient,dataset_patient_sample}_viber_best_st_fit_plots.rds`
-  - RDS file containing summary plots for best standard fit (if multiple samples)
-- `{dataset_patient,dataset_patient_sample}_viber_best_st_heuristic_fit_plots.rds`
-  - RDS file containing summary plots for best standard fit with applied heuristic (if multiple samples)
-- `{dataset_patient,dataset_patient_sample}_viber_best_st_mixing_plots.rds`
-  - RDS file containing mixing proportion plot for best standard fit (if single samples)
-- `{dataset_patient,dataset_patient_sample}_viber_best_st_heuristic_mixing_plots.rds`
-  - RDS file containing mixing proportion plot for best standard fit with applied heuristic (if single samples)
-- `{dataset_patient,dataset_patient_sample}_REPORT_plots_viber.rds`
-  - report of VIBER deconvolution in RDS
-- `{dataset_patient,dataset_patient_sample}_REPORT_plots_viber.pdf`
-  - report of VIBER deconvolution in PDF
-- `{dataset_patient,dataset_patient_sample}_REPORT_plots_viber.png`
-  - report of VIBER deconvolution in PNG
+* `{dataset_patient,dataset_patient_sample}_viber_best_st_fit.rds`
+    * RDS file for best standard fit
+* `{dataset_patient,dataset_patient_sample}_viber_best_st_heuristic_fit.rds`
+    * RDS file for best standard fit with applied heuristic
+* `{dataset_patient,dataset_patient_sample}_viber_best_st_fit_plots.rds`
+    * RDS file containing summary plots for best standard fit (if multiple samples)
+* `{dataset_patient,dataset_patient_sample}_viber_best_st_heuristic_fit_plots.rds`
+    * RDS file containing summary plots for best standard fit with applied heuristic (if multiple samples)
+* `{dataset_patient,dataset_patient_sample}_viber_best_st_mixing_plots.rds`
+    * RDS file containing mixing proportion plot for best standard fit (if single samples)
+* `{dataset_patient,dataset_patient_sample}_viber_best_st_heuristic_mixing_plots.rds`
+    * RDS file containing mixing proportion plot for best standard fit with applied heuristic (if single samples)
+* `{dataset_patient,dataset_patient_sample}_REPORT_plots_viber.rds`
+    * report of VIBER deconvolution in RDS
+* `{dataset_patient,dataset_patient_sample}_REPORT_plots_viber.pdf`
+    * report of VIBER deconvolution in PDF
+* `{dataset_patient,dataset_patient_sample}_REPORT_plots_viber.png`
+    * report of VIBER deconvolution in PNG
 
 </details>
 
@@ -382,7 +388,6 @@ This folder contains the results of multivariate analysis using VIBER, which can
 
 </details>
 
-
 <details markdown="1">
 <summary>Output files for all patients without MOBSTER</summary>
 
@@ -399,7 +404,6 @@ This folder contains the results of multivariate analysis using VIBER, which can
   
 </details> -->
 
-
 ## Clone Tree Inference
 
 Subclonal deconvolution results are used to build clone tree from both single samples and multple samples using [ctree](https://caravagnalab.github.io/ctree/index.html). ctree is a R-based package which implements basic functions to create, manipulate and visualize clone trees by modelling Cancer Cell Fractions (CCF) clusters. Annotated driver genes must be provided in the input data.
@@ -414,16 +418,16 @@ VIBER and MOBSTER fits are already suitable for ctree analysis.
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/ctree/<dataset>/<patient>/<sample>/`**
 
-- `ctree_<tool>.rds`
-  - RDS file containing inferred clone tree
-- `ctree_<tool>_plots.rds`
-  - RDS file for clone tree plot
-- `REPORT_plots_ctree_<tool>.rds`
-  - RDS file for ctree report
-- `REPORT_plots_ctree_<tool>.pdf`
-  - PDF file for ctree report
-- `REPORT_plots_ctree_<tool>.png`
-  - PNG file for ctree report
+* `ctree_<tool>.rds`
+    * RDS file containing inferred clone tree
+* `ctree_<tool>_plots.rds`
+    * RDS file for clone tree plot
+* `REPORT_plots_ctree_<tool>.rds`
+    * RDS file for ctree report
+* `REPORT_plots_ctree_<tool>.pdf`
+    * PDF file for ctree report
+* `REPORT_plots_ctree_<tool>.png`
+    * PNG file for ctree report
 <!-- - `ctree_input_pyclonevi.csv`
   - CSV file required for clone tree inference from pyclone -->
 
@@ -442,7 +446,6 @@ VIBER and MOBSTER fits are already suitable for ctree analysis.
 - `ctree_input_pyclonevi.csv`
   - CSV file required for clone tree inference from pyclone
 
-
 </details> -->
 ## Genome Interpreter
 
@@ -453,18 +456,18 @@ Add description
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/ctree/<dataset>/<patient>/<sample>/`**
 
-- `name_of_the_file`
-  - add description on this part
+* `name_of_the_file`
+    * add description on this part
 
 <!-- - `ctree_input_pyclonevi.csv`
   - CSV file required for clone tree inference from pyclone -->
 
 </details>
 
-
 ## Unpublished results
 
 ### Formatter
+
 The Formatter subworkflow is used to convert file to other formats and to standardize the output files resulting from different mutation (Mutect2, Strelka) and cna callers (ASCAT,Sequenza). Output files from this step are not published.
 
 #### cnaparse
@@ -474,8 +477,10 @@ This parser aims at standardize into a unique format copy number calls and purit
 <summary>Output files for all samples</summary>
 
 **Output directory: `{work_dir}/formatter/cna2CNAqc/<dataset>/<patient>/<sample>/`**
+
 * `CNA.rds`
-  * RDS file containing parsed cna output in table format 
+    * RDS file containing parsed cna output in table format
+
 </details>
 
 #### vcfparse
@@ -486,8 +491,10 @@ This parser aims at standardize into a unique format single nucleotide variants 
 <summary>Output files for all samples</summary>
 
 **Output directory: `{work_dir}/formatter/vcf2CNAqc/<dataset>/<patient>/<sample>/`**
+
 * `VCF.rds`
-  * RDS file containing parsed vcf in table format
+    * RDS file containing parsed vcf in table format
+
 </details>
 
 #### tsvparse
@@ -498,8 +505,10 @@ This parser aims at converting mutations data of joint CNAqc analysis from CNAqc
 <summary>Output files for all patients</summary>
 
 **Output directory: `{work_dir}/formatter/CNAqc2tsv/<dataset>/<patient>/`**
+
 * `joint_table.tsv`
-  * TSV file containing cna and variants joint information.
+    * TSV file containing cna and variants joint information.
+
 </details>
 
 ### Lifter
@@ -508,7 +517,8 @@ This parser aims at converting mutations data of joint CNAqc analysis from CNAqc
 The Lifter subworkflow is an optional step and it is run when `--mode multisample` is used. When multiple samples from the same patient are provided, the user can specify either a single joint VCF file, containing variant calls from all tumor samples of the patient, or individual sample specific VCF files. In the latter case, path to tumor BAM files must be provided in order to collect all mutations from the samples and perform pile-up of sample's private mutations in all the other samples. Two intermediate steps, [get_positions](#get_positions) and [mpileup](#mpileup), are performed to identify private mutations in all the samples and retrieve their variant allele frequency. Once private mutations are properly defined, they are merged back into the original VCF file during the [join_positions](#join_positions) step. The updated VCF file is then converted into a `vcfR` RDS object.
 
 #### get_positions
-This intermediate step allows to retrieve private and shared mutations across samples originated from the same patient. 
+
+This intermediate step allows to retrieve private and shared mutations across samples originated from the same patient.
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
@@ -516,15 +526,18 @@ This intermediate step allows to retrieve private and shared mutations across sa
 **Output directory: `{work_dir}/lifter/mpileup/<dataset>/<patient>/<sample>/`**
 
 * `positions_missing.bed`
-  * BED file containing mutations to be retrieved for a given sample
+    * BED file containing mutations to be retrieved for a given sample
+
 </details>
 
 <details markdown="1">
 <summary>Output files for all patients</summary>
 
 **Output directory: `{work_dir}/lifter/mpileup/<dataset>/<patient>/`**
+
 * `all_positions.bed`
-  * BED file containing mutation of all the samples of the same patient
+    * BED file containing mutation of all the samples of the same patient
+
 </details>
 
 #### mpileup
@@ -535,19 +548,21 @@ At this stage, [bcftools](https://samtools.github.io/bcftools/bcftools.html) is 
 <summary>Output files for all samples</summary>
 
 **Output directory: `{work_dir}/lifter/mpileup/<dataset>/<patient>/<sample>/`**
-- `pileup.vcf`
-  - VCF file with called mutations
+* `pileup.vcf`
+    * VCF file with called mutations
+
 </details>
 
 #### join_positions
+
 In this step, all retrieved mutations are joined with original mutations present in input VCF, which is in turn converted into an RDS object using [vcfR](https://cran.r-project.org/web/packages/vcfR/vignettes/intro_to_vcfR.html).
 
 <details markdown="1">
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/lifter/mpileup/<dataset>/<patient>/<sample>/`**
-- `pileup_VCF.rds`
-  - RDS containing shared and private mutations
+* `pileup_VCF.rds`
+    * RDS containing shared and private mutations
 
 </details>
 <!-- 
@@ -560,6 +575,7 @@ Variants are annotated according to [IntOGen latest release](https://www.nature.
 <summary>Output files for all samples</summary>
 
 **Output directory: `{work_dir}/DriverAnnotation/<dataset>/<patient>/<sample>/`**
+
 * `annotated_drivers.rds`
-  * RDS file containing variants with annotated drivers.
+    * RDS file containing variants with annotated drivers.
 </details> -->

@@ -13,7 +13,8 @@ process PYCLONEVI {
 
     script:
       def args = task.ext.args ?: ''
-      def prefix = task.ext.prefix ?:"${meta.id}_remove_tail_$args.remove_tail" 
+      // def prefix = task.ext.prefix ?:"${meta.id}_remove_tail_$args.remove_tail" 
+      def prefix = task.ext.prefix ?:"${meta.id}" 
       def n_cluster_arg = args.n_cluster ? "$args.n_cluster" : ""
       def density_arg = args.density ? "$args.density" : ""
       def n_grid_point_arg = args.n_grid_point ? "$args.n_grid_point" : ""
