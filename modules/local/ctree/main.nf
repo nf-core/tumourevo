@@ -91,6 +91,14 @@ process CTREE {
       
       CCF_table = add_dummy_driver(CCF_table, variant_colname="variantID", is_driver_colname="is.driver")
 
+
+      if (nrow(drivers_table)==0) {
+        drivers_table = CCF_table %>% 
+          dplyr::filter(is.driver) %>%
+          dplyr::select(-nMuts) %>%
+          dplyr::mutate(patientID=patient)
+      }
+  
       ctree_init = list("CCF_table"=CCF_table,
                         "drivers_table"=drivers_table,
                         "samples"=samples,

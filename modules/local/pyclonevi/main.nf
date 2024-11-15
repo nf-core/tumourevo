@@ -39,7 +39,7 @@ process PYCLONEVI {
 
       echo -e "\$colnames" > ${prefix}_pyclone_input.tsv
       for i in $sampleID_string;
-        do awk '\$'\$column_number' == "'"\$i"'"' ${prefix}_pyclone_input_all_samples.tsv >> ${prefix}_pyclone_input.tsv;
+        do awk -F "\t" '\$'\$column_number' == "'"\$i"'"' ${prefix}_pyclone_input_all_samples.tsv >> ${prefix}_pyclone_input.tsv;
       done
 
       pyclone-vi fit -i ${prefix}_pyclone_input.tsv -o ${prefix}_all_fits.h5 -c $n_cluster_arg -d $density_arg --num-grid-points $n_grid_point_arg --num-restarts $n_restarts_arg

@@ -8,10 +8,11 @@ testing/
 .nf-test*
 .nf-test/
 clean_nextflow.sh
-err
+*err
 job_test.sh
 job.sh
-log
+*log
+*out
 test_err
 test_log
 test_results/
