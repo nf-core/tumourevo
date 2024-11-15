@@ -68,7 +68,7 @@ process CNAQC {
       KDE = eval(parse(text = "$kde")),
       starting_state_subclonal_evolution = "$starting_state_subclonal_evolution",
       cluster_subclonal_CCF = as.logical("$cluster_subclonal_CCF"),
-      min_VAF = 0)
+      min_VAF = 0.01)
 
     x = CNAqc::compute_CCF(
       x,
@@ -77,33 +77,37 @@ process CNAQC {
       cutoff_QC_PASS = as.numeric("$cutoff_QC_PASS"),
       method = "$method"
     )
+    
+    tmp_x <- x
+    mut <- tmp_x$mutations %>% dplyr::filter(VAF > 0)
+    tmp_x$mutations <- mut
 
     pl = ggpubr::ggarrange(
-      CNAqc::plot_data_histogram(x, which = 'VAF', karyotypes = eval(parse(text="$karyotypes"))),
-      CNAqc::plot_data_histogram(x, which = 'DP', karyotypes = eval(parse(text="$karyotypes"))),
-      CNAqc::plot_data_histogram(x, which = 'NV', karyotypes = eval(parse(text="$karyotypes"))),
-      CNAqc::plot_data_histogram(x, which = 'CCF', karyotypes = eval(parse(text="$karyotypes"))),
+      CNAqc::plot_data_histogram(tmp_x, which = 'VAF', karyotypes = eval(parse(text="$karyotypes"))),
+      CNAqc::plot_data_histogram(tmp_x, which = 'DP', karyotypes = eval(parse(text="$karyotypes"))),
+      CNAqc::plot_data_histogram(tmp_x, which = 'NV', karyotypes = eval(parse(text="$karyotypes"))),
+      CNAqc::plot_data_histogram(tmp_x, which = 'CCF', karyotypes = eval(parse(text="$karyotypes"))),
       ncol = 2,
       nrow = 2
     )
 
 
     pl_exp = patchwork::wrap_plots(
-      CNAqc::plot_gw_counts(x),
-      CNAqc::plot_gw_vaf(x, N = 10000),
-      CNAqc::plot_gw_depth(x, N = 10000),
-      CNAqc::plot_segments(x),
+      CNAqc::plot_gw_counts(tmp_x),
+      CNAqc::plot_gw_vaf(tmp_x, N = 10000),
+      CNAqc::plot_gw_depth(tmp_x, N = 10000),
+      CNAqc::plot_segments(tmp_x),
       pl, 
       nrow = 5, 
       heights = c(.5,.5,.5,1,5)) + 
       patchwork::plot_annotation("$meta.tumour_sample")
 
     pl_qc = patchwork::wrap_plots(
-      CNAqc::plot_peaks_analysis(x, what = 'common', empty_plot = FALSE),
-      #CNAqc::plot_peaks_analysis(x, what = 'general', empty_plot = FALSE),
-      #CNAqc::plot_peaks_analysis(x, what = 'subclonal', empty_plot = FALSE),
-      CNAqc::plot_qc(x),
-      CNAqc::plot_CCF(x, assembly_plot = TRUE, empty_plot = FALSE), 
+      CNAqc::plot_peaks_analysis(tmp_x, what = 'common', empty_plot = FALSE),
+      #CNAqc::plot_peaks_analysis(tmp_x, what = 'general', empty_plot = FALSE),
+      #CNAqc::plot_peaks_analysis(tmp_x, what = 'subclonal', empty_plot = FALSE),
+      CNAqc::plot_qc(tmp_x),
+      CNAqc::plot_CCF(tmp_x, assembly_plot = TRUE, empty_plot = FALSE), 
       nrow = 3, 
       heights = c(1,1.5,1)) + 
       patchwork::plot_annotation("$meta.tumour_sample")
