@@ -79,8 +79,8 @@ process CNAQC {
     )
     
     tmp_x <- x
-    mut <- tmp_x$mutations %>% dplyr::filter(VAF > 0)
-    tmp_x$mutations <- mut
+    mut <- tmp_x\$mutations %>% dplyr::filter(VAF > 0)
+    tmp_x\$mutations <- mut
 
     pl = ggpubr::ggarrange(
       CNAqc::plot_data_histogram(tmp_x, which = 'VAF', karyotypes = eval(parse(text="$karyotypes"))),
