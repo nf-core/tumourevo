@@ -31,7 +31,7 @@ process BCFTOOLS_MPILEUP {
     def bgzip_mpileup = save_mpileup ? "bgzip ${prefix}.mpileup" : ""
     def intervals = intervals ? "-T ${intervals}" : ""
     """
-    echo "${meta.id}" > sample_name.list
+    echo "${meta.tumour_sample}" > sample_name.list
 
     bcftools \\
         mpileup \\

@@ -180,7 +180,7 @@ parse_Mutect = function(vcf, tumour_id, normal_id, meta_id, filter_mutations = F
     names(calls) = samples_list
     samples = c(tumour_id, normal_id)
     calls = calls[samples]
-    calls[[tumour_id]]$mutations = calls[[tumour_id]]$mutations %>% dplyr::mutate(sample = meta_id)
+    #calls[[tumour_id]]$mutations = calls[[tumour_id]]$mutations %>% dplyr::mutate(sample = meta_id)
     return(calls)
 }
 
