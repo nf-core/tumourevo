@@ -32,16 +32,16 @@ process VCF_PROCESSING {
     source = vcfR::queryMETA(vcf, element = 'source')[[1]]
 
     if (TRUE %in% grepl(pattern = 'Mutect', x = source)){
-        calls = parse_Mutect(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
+        calls = parse_Mutect(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", meta_id = "$prefix", filter_mutations = as.logical("$filter_mutations"))
         
     } else if (TRUE %in% grepl(pattern = 'strelka', x = source)){
-        calls = parse_Strelka(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
+        calls = parse_Strelka(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", meta_id = "$prefix", filter_mutations = as.logical("$filter_mutations"))
     
     } else if (TRUE %in% grepl(pattern = 'Platypus', x = source)){
-        calls = parse_Platypus(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
+        calls = parse_Platypus(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", meta_id = "$prefix", filter_mutations = as.logical("$filter_mutations"))
 
     } else if (TRUE %in% grepl(pattern = 'freeBayes', x = source)){
-        calls = parse_FreeBayes(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
+        calls = parse_FreeBayes(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", meta_id = "$prefix", filter_mutations = as.logical("$filter_mutations"))
 
     } else {
         stop('Variant Caller not supported.')
@@ -50,3 +50,4 @@ process VCF_PROCESSING {
     saveRDS(object = calls, file = paste0("$prefix", "_snv.rds"))
     """
 }
+

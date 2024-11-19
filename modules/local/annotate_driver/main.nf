@@ -50,7 +50,7 @@ process ANNOTATE_DRIVER {
       tidyr::separate(HGVSp, ':', into = c('s1', 's2'), remove=F) %>%
       dplyr::mutate(
           is_driver = (CGC_CANCER_GENE & IMPACT %in% c('MODERATE', 'HIGH')),
-          driver_label = paste(SYMBOL, s2, sep = '\n')
+          driver_label = paste(SYMBOL, s2, sep = '_')
       ) %>%
       mutate(is_driver = ifelse(is.na(is_driver), FALSE, is_driver))
 
