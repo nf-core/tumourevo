@@ -3,42 +3,46 @@
 ## Table of contents
 
 - [nf-core/tumourevo: Usage](#nf-coretumourevo-usage)
-    - [Table of contents](#table-of-contents)
+  - [Table of contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Running the pipeline](#running-the-pipeline)
-    - [Quickstart](#quickstart)
-    - [Input: Sample sheet configurations](#input-sample-sheet-configurations)
-        - [Overview: Samplesheet Columns](#overview-samplesheet-columns)
-    - [Pipeline modalities](#pipeline-modalities)
-        - [Variant calling](#variant-calling)
-            - [Multi-sample variant calling](#1-multi-sample-variant-calling)
-            - [Single sample variant calling](#2-single-sample-variant-calling)
-        - [Subclonal deconvolution](#subclonal-deconvolution)
-    - [Driver annotation](#driver-annotation)
-    - [Avaiable tools](#avaiable-tools)
-        - [Updating the pipeline](#updating-the-pipeline)
-        - [Reproducibility](#reproducibility)
-    - [Main arguments](#main-arguments)
-        - [`-profile`](#-profile)
-    - [Job resources](#job-resources)
-        - [Automatic resubmission](#automatic-resubmission)
-        - [Custom resource requests](#custom-resource-requests)
-    - [Other command line parameters](#other-command-line-parameters)
-        - [`--outdir`](#--outdir)
-        - [`--email`](#--email)
-        - [`--email_on_fail`](#--email_on_fail)
-        - [`--max_multiqc_email_size`](#--max_multiqc_email_size)
-        - [`-name`](#-name)
-        - [`-resume`](#-resume)
-        - [`-c`](#-c)
-        - [`--custom_config_version`](#--custom_config_version)
-        - [`--custom_config_base`](#--custom_config_base)
-        - [`--max_memory`](#--max_memory)
-        - [`--max_time`](#--max_time)
-        - [`--max_cpus`](#--max_cpus)
-        - [`--plaintext_email`](#--plaintext_email)
-        - [`--monochrome_logs`](#--monochrome_logs)
-        - [`--multiqc_config`](#--multiqc_config)
+  - [Quickstart](#quickstart)
+  - [Input: Sample sheet configurations](#input-sample-sheet-configurations)
+    - [Overview: Samplesheet Columns](#overview-samplesheet-columns)
+  - [Pipeline modalities](#pipeline-modalities)
+  - [Variant calling](#variant-calling)
+    - [1. Multi-sample variant calling](#1-multi-sample-variant-calling)
+      - [Examples](#examples)
+    - [2. Single sample variant calling](#2-single-sample-variant-calling)
+- [Filtering data](#filtering-data)
+- [Subclonal deconvolution](#subclonal-deconvolution)
+    - [The `remove_tail` parameter](#the-remove_tail-parameter)
+      - [Example](#example)
+  - [Driver annotation](#driver-annotation)
+  - [Avaiable tools](#avaiable-tools)
+    - [Updating the pipeline](#updating-the-pipeline)
+    - [Reproducibility](#reproducibility)
+  - [Main arguments](#main-arguments)
+    - [`-profile`](#-profile)
+  - [Job resources](#job-resources)
+    - [Automatic resubmission](#automatic-resubmission)
+    - [Custom resource requests](#custom-resource-requests)
+  - [Other command line parameters](#other-command-line-parameters)
+    - [`--outdir`](#--outdir)
+    - [`--email`](#--email)
+    - [`--email_on_fail`](#--email_on_fail)
+    - [`--max_multiqc_email_size`](#--max_multiqc_email_size)
+    - [`-name`](#-name)
+    - [`-resume`](#-resume)
+    - [`-c`](#-c)
+    - [`--custom_config_version`](#--custom_config_version)
+    - [`--custom_config_base`](#--custom_config_base)
+    - [`--max_memory`](#--max_memory)
+    - [`--max_time`](#--max_time)
+    - [`--max_cpus`](#--max_cpus)
+    - [`--plaintext_email`](#--plaintext_email)
+    - [`--monochrome_logs`](#--monochrome_logs)
+    - [`--multiqc_config`](#--multiqc_config)
 
 # Introduction
 
@@ -58,7 +62,8 @@ nextflow run nf-core/tumourevo \
  -profile <PROFILE> \
  --input <INPUT CSV> \
  --outdir ./results
- --tools <TOOLS>
+ --tools <TOOLS> \
+ --filter #check the correct name of the flag
 ```
 
 `-r <VERSION>` is optional but strongly recommended for reproducibility and should match the latest version.
@@ -173,6 +178,11 @@ If you can not include the bam files in the input csv, the pipeline will run any
 
 <!-- You can use the `multisample` mode of tumourevo to analyse samples from multi-region and longitudinal assays. This allows you to track in space and time the existing tumor populations, and better understand its heterogeneity. This modality integrates data across multiple samples, thus improving the resolution of subclonal structures and providing insights into the evolutionary dynamics and progression of the tumor.
 Two of the avaiable tools for subclonal deconvolution, `pyclonevi` and `viber` can by-design be run in multi-sample mode, inferring the subclonal structure of samples. If you add `mobster` to the `--tool` parameter when running the pipeline in this modality, it will be run at first on each individual sample (since the tool does not support at the moment multi-sample analysis) in order to recognize neutral tail mutations and remove them. The mutations data manipulated in this way will then be processed by either `pyclone`, `viber` or both using the multivariate subclonal deconvolution as described before.  -->
+
+# Filtering data
+Using the `--filter` flag it is possible to control how the pipeline handles different steps, in particular regarding the QC workflow. 
+Setting `--filter TRUE` will 
+
 
 # Subclonal deconvolution
 
