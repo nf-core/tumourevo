@@ -3,7 +3,7 @@ library(vcfR)
 
 # adjust tumour and normal sample id!!!!!
 # to add VEP
-parse_FreeBayes = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
+parse_FreeBayes = function(vcf, tumour_id, normal_id, meta_id, filter_mutations = FALSE){
   tb = vcfR::vcfR2tidy(vcf)
   
   gt_field = tb$gt %>% 
@@ -87,12 +87,12 @@ parse_FreeBayes = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
   names(calls) = samples_list
   samples = c(tumour_id, normal_id)
   calls = calls[samples]
-
+  calls[[tumour_id]] = calls[[tumour_id]] %>% dplyr::mutate(sample = meta_id)
   return(calls)
 }
 
 
-parse_Mutect = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
+parse_Mutect = function(vcf, tumour_id, normal_id, meta_id, filter_mutations = FALSE){
     # Transform vcf to tidy 
     tb = vcfR::vcfR2tidy(vcf)
 
@@ -180,6 +180,7 @@ parse_Mutect = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
     names(calls) = samples_list
     samples = c(tumour_id, normal_id)
     calls = calls[samples]
+    #calls[[tumour_id]]$mutations = calls[[tumour_id]]$mutations %>% dplyr::mutate(sample = meta_id)
     return(calls)
 }
 
@@ -200,7 +201,7 @@ retrieve_ref_alt = function(row){
   ref_alt
 }
 
-parse_Strelka = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
+parse_Strelka = function(vcf, tumour_id, normal_id, meta_id, filter_mutations = FALSE){
   tb = vcfR::vcfR2tidy(vcf)
   gt_field = tb$gt %>% rename(sample = Indiv)  
   samples_list = gt_field$sample %>% unique
@@ -289,7 +290,7 @@ parse_Strelka = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
 }
 
 
-parse_Platypus = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
+parse_Platypus = function(vcf, tumour_id, normal_id, meta_id, filter_mutations = FALSE){
     tb = vcfR::vcfR2tidy(vcf)
 
     gt_field = tb$gt %>% 
@@ -373,5 +374,6 @@ parse_Platypus = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){
     names(calls) = samples_list
     samples = c(tumour_id, normal_id)
     calls = calls[samples]
+    calls[[tumour_id]] = calls[[tumour_id]] %>% dplyr::mutate(sample = meta_id)
     return(calls)
 }
