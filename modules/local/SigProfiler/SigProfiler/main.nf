@@ -13,7 +13,7 @@ process SIGPROFILER {
     
       def args                              = task.ext.args                                 ?: ''
       def prefix                            = task.ext.prefix                               ?: "${meta.id}"
-      def reference_genome                  = args!='' && args.reference_genome             ? "$args.reference_genome" : ""
+      // def reference_genome                  = args!='' && args.reference_genome             ? "$args.reference_genome" : ""
       def exome                             = args!='' && args.exome                        ? "$args.exome" : ""
       def input_type                        = args!='' && args.input_type                   ? "$args.input_type" : ""
       def context_type                      = args!='' && args.context_type                 ? "$args.context_type" : ""
@@ -68,7 +68,7 @@ process SIGPROFILER {
           if not os.path.exists(input_path):
               os.mkdir(input_path)
       
-          output_path = os.path.join("output", "SBS", f"{dataset_id}_SBS96_all")
+          output_path = os.path.join("output", "SBS", f"{dataset_id}.SBS96.all")
          
           
           # input data preprocessing
@@ -83,7 +83,7 @@ process SIGPROFILER {
              multisample_table = pd.concat(tables, ignore_index=True)
              return multisample_table
 
-          def input_processing(data, dataset_id, genome = '$referece_genome'):
+          def input_processing(data, dataset_id, genome = "$params.genome"):
              new_columns = {'Project': dataset_id, 'Genome': genome, 'Type': "SOMATIC", 'mut_type': "SNP"}
              df = data.assign(**new_columns)
              df['chr'] = df['chr'].astype(str).str[3:]
@@ -94,7 +94,7 @@ process SIGPROFILER {
     
           input_tsv_join = process_tsv_join("$tsv_list")
 
-          input_data = input_processing(input_tsv_join, dataset_id, '$reference_genome')
+          input_data = input_processing(input_tsv_join, dataset_id, "$params.genome")
 
           # saving input matrix to txt
           input_data.to_csv(f"{input_path}/input_data.txt", sep="\\t", index=False, header=True)
@@ -102,14 +102,14 @@ process SIGPROFILER {
           # mutation's counts matrix generation
           input_matrix = matGen.SigProfilerMatrixGeneratorFunc(
                   project = dataset_id, 
-                  reference_genome = '$reference_genome', 
+                  reference_genome = "$params.genome", 
                   path_to_input_files = input_path,
-                  exome = bool("$exome"),
-                  bed_file = "$bed_file", 
-                  chrom_based = bool("$chrom_based"), 
-                  plot = bool("$plot"), 
-                  tsb_stat = bool("$tsb_stat"), 
-                  seqInfo = bool("$seqInfo"), 
+                  exome = bool(eval("$exome")),
+                  bed_file = eval("$bed_file"), 
+                  chrom_based = bool(eval("$chrom_based")), 
+                  plot = bool(eval("$plot")), 
+                  tsb_stat = bool(eval("$tsb_stat")), 
+                  seqInfo = bool(eval("$seqInfo")), 
                   cushion = int("$cushion"),
                   volume = "./")
 
@@ -119,14 +119,14 @@ process SIGPROFILER {
           sig.sigProfilerExtractor(input_type = "$input_type", 
                                    output = "results", 
                                    input_data = full_input_data_path,  
-                                   reference_genome = '$reference_genome', 
-                                   opportunity_genome = '$reference_genome',
+                                   reference_genome = "$params.genome", 
+                                   opportunity_genome = "$params.genome",
                                    context_type = "$context_type",  
-                                   exome = bool("$exome"),
+                                   exome = bool(eval("$exome")),
                                    minimum_signatures = int("$minimum_signatures"),  
                                    maximum_signatures = int("$maximum_signatures"), 
                                    nmf_replicates = int("$nmf_replicates"),
-                                   resample = bool("$resample"),
+                                   resample = bool(eval("$resample")),
                                    seeds= "$seeds",
                                    matrix_normalization = "$matrix_normalization", 
                                    nmf_init = "$nmf_init", 
@@ -136,17 +136,17 @@ process SIGPROFILER {
                                    nmf_test_conv = int("$nmf_test_conv"), 
                                    nmf_tolerance = float("$nmf_tolerance"), 
                                    cpu = int("$cpu"),
-                                   gpu = bool("$gpu"),
+                                   gpu = bool(eval("$gpu")),
                                    batch_size = int("$batch_size"),
                                    stability = float("$stability"),
                                    min_stability = float("$min_stability"),
                                    combined_stability = float("$combined_stability"),
-                                   allow_stability_drop = bool("$allow_stability_drop"),
+                                   allow_stability_drop = bool(eval("$allow_stability_drop")),
                                    cosmic_version = float("$cosmic_version"),
-                                   make_decomposition_plots = bool("$make_decomposition_plots"), 
-                                   collapse_to_SBS96 = bool("$collapse_to_SBS96"), 
-                                   get_all_signature_matrices = bool("$get_all_signature_matrices"),
-                                   export_probabilities = bool("$export_probabilities"))
+                                   make_decomposition_plots = bool(eval("$make_decomposition_plots")), 
+                                   collapse_to_SBS96 = bool(eval("$collapse_to_SBS96")), 
+                                   get_all_signature_matrices = bool(eval("$get_all_signature_matrices")),
+                                   export_probabilities = bool(eval("$export_probabilities")))
 
           # save the output results
           dest_dir = "$prefix/"
