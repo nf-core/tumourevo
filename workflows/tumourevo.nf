@@ -79,9 +79,9 @@ workflow TUMOUREVO {
     
     if (params.filter == true){
         SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_PASS)
-        //SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_PASS)
+        SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_PASS)
     } else {
         SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_ALL)
-        //SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_ALL)
+        SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_ALL)
     }
 }
