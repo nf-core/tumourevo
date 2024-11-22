@@ -45,13 +45,13 @@ This directory contains results from the variant annotation subworkflow. At the 
 This step starts from VCF files.
 
 <details markdown="1">
-<summary>Output files for all samples</summary>
+<summary>Output files for all samples </summary>
+<strong>Output directory: <code>{publish_dir}/variant_annotation/VEP/dataset/patient/sample/</code></strong>
 
-**Output directory: `{publish_dir}/variant_annotation/VEP/<dataset>/<patient>/<sample>/`**
-
-* `<dataset>_<patient>_<sample>.vcf.gz` and `<dataset>_<patient>_<sample>.vcf.gz.tbi`
-    * annotated VCF file with tabix index
-
+<ul>
+<li> <code><dataset>_<patient>_<sample>.vcf.gz</code> and <code><dataset>_<patient>_<sample>.vcf.gz.tbi</code>
+<li> annotated VCF file with tabix index
+</ul>
 </details>
 
 <!-- ### vcf2maf
@@ -113,7 +113,7 @@ In this step, all retrieved mutations are joined with original mutations present
 </details> -->
 ## Driver Annotation
 
-This directory contains results from the driver annotation subworkflow. 
+This directory contains results from the driver annotation subworkflow.
 
 ### Tumour-type driver annotation
 
@@ -123,8 +123,10 @@ According to the specified tumour type, potential driver mutations are identifie
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/driver_annotation/annotate_driver/<dataset>/<patient>/<sample>/`**
+
 * `<dataset>_<patient>_<sample>_driver.rds`
     * RDS with annotated mutations
+
 </details>
 
 <!-- ### Build reference
@@ -168,6 +170,7 @@ The QC subworkflow is a crucial step of the pipeline as it ensures high confiden
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/QC/tinc/<dataset>/<patient>/<sample>/`**
+
 * `<dataset>_<patient>_<sample>_fit.rds`
     * TINC fit containing TIN and TIT estimates in RDS;
 * `<dataset>_<patient>_<sample>_plot.rds` and `<dataset>_<patient>_<sample>_plot.pdf`:
@@ -185,6 +188,7 @@ The QC subworkflow is a crucial step of the pipeline as it ensures high confiden
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/QC/CNAqc/<dataset>/<patient>/<sample>/`**
+
 * `<dataset>_<patient>_<sample>_data_plot.rds` and `<dataset>_<patient>_<sample>_data.pdf`
     * CNAqc report with genome wide mutation and allele specific copy number plots in RDS and PDF
 * `<dataset>_<patient>_<sample>_qc_plot.rds` and `<dataset>_<patient>_<sample>_qc.pdf`
@@ -202,6 +206,7 @@ This module creates a multi-CNAqc object for patient by summarizing the quality 
 <summary>Output files for all patients</summary>
 
 **Output directory: `{publish_dir}/QC/join_CNAqc/<dataset>/<patient>/`**
+
 * `<dataset>_<patient>_multi_cnaqc_ALL.rds`
     * unfiltered multi-CNAqc RDS object
 * `<dataset>_<patient>_multi_cnaqc_PASS.rds`
@@ -225,6 +230,7 @@ The results of this step are collected in `{pubslish_dir}/signature_deconvolutio
 <summary>Output files for dataset</summary>
 
 **Output directory: `{publish_dir}/signatures_deconvolution/SparseSig/<dataset>/`**
+
 * `best_params_config.rds`
     * signatures best configiration object
 * `cv_means_mse.rds`
@@ -246,6 +252,7 @@ The results of this step are collected in `{pubslish_dir}/signature_deconvolutio
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/signatures_deconvolution/SigProfiler/<dataset>/`**
+
 * `<dataset>.` _missing_
     * _missing_
 
@@ -298,6 +305,7 @@ If `--mode singlesample` is provided, each sample is analysed individually provi
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/pyclonevi/<dataset>/<patient>`**
+
 * `<dataset>_<patient>_pyclone_input.tsv`
     * TSV file with Pyclone-VI input table
 * `<dataset>_<patient>_all_fits.h5`
@@ -306,7 +314,6 @@ If `--mode singlesample` is provided, each sample is analysed individually provi
     * TSV file for the best fit
 * `<dataset>_<patient>_cluster_table.csv`
     * CSV file wtih clone assignment
-
 
 </details>
 
@@ -431,6 +438,7 @@ VIBER and MOBSTER fits are already compatible for ctree analysis.
     * RDS file for clone tree plot
 * `{<dataset>_<patient>,<dataset>_<patient>_<sample>}_REPORT_plots_ctree_<tool>.{rds,png,pdf}`
     * ctree report in RDS,PNG and PDF
+
 </details>
 <!--
 ### Multi sample
@@ -439,12 +447,12 @@ VIBER and MOBSTER fits are already compatible for ctree analysis.
 
 **Output directory: `{publish_dir}/subclonal_deconvolution/ctree/<patient>/`**
 
-- `ctree_<tool>.rds`
-  - RDS file containing inferred clone tree
-- `ctree_<tool>_plots.rds`
-  - RDS file for single sample clone tree plot
-- `ctree_input_pyclonevi.csv`
-  - CSV file required for clone tree inference from pyclone
+* `ctree_<tool>.rds`
+    * RDS file containing inferred clone tree
+* `ctree_<tool>_plots.rds`
+    * RDS file for single sample clone tree plot
+* `ctree_input_pyclonevi.csv`
+    * CSV file required for clone tree inference from pyclone
 
 </details>
 <!--
@@ -525,6 +533,7 @@ At this stage, [bcftools](https://samtools.github.io/bcftools/bcftools.html) is 
 <summary>Output files for all samples</summary>
 
 **Output directory: `{work_dir}/lifter/mpileup/<dataset>/<patient>/<sample>/`**
+
 * `<dataset>_<patient>_<sample>.bcftools_stats.txt`
     * TXT file with statistics on the called mutations
 * `<dataset>_<patient>_<sample>.vcf.gz` and `<dataset>_<patient>_<sample>.vcf.gz.tbi`:
@@ -540,18 +549,22 @@ This intermediate step allows to retrieve private and shared mutations across sa
 <summary>Output files for all samples</summary>
 
 **Output directory: `{publish_dir}/lifter/positions/<dataset>/<patient>/<sample>/`**
+
 * `<dataset>_<patient>_<sample>.pileup_VCF.rds`
     * RDS containing shared and private mutations
 * `<dataset>_<patient>_<sample>.positions_missing`
     * TXT file containing mutations to be retrieved for a given sample
+
 </details>
 
 <details markdown="1">
 <summary>Output files for all patients</summary>
 
 **Output directory: `{publish_dir}/lifter/positions/<dataset>/<patient>/`**
+
 * `<dataset>_<patient>__all_positions.rds`
     * RDS containing shared and private mutations
+
 </details>
 
 <!-- 

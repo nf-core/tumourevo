@@ -1,0 +1,8 @@
+# General project info
+site_name: tumourevo
+site_description: Documentation for tumourevo, built with nf-core and MkDocs.
+site_author: Cancer Data Science laboratorn
+repo_url: https://github.com/caravagnalab/tumourevo.git
+
+theme: readthedocs
+
