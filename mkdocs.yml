@@ -1,8 +1,13 @@
 # General project info
 site_name: tumourevo
-site_description: Documentation for tumourevo, built with nf-core and MkDocs.
-site_author: Cancer Data Science laboratorn
+site_description: Documentation for the tumourevo pipeline.
+site_author: Cancer Data Science laboratory
 repo_url: https://github.com/caravagnalab/tumourevo.git
+
+nav:
+  - Contents: 'contents.md'
+  - Usage: 'usage.md'
+  - Output: 'output.md'
 
 theme: readthedocs
 
