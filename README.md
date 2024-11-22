@@ -10,14 +10,14 @@
 [![Docker](https://img.shields.io/docker/automated/nfcore/tumourevo.svg)](https://hub.docker.com/r/nfcore/tumourevo)
 
 ## Introduction
+
 **nf-core/tumourevo** is a bioinformatics pipeline to model tumour evolution from whole-genome sequencing (WGS) data. The pipeline performs state-of-the-art downstream analysis of variant and copy-number calls from tumour-normal matched sequecing assays, reconstructing the evolutionary processes leading to the observed tumour genome. This analysis can be done  at the level of single samples, multiple samples from the same patient (multi-region/longitudinal assays), and of multiple patients from distinct cohorts.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible. The [Nextflow DSL2]([https://www.nextflow.io](https://www.nextflow.io/docs/latest/dsl1.html)) implementation of this pipeline uses one container per process which makes it easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
 <p align="center">
-    <img title="tumourevo workflow" src="docs/images/workflow.png" width=90%>
+    <img title="tumourevo workflow" src="docs/images/workflow_last.png" width=90%>
 </p>
-
 
 ## Pipeline Summary
 
@@ -59,9 +59,9 @@ The nf-core/tumourevo pipeline comes with documentation about the pipeline, foun
 
 1. [Installation](https://nf-co.re/usage/installation)
 2. Pipeline configuration
-    * [Local installation](https://nf-co.re/usage/local_installation)
-    * [Adding your own system config](https://nf-co.re/usage/adding_own_config)
-    * [Reference genomes](https://nf-co.re/usage/reference_genomes)
+    - [Local installation](https://nf-co.re/usage/local_installation)
+    - [Adding your own system config](https://nf-co.re/usage/adding_own_config)
+    - [Reference genomes](https://nf-co.re/usage/reference_genomes)
 3. [Running the pipeline](docs/usage.md)
 4. [Output and how to interpret the results](docs/output.md)
 5. [Troubleshooting](https://nf-co.re/usage/troubleshooting)
