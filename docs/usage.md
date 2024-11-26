@@ -265,7 +265,6 @@ We report the different tools included in the pipeline.
     - [Ctree](https://caravagnalab.github.io/ctree/)
 
   5. **Signature deconvolution**
-
    - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
    - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/) 
 
