@@ -266,8 +266,8 @@ We report the different tools included in the pipeline.
 
   5. **Signature deconvolution**
 
-    - [SparseSignature]()
-    - [SigProfiler]()
+   - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
+   - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/) 
 
 <!-- ### Start with annotation
 
