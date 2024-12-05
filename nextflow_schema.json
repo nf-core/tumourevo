@@ -1,0 +1,595 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/nf-core/tumourevo/master/nextflow_schema.json",
+  "title": "nf-core/tumourevo pipeline parameters",
+  "description": "Analysis pipleine to model tumour clonal evolution from WGS data (driver annotation, quality control of copy number calls, subclonal and mutational signature deconvolution)",
+  "type": "object",
+  "$defs": {
+    "input_output_options": {
+      "title": "Input/output options",
+      "type": "object",
+      "fa_icon": "fas fa-terminal",
+      "description": "Define where the pipeline should find input data and save output data.",
+      "required": ["input", "outdir"],
+      "properties": {
+        "input": {
+          "type": "string",
+          "format": "file-path",
+          "exists": true,
+          "schema": "assets/schema_input.json",
+          "mimetype": "text/csv",
+          "pattern": "^\\S+\\.csv$",
+          "description": "Path to comma-separated file containing information about the samples in the experiment.",
+          "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+          "fa_icon": "fas fa-file-csv"
+        },
+        "outdir": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+          "fa_icon": "fas fa-folder-open"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/input_output_options"
+    }
+  ],
+  "properties": {
+    "genome": {
+      "type": "string"
+    },
+    "fasta": {
+      "type": "string"
+    },
+    "tools": {
+      "type": "string",
+      "default": "mobster,viber,pyclone-vi,sparsesignatures,sigprofiler"
+    },
+    "publish_dir_mode": {
+      "type": "string",
+      "default": "copy"
+    },
+    "publish_dir_mode_genome_sigprofiler": {
+      "type": "string",
+      "default": "move"
+    },
+    "filter": {
+      "type": "string"
+    },
+    "download_cache_vep": {
+      "type": "string"
+    },
+    "vep_cache": {
+      "type": "string"
+    },
+    "vep_cache_version": {
+      "type": "string"
+    },
+    "vep_species": {
+      "type": "string"
+    },
+    "vep_genome": {
+      "type": "string"
+    },
+    "vep_custom_args": {
+      "type": "string",
+      "default": "--everything --filter_common --per_gene --total_length --offline --format vcf"
+    },
+    "drivers_table": {
+      "type": "string",
+      "default": "https://raw.githubusercontent.com/nicola-calonaci/test-datasets/evoverse/data/DRIVER_ANNOTATION/DNDSCV/RefCDS_human_GRCh38_GencodeV18_recommended.rda"
+    },
+    "vcf_filter_mutations": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "cnaqc_matching_strategy": {
+      "type": "string",
+      "default": "rightmost"
+    },
+    "cnaqc_karyotypes": {
+      "type": "string",
+      "default": "c(\\'1:0\\', \\'1:1\\', \\'2:0\\', \\'2:1\\', \\'2:2\\')"
+    },
+    "cnaqc_min_karyotype_size": {
+      "type": "integer",
+      "default": 0
+    },
+    "cnaqc_min_absolute_karyotype_mutations": {
+      "type": "integer",
+      "default": 100
+    },
+    "cnaqc_p_binsize_peaks": {
+      "type": "number",
+      "default": 0.005
+    },
+    "cnaqc_matching_epsilon": {
+      "type": "string",
+      "default": "NULL"
+    },
+    "cnaqc_purity_error": {
+      "type": "number",
+      "default": 0.05
+    },
+    "cnaqc_vaf_tolerance": {
+      "type": "number",
+      "default": 0.015
+    },
+    "cnaqc_n_bootstrap": {
+      "type": "integer",
+      "default": 1
+    },
+    "cnaqc_kernel_adjust": {
+      "type": "integer",
+      "default": 1
+    },
+    "cnaqc_kde": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "cnaqc_starting_state_subclonal_evolution": {
+      "type": "string",
+      "default": "1:1"
+    },
+    "cnaqc_cluster_subclonal_CCF": {
+      "type": "string",
+      "default": "FALSE"
+    },
+    "cnaqc_muts_per_karyotype": {
+      "type": "integer",
+      "default": 25
+    },
+    "cnaqc_cutoff_QC_PASS": {
+      "type": "number",
+      "default": 0.1
+    },
+    "cnaqc_method": {
+      "type": "string",
+      "default": "ENTROPY"
+    },
+    "cnaqc_plot_cn": {
+      "type": "string",
+      "default": "absolute"
+    },
+    "joincnaqc_qc_filter": {
+      "type": "string",
+      "default": "FALSE"
+    },
+    "joincnaqc_keep_original": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "vartrix_scoring_method": {
+      "type": "string",
+      "default": "consensus"
+    },
+    "vartrix_padding": {
+      "type": "integer",
+      "default": 100
+    },
+    "vartrix_umi": {
+      "type": "boolean"
+    },
+    "pyclonevi_n_cluster": {
+      "type": "integer",
+      "default": 20
+    },
+    "pyclonevi_density": {
+      "type": "string",
+      "default": "beta-binomial"
+    },
+    "pyclonevi_n_grid_point": {
+      "type": "integer",
+      "default": 100
+    },
+    "pyclonevi_n_restarts": {
+      "type": "integer",
+      "default": 100
+    },
+    "mobster_K": {
+      "type": "string",
+      "default": "1:5"
+    },
+    "mobster_samples": {
+      "type": "integer",
+      "default": 5
+    },
+    "mobster_init": {
+      "type": "string",
+      "default": "peaks"
+    },
+    "mobster_tail": {
+      "type": "string",
+      "default": "c(TRUE,FALSE)"
+    },
+    "mobster_epsilon": {
+      "type": "number",
+      "default": 1e-10
+    },
+    "mobster_maxIter": {
+      "type": "integer",
+      "default": 250
+    },
+    "mobster_fit_type": {
+      "type": "string",
+      "default": "MM"
+    },
+    "mobster_seed": {
+      "type": "integer",
+      "default": 12345
+    },
+    "mobster_model_selection": {
+      "type": "string",
+      "default": "reICL"
+    },
+    "mobster_trace": {
+      "type": "string",
+      "default": "FALSE"
+    },
+    "mobster_parallel": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "mobster_pi_cutoff": {
+      "type": "number",
+      "default": 0.02
+    },
+    "mobster_n_cutoff": {
+      "type": "integer",
+      "default": 10
+    },
+    "mobster_auto_setup": {
+      "type": "string",
+      "default": "NULL"
+    },
+    "mobster_silent": {
+      "type": "string",
+      "default": "FALSE"
+    },
+    "viber_K": {
+      "type": "integer",
+      "default": 10
+    },
+    "viber_samples": {
+      "type": "integer",
+      "default": 10
+    },
+    "viber_alpha_0": {
+      "type": "number",
+      "default": 1e-6
+    },
+    "viber_a_0": {
+      "type": "integer",
+      "default": 1
+    },
+    "viber_b_0": {
+      "type": "integer",
+      "default": 1
+    },
+    "viber_maxIter": {
+      "type": "integer",
+      "default": 5000
+    },
+    "viber_epsilon_conv": {
+      "type": "number",
+      "default": 1e-10
+    },
+    "viber_q_init": {
+      "type": "string",
+      "default": "prior"
+    },
+    "viber_trace": {
+      "type": "string",
+      "default": "FALSE"
+    },
+    "viber_binomial_cutoff": {
+      "type": "number",
+      "default": 0.05
+    },
+    "viber_dimensions_cutoff": {
+      "type": "integer",
+      "default": 1
+    },
+    "viber_pi_cutoff": {
+      "type": "number",
+      "default": 0.02
+    },
+    "viber_re_assign": {
+      "type": "string",
+      "default": "FALSE"
+    },
+    "ctree_sspace_cutoff": {
+      "type": "integer",
+      "default": 10000
+    },
+    "ctree_n_sampling": {
+      "type": "integer",
+      "default": 5000
+    },
+    "ctree_store_max": {
+      "type": "integer",
+      "default": 100
+    },
+    "sparsesignatures_K": {
+      "type": "string",
+      "default": "2:10"
+    },
+    "sparsesignatures_background_signature": {
+      "type": "string",
+      "default": "NULL"
+    },
+    "sparsesignatures_beta": {
+      "type": "string",
+      "default": "NULL"
+    },
+    "sparsesignatures_normalize_counts": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "sparsesignatures_nmf_runs": {
+      "type": "integer",
+      "default": 10
+    },
+    "sparsesignatures_iterations": {
+      "type": "integer",
+      "default": 30
+    },
+    "sparsesignatures_max_iterations_lasso": {
+      "type": "integer",
+      "default": 10000
+    },
+    "sparsesignatures_num_processes": {
+      "type": "string",
+      "default": "all"
+    },
+    "sparsesignatures_cross_validation_entries": {
+      "type": "number",
+      "default": 0.01
+    },
+    "sparsesignatures_cross_validation_repetitions": {
+      "type": "integer",
+      "default": 50
+    },
+    "sparsesignatures_cross_validation_iterations": {
+      "type": "integer",
+      "default": 5
+    },
+    "sparsesignatures_lambda_values_alpha": {
+      "type": "string",
+      "default": "c(0.00, 0.01, 0.05, 0.10)"
+    },
+    "sparsesignatures_lambda_values_beta": {
+      "type": "string",
+      "default": "c(0.01, 0.05, 0.1, 0.2)"
+    },
+    "sparsesignatures_lambda_rate_alpha": {
+      "type": "integer",
+      "default": 0
+    },
+    "sparsesignatures_verbose": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "sparsesignatures_seed": {
+      "type": "integer",
+      "default": 12345
+    },
+    "download_sigprofiler_genome": {
+      "type": "boolean",
+      "default": true
+    },
+    "genome_installed_path": {
+      "type": "string"
+    },
+    "sigprofiler_exome": {
+      "type": "boolean"
+    },
+    "sigprofiler_input_type": {
+      "type": "string",
+      "default": "matrix"
+    },
+    "sigprofiler_context_type": {
+      "type": "string",
+      "default": "96,DINUC,ID"
+    },
+    "sigprofiler_minimum_signatures": {
+      "type": "integer",
+      "default": 1
+    },
+    "sigprofiler_maximum_signatures": {
+      "type": "integer",
+      "default": 25
+    },
+    "sigprofiler_nmf_replicates": {
+      "type": "integer",
+      "default": 100
+    },
+    "sigprofiler_resample": {
+      "type": "boolean",
+      "default": true
+    },
+    "sigprofiler_seeds": {
+      "type": "string",
+      "default": "random"
+    },
+    "sigprofiler_matrix_normalization": {
+      "type": "string",
+      "default": "gmm"
+    },
+    "sigprofiler_nmf_init": {
+      "type": "string",
+      "default": "random"
+    },
+    "sigprofiler_min_nmf_iterations": {
+      "type": "integer",
+      "default": 10000
+    },
+    "sigprofiler_max_nmf_iterations": {
+      "type": "integer",
+      "default": 1000000
+    },
+    "sigprofiler_nmf_test_conv": {
+      "type": "integer",
+      "default": 10000
+    },
+    "sigprofiler_nmf_tolerance": {
+      "type": "number",
+      "default": 1e-15
+    },
+    "sigprofiler_cpu": {
+      "type": "integer",
+      "default": -1
+    },
+    "sigprofiler_stability": {
+      "type": "number",
+      "default": 0.8
+    },
+    "sigprofiler_min_stability": {
+      "type": "number",
+      "default": 0.2
+    },
+    "sigprofiler_combined_stability": {
+      "type": "integer",
+      "default": 1
+    },
+    "sigprofiler_cosmic_version": {
+      "type": "number",
+      "default": 3.4
+    },
+    "sigprofiler_make_decomposition_plots": {
+      "type": "boolean",
+      "default": true
+    },
+    "sigprofiler_collapse_to_SBS96": {
+      "type": "boolean",
+      "default": true
+    },
+    "sigprofiler_get_all_signature_matrices": {
+      "type": "boolean",
+      "default": true
+    },
+    "sigprofiler_export_probabilities": {
+      "type": "boolean",
+      "default": true
+    },
+    "sigprofiler_bed_file": {
+      "type": "string",
+      "default": "None"
+    },
+    "sigprofiler_chrom_based": {
+      "type": "boolean"
+    },
+    "sigprofiler_plot": {
+      "type": "boolean"
+    },
+    "sigprofiler_tsb_stat": {
+      "type": "boolean"
+    },
+    "sigprofiler_seqInfo": {
+      "type": "boolean"
+    },
+    "sigprofiler_cushion": {
+      "type": "integer",
+      "default": 100
+    },
+    "sigprofiler_precision": {
+      "type": "string",
+      "default": "single"
+    },
+    "sigprofiler_gpu": {
+      "type": "boolean"
+    },
+    "sigprofiler_batch_size": {
+      "type": "integer",
+      "default": 1
+    },
+    "sigprofiler_allow_stability_drop": {
+      "type": "boolean"
+    },
+    "tinc_vaf_range_tumour": {
+      "type": "string",
+      "default": "c(0, 0.7)"
+    },
+    "tinc_cutoff_miscalled_clonal": {
+      "type": "number",
+      "default": 0.6
+    },
+    "tinc_cutoff_lv_assignment": {
+      "type": "number",
+      "default": 0.75
+    },
+    "tinc_N": {
+      "type": "integer",
+      "default": 20000
+    },
+    "tinc_fast": {
+      "type": "string",
+      "default": "TRUE"
+    },
+    "tinc_normal_contamination_lv": {
+      "type": "integer",
+      "default": 3
+    },
+    "name": {
+      "type": "boolean"
+    },
+    "email": {
+      "type": "boolean"
+    },
+    "email_on_fail": {
+      "type": "boolean"
+    },
+    "plaintext_email": {
+      "type": "boolean"
+    },
+    "monochrome_logs": {
+      "type": "boolean"
+    },
+    "igenomes_base": {
+      "type": "string",
+      "default": "s3://ngi-igenomes/igenomes/"
+    },
+    "tracedir": {
+      "type": "string",
+      "default": "null/pipeline_info"
+    },
+    "igenomes_ignore": {
+      "type": "boolean"
+    },
+    "custom_config_version": {
+      "type": "string",
+      "default": "master"
+    },
+    "custom_config_base": {
+      "type": "string",
+      "default": "https://raw.githubusercontent.com/nf-core/configs/master"
+    },
+    "hostnames": {
+      "type": "boolean"
+    },
+    "config_profile_description": {
+      "type": "boolean"
+    },
+    "config_profile_contact": {
+      "type": "boolean"
+    },
+    "config_profile_url": {
+      "type": "boolean"
+    },
+    "max_memory": {
+      "type": "string",
+      "default": "128 GB"
+    },
+    "max_cpus": {
+      "type": "integer",
+      "default": 16
+    },
+    "max_time": {
+      "type": "string",
+      "default": "10d"
+    }
+  }
+}
