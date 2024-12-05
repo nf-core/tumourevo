@@ -80,7 +80,7 @@
     },
     "drivers_table": {
       "type": "string",
-      "default": "https://raw.githubusercontent.com/nicola-calonaci/test-datasets/evoverse/data/DRIVER_ANNOTATION/DNDSCV/RefCDS_human_GRCh38_GencodeV18_recommended.rda"
+      "default": "https://raw.githubusercontent.com/nicola-calonaci/test-datasets/tumourevo/data/DRIVER_ANNOTATION/DNDSCV/RefCDS_human_GRCh38_GencodeV18_recommended.rda"
     },
     "vcf_filter_mutations": {
       "type": "string",

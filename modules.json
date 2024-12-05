@@ -1,6 +1,6 @@
 {
-  "name": "nf-core/evoverse",
-  "homePage": "https://github.com/nf-core/evoverse",
+  "name": "nf-core/tumourevo",
+  "homePage": "https://github.com/nf-core/tumourevo",
   "repos": {
     "https://github.com/nf-core/modules.git": {
       "modules": {
