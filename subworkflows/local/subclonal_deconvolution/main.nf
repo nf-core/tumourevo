@@ -1,7 +1,6 @@
 // SUBCLONAL DECONVOLUTION WORKFLOW
 
 include { MOBSTERh } from "../../../modules/local/mobsterh/main"
-include { JOINT_FIT } from "../../../modules/local/joint_fit/main"
 include { VIBER } from "../../../modules/local/viber/main"
 include { PYCLONEVI } from "../../../modules/local/pyclonevi/main"
 include { FORMATTER } from "../../../subworkflows/local/formatter/main"

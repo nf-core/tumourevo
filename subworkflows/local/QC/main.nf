@@ -32,18 +32,17 @@ workflow QC {
             meta = meta + [id: "${meta.dataset}_${meta.patient}"]
             [meta.subMap('dataset', 'patient', 'id'), rds, sample]}
             | groupTuple
-            | join(contamination)
+            //| join(contamination)
 
-        
-        out_tinc = in_join_cnaqc.map{  meta, rds, sample, normal_contamination -> 
-            meta = meta + [nc: normal_contamination] 
-                [meta, rds, sample] }
-                .branch { meta, rds, sample -> 
-                        pass: meta.nc == '0'
-                        not_pass: meta.nc == '1'
-                }
-        
-        JOIN_CNAQC(out_tinc.pass)
+        //out_tinc = in_join_cnaqc.map{  meta, rds, sample, normal_contamination -> 
+        //    meta = meta + [nc: normal_contamination] 
+        //        [meta, rds, sample] }
+        //        .branch { meta, rds, sample -> 
+        //                pass: meta.nc == '0'
+        //                not_pass: meta.nc == '1'
+        //        }
+         
+        JOIN_CNAQC(in_join_cnaqc)
     
     emit:
         rds_cnaqc = CNAQC.out.qc_rds
