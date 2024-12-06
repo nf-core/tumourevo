@@ -28,21 +28,31 @@ process ANNOTATE_DRIVER {
 
     drivers_table = readr::read_tsv(file = "$driver_list") 
     
-    if("$meta.cancer_type" == 'PANCANCER'){
+    if("$meta.cancer_type" %in% drivers_table\$CANCER_TYPE){
       drivers_table = drivers_table %>% 
         dplyr::group_by(SYMBOL) %>% 
         dplyr::reframe(CGC_CANCER_GENE = any(CGC_CANCER_GENE), dplyr::across(dplyr::everything())) %>% 
         dplyr::filter(CGC_CANCER_GENE) %>% 
-        dplyr::mutate(CANCER_TYPE = 'PANCANCER')
-    } 
+        dplyr::filter(CANCER_TYPE = "$meta.cancer_type")
+    } else {
+      drivers_table = drivers_table %>%
+        dplyr::group_by(SYMBOL) %>%
+        dplyr::reframe(CGC_CANCER_GENE = any(CGC_CANCER_GENE), dplyr::across(dplyr::everything())) %>%
+        dplyr::filter(CGC_CANCER_GENE) %>%
+        dplyr::mutate(CANCER_TYPE = "PANCANCER")
+    }
 
     drivers_table = drivers_table %>% 
         dplyr::select(SYMBOL, CANCER_TYPE, CGC_CANCER_GENE) %>% 
         unique()
 
+    cancer_type = "$meta.cancer_type"
+    if (!(cancer_type) %in% drivers_table\$CANCER_TYPE ){
+       cancer_type = 'PANCANCER'	
+    }
 
     x = SNV %>% 
-      dplyr::mutate(CANCER_TYPE = "$meta.cancer_type") %>%
+      dplyr::mutate(CANCER_TYPE = cancer_type) %>%
       dplyr::left_join(
         drivers_table,
         by = c('SYMBOL', 'CANCER_TYPE')

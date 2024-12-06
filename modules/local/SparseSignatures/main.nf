@@ -47,6 +47,11 @@ process SPARSE_SIGNATURES {
 
     source("$moduleDir/getters.R")
 
+    n_procs = parse(text="$num_processes")
+    if (n_procs == "all"){
+	n_procs = eval("Inf")
+    }
+
     patients_tsv = strsplit("$tsv_join", " ")[[1]]
     tables = lapply(patients_tsv, FUN = function(p_table){
         read.delim(p_table, sep = "\\t", header=T) %>% 
@@ -114,7 +119,7 @@ process SPARSE_SIGNATURES {
       cross_validation_repetitions = as.integer("$cross_validation_repetitions"), 
       iterations = as.integer("$iterations"), 
       max_iterations_lasso = as.integer("$max_iterations_lasso"), 
-      num_processes = eval(parse(text="$num_processes")), 
+      num_processes = n_procs, 
       verbose = as.logical("$verbose"),
       seed = as.integer("$seed")
     ) 
@@ -173,7 +178,7 @@ process SPARSE_SIGNATURES {
             panel.background=element_blank(),
             axis.line=element_line(colour="black"))
 
-    plt_all = patchwork::wrap_plots(plot_exposure, plot_signatures, ncol=2) + patchwork::plot_annotation(title = "$meta.datasetID")
+    plt_all = patchwork::wrap_plots(plot_exposure, plot_signatures, ncol=2) + patchwork::plot_annotation(title = "$meta.id")
     ggplot2::ggsave(plot = plt_all, filename = paste0("$prefix", "_plot_all.pdf"), width = 210, height = 297, units="mm", dpi = 200)
     saveRDS(object = plt_all, file = paste0("$prefix", "_plot_all.rds"))
 
