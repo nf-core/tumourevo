@@ -49,8 +49,11 @@ process SPARSE_SIGNATURES {
 
     n_procs = parse(text="$num_processes")
     if (n_procs == "all"){
-	n_procs = eval("Inf")
+	n_procs = as.double("Inf")
+    } else {
+	n_procs = eval(n_procs)
     }
+
 
     patients_tsv = strsplit("$tsv_join", " ")[[1]]
     tables = lapply(patients_tsv, FUN = function(p_table){
