@@ -1,0 +1,32 @@
+nextflow_process {
+  name 'Test process BUILD_REFERENCE'
+  script "modules/local/build_reference/main.nf"
+  process 'BUILD_REFERENCE'
+
+  test("Should run without failures") {
+    when {
+      process {
+        """
+        cds_table = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/BioMart_human_GRCh37_chr3_segment.txt', checkIfExists: true)
+        genome_fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
+        input[0] = cds_table
+        input[1] = genome_fasta
+        """
+      }
+    }
+
+    then {
+      assertAll(
+        { assert process.success },
+        { assert process.out.dnds_reference },
+        { assert process.out.dnds_reference.size() == 1 },
+        { assert process.out.dnds_reference.get(0) ==~ ".*/reference.rda" },
+        { assert snapshot(process.out.dnds_reference).match() }
+      )  
+    }
+  }
+}
+
+/** Infos:
+*   test not working due to failed to pull singularity image tucano/dndscv:latest
+*/

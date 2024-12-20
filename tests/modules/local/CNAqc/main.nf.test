@@ -1,0 +1,43 @@
+nextflow_process {
+    name "Test Process CNAQC"
+    script "modules/local/CNAqc/main.nf"
+    process "CNAQC"
+
+    test("Should run without failures") {
+        when {
+            params {
+                // define module specific parameters here
+                genome = "GRCh38"
+                fasta = "/orfeo/LTS/CDSLab/LT_storage/ref_genomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta"
+            }
+            process {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER" 
+                ]
+                
+                // From cna2cnaqc
+                cna_rds = file(params.local_testdata_base_path + '/from_cna2CNAqc/MSeq_Set06_Set6_42_cna.rds', checkIfExists: true)
+                // From annotateDriver
+                // If there's bam, we have both from vcf2cnaqc + from joinposition
+                snv_rds = file(params.local_testdata_base_path + '/from_vcf2CNAqc/MSeq_Set06_Set6_42_snv.rds', checkIfExists: true)
+                
+                // Create a tuple with metadata and file path
+                input[0] = tuple(meta, cna_rds, snv_rds)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            //assert snapshot(process.out).match() //problems
+        }
+
+    }
+
+}

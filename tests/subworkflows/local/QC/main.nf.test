@@ -1,0 +1,38 @@
+nextflow_workflow {
+
+    name "Test Workflow QC"
+
+    script "subworkflows/local/QC/main.nf"
+    workflow "QC"
+
+    test("Run without failures") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER" 
+                ]
+                
+                // From cna2cnaqc
+                cna_rds = file(params.local_testdata_base_path + "/from_cna2CNAqc/MSeq_Set06_Set6_42_cna.rds", checkIfExists: true)
+                // From vcf2cnaqc
+                snv_rds = file(params.local_testdata_base_path + "/from_dndscv/MSeq_Set06_Set6_42_dnds.rds", checkIfExists: true)
+                // Create a tuple with metadata and file paths
+                input[0] = tuple(meta, cna_rds, snv_rds)
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow.out).match()
+        }
+    
+    }
+}

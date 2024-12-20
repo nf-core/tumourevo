@@ -1,245 +1,800 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/nf-core/tumourevo/master/nextflow_schema.json",
-    "title": "nf-core/tumourevo pipeline parameters",
-    "description": "Analysis pipleine to model tumour clonal evolution from WGS data (driver annotation, quality control of copy number calls, subclonal and mutational signature deconvolution)",
-    "type": "object",
-    "$defs": {
-        "input_output_options": {
-            "title": "Input/output options",
-            "type": "object",
-            "fa_icon": "fas fa-terminal",
-            "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
-            "properties": {
-                "input": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "schema": "assets/schema_input.json",
-                    "mimetype": "text/csv",
-                    "pattern": "^\\S+\\.csv$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/tumourevo/usage#samplesheet-input).",
-                    "fa_icon": "fas fa-file-csv"
-                },
-                "outdir": {
-                    "type": "string",
-                    "format": "directory-path",
-                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-                    "fa_icon": "fas fa-folder-open"
-                },
-                "email": {
-                    "type": "string",
-                    "description": "Email address for completion summary.",
-                    "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
-                },
-                "multiqc_title": {
-                    "type": "string",
-                    "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
-                    "fa_icon": "fas fa-file-signature"
-                }
-            }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/nf-core/tumourevo/master/nextflow_schema.json",
+  "title": "nf-core/tumourevo pipeline parameters",
+  "description": "Analysis pipleine to model tumour clonal evolution from WGS data (driver annotation, quality control of copy number calls, subclonal and mutational signature deconvolution)",
+  "type": "object",
+  "$defs": {
+    "input_output_options": {
+      "title": "Input/output options",
+      "type": "object",
+      "fa_icon": "fas fa-terminal",
+      "description": "Define where the pipeline should find input data and save output data.",
+      "required": ["input", "outdir"],
+      "properties": {
+        "input": {
+          "type": "string",
+          "format": "file-path",
+          "exists": true,
+          "schema": "assets/schema_input.json",
+          "mimetype": "text/csv",
+          "pattern": "^\\S+\\.csv$",
+          "description": "Path to comma-separated file containing information about the samples in the experiment.",
+          "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+          "fa_icon": "fas fa-file-csv"
         },
-        "reference_genome_options": {
-            "title": "Reference genome options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
-            "properties": {
-                "genome": {
-                    "type": "string",
-                    "description": "Name of iGenomes reference.",
-                    "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
-                },
-                "fasta": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
-                    "description": "Path to FASTA genome file.",
-                    "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
-                    "fa_icon": "far fa-file-code"
-                },
-                "igenomes_ignore": {
-                    "type": "boolean",
-                    "description": "Do not load the iGenomes reference config.",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "help_text": "Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`."
-                },
-                "igenomes_base": {
-                    "type": "string",
-                    "format": "directory-path",
-                    "description": "The base path to the igenomes reference files",
-                    "fa_icon": "fas fa-ban",
-                    "hidden": true,
-                    "default": "s3://ngi-igenomes/igenomes/"
-                }
-            }
-        },
-        "institutional_config_options": {
-            "title": "Institutional config options",
-            "type": "object",
-            "fa_icon": "fas fa-university",
-            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
-            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
-            "properties": {
-                "custom_config_version": {
-                    "type": "string",
-                    "description": "Git commit id for Institutional configs.",
-                    "default": "master",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
-                },
-                "custom_config_base": {
-                    "type": "string",
-                    "description": "Base directory for Institutional configs.",
-                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
-                    "hidden": true,
-                    "help_text": "If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.",
-                    "fa_icon": "fas fa-users-cog"
-                },
-                "config_profile_name": {
-                    "type": "string",
-                    "description": "Institutional config name.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
-                },
-                "config_profile_description": {
-                    "type": "string",
-                    "description": "Institutional config description.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
-                },
-                "config_profile_contact": {
-                    "type": "string",
-                    "description": "Institutional config contact information.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
-                },
-                "config_profile_url": {
-                    "type": "string",
-                    "description": "Institutional config URL link.",
-                    "hidden": true,
-                    "fa_icon": "fas fa-users-cog"
-                }
-            }
-        },
-        "generic_options": {
-            "title": "Generic options",
-            "type": "object",
-            "fa_icon": "fas fa-file-import",
-            "description": "Less common options for the pipeline, typically set in a config file.",
-            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
-            "properties": {
-                "version": {
-                    "type": "boolean",
-                    "description": "Display version and exit.",
-                    "fa_icon": "fas fa-question-circle",
-                    "hidden": true
-                },
-                "publish_dir_mode": {
-                    "type": "string",
-                    "default": "copy",
-                    "description": "Method used to save pipeline results to output directory.",
-                    "help_text": "The Nextflow `publishDir` option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See [Nextflow docs](https://www.nextflow.io/docs/latest/process.html#publishdir) for details.",
-                    "fa_icon": "fas fa-copy",
-                    "enum": ["symlink", "rellink", "link", "copy", "copyNoFollow", "move"],
-                    "hidden": true
-                },
-                "email_on_fail": {
-                    "type": "string",
-                    "description": "Email address for completion summary, only when pipeline fails.",
-                    "fa_icon": "fas fa-exclamation-triangle",
-                    "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
-                    "help_text": "An email address to send a summary email to when the pipeline is completed - ONLY sent if the pipeline does not exit successfully.",
-                    "hidden": true
-                },
-                "plaintext_email": {
-                    "type": "boolean",
-                    "description": "Send plain-text email instead of HTML.",
-                    "fa_icon": "fas fa-remove-format",
-                    "hidden": true
-                },
-                "max_multiqc_email_size": {
-                    "type": "string",
-                    "description": "File size limit when attaching MultiQC reports to summary emails.",
-                    "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
-                    "default": "25.MB",
-                    "fa_icon": "fas fa-file-upload",
-                    "hidden": true
-                },
-                "monochrome_logs": {
-                    "type": "boolean",
-                    "description": "Do not use coloured log outputs.",
-                    "fa_icon": "fas fa-palette",
-                    "hidden": true
-                },
-                "hook_url": {
-                    "type": "string",
-                    "description": "Incoming hook URL for messaging service",
-                    "fa_icon": "fas fa-people-group",
-                    "help_text": "Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.",
-                    "hidden": true
-                },
-                "multiqc_config": {
-                    "type": "string",
-                    "format": "file-path",
-                    "description": "Custom config file to supply to MultiQC.",
-                    "fa_icon": "fas fa-cog",
-                    "hidden": true
-                },
-                "multiqc_logo": {
-                    "type": "string",
-                    "description": "Custom logo file to supply to MultiQC. File name must also be set in the MultiQC config file",
-                    "fa_icon": "fas fa-image",
-                    "hidden": true
-                },
-                "multiqc_methods_description": {
-                    "type": "string",
-                    "description": "Custom MultiQC yaml file containing HTML including a methods description.",
-                    "fa_icon": "fas fa-cog"
-                },
-                "validate_params": {
-                    "type": "boolean",
-                    "description": "Boolean whether to validate parameters against the schema at runtime",
-                    "default": true,
-                    "fa_icon": "fas fa-check-square",
-                    "hidden": true
-                },
-                "pipelines_testdata_base_path": {
-                    "type": "string",
-                    "fa_icon": "far fa-check-circle",
-                    "description": "Base URL or local path to location of pipeline test dataset files",
-                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/",
-                    "hidden": true
-                },
-                "trace_report_suffix": {
-                    "type": "string",
-                    "fa_icon": "far calendar",
-                    "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
-                    "hidden": true
-                }
-            }
+        "outdir": {
+          "type": "string",
+          "format": "directory-path",
+          "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+          "fa_icon": "fas fa-folder-open"
         }
+      }
     },
-    "allOf": [
-        {
-            "$ref": "#/$defs/input_output_options"
+    "main_options": {
+      "title": "Main options",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "fasta": {
+          "type": "string",
+          "description": "Path to reference fast file."
         },
-        {
-            "$ref": "#/$defs/reference_genome_options"
+        "genome": {
+          "type": "string",
+          "description": "Reference genome name."
         },
-        {
-            "$ref": "#/$defs/institutional_config_options"
+        "tools": {
+          "type": "string",
+          "default": "mobster,viber,pyclone-vi,sparsesignatures,sigprofiler",
+          "description": "List of tools for running the pipeline."
         },
-        {
-            "$ref": "#/$defs/generic_options"
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "copy",
+          "description": "Method used to save pipeline results to output directory."
+        },
+        "filter": {
+          "type": "string",
+          "description": "Flag for filtering QC mutations or not."
         }
-    ]
+      },
+      "required": ["genome"],
+      "fa_icon": "fas fa-cog"
+    },
+    "variant_annotation": {
+      "title": "Variant Annotation",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "download_cache_vep": {
+          "type": "string"
+        },
+        "vep_cache": {
+          "type": "string",
+          "description": "Path to VEP cache."
+        },
+        "vep_cache_version": {
+          "type": "string",
+          "description": "VEP cache version."
+        },
+        "vep_species": {
+          "type": "string",
+          "description": "VEP species."
+        },
+        "vep_genome": {
+          "type": "string",
+          "description": "VEP reference genome name."
+        },
+        "vep_custom_args": {
+          "type": "string",
+          "default": "--everything --filter_common --per_gene --total_length --offline --format vcf",
+          "description": "Add an extra custom argument to VEP."
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "driver_annotation": {
+      "title": "Driver Annotation",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "drivers_table": {
+          "type": "string",
+          "default": "https://raw.githubusercontent.com/nicola-calonaci/test-datasets/evoverse/data/DRIVER_ANNOTATION/DNDSCV/RefCDS_human_GRCh38_GencodeV18_recommended.rda",
+          "description": "Path to driver table."
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "vcf2cnaqc": {
+      "title": "VCF2CNAqc",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "vcf_filter_mutations": {
+          "type": "string",
+          "default": "TRUE",
+          "description": "Flag for filtering mutations from vcf."
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "cnaqc": {
+      "title": "CNAqc",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "cnaqc_karyotypes": {
+          "type": "string",
+          "default": "c(\\'1:0\\', \\'1:1\\', \\'2:0\\', \\'2:1\\', \\'2:2\\')"
+        },
+        "cnaqc_min_karyotype_size": {
+          "type": "integer",
+          "default": 0
+        },
+        "cnaqc_min_absolute_karyotype_mutations": {
+          "type": "integer",
+          "default": 100
+        },
+        "cnaqc_p_binsize_peaks": {
+          "type": "number",
+          "default": 0.005
+        },
+        "cnaqc_matching_epsilon": {
+          "type": "string",
+          "default": "NULL"
+        },
+        "cnaqc_purity_error": {
+          "type": "number",
+          "default": 0.05
+        },
+        "cnaqc_vaf_tolerance": {
+          "type": "number",
+          "default": 0.015
+        },
+        "cnaqc_n_bootstrap": {
+          "type": "integer",
+          "default": 1
+        },
+        "cnaqc_matching_strategy": {
+          "type": "string",
+          "default": "rightmost"
+        },
+        "cnaqc_kde": {
+          "type": "string",
+          "default": "TRUE"
+        },
+        "cnaqc_starting_state_subclonal_evolution": {
+          "type": "string",
+          "default": "1:1"
+        },
+        "cnaqc_plot_cn": {
+          "type": "string",
+          "default": "absolute"
+        },
+        "cnaqc_muts_per_karyotype": {
+          "type": "integer",
+          "default": 25
+        },
+        "cnaqc_cutoff_QC_PASS": {
+          "type": "number",
+          "default": 0.1
+        },
+        "cnaqc_cluster_subclonal_CCF": {
+          "type": "string",
+          "default": "FALSE"
+        },
+        "cnaqc_method": {
+          "type": "string",
+          "default": "ENTROPY"
+        },
+        "cnaqc_kernel_adjust": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "joincnaqc": {
+      "title": "JoinCNAqc",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "joincnaqc_qc_filter": {
+          "type": "string",
+          "default": "FALSE"
+        },
+        "joincnaqc_keep_original": {
+          "type": "string",
+          "default": "TRUE"
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "pyclonevi": {
+      "title": "PyCloneVI",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "pyclonevi_density": {
+          "type": "string",
+          "default": "beta-binomial"
+        },
+        "pyclonevi_n_restarts": {
+          "type": "integer",
+          "default": 100
+        },
+        "pyclonevi_n_grid_point": {
+          "type": "integer",
+          "default": 100
+        },
+        "pyclonevi_n_cluster": {
+          "type": "integer",
+          "default": 20
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "mobster": {
+      "title": "Mobster",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "mobster_K": {
+          "type": "string",
+          "default": "1:5"
+        },
+        "mobster_init": {
+          "type": "string",
+          "default": "peaks"
+        },
+        "mobster_samples": {
+          "type": "integer",
+          "default": 5
+        },
+        "mobster_tail": {
+          "type": "string",
+          "default": "c(TRUE,FALSE)"
+        },
+        "mobster_epsilon": {
+          "type": "number",
+          "default": 1e-10
+        },
+        "mobster_maxIter": {
+          "type": "integer",
+          "default": 250
+        },
+        "mobster_fit_type": {
+          "type": "string",
+          "default": "MM"
+        },
+        "mobster_seed": {
+          "type": "integer",
+          "default": 12345
+        },
+        "mobster_model_selection": {
+          "type": "string",
+          "default": "reICL"
+        },
+        "mobster_trace": {
+          "type": "string",
+          "default": "FALSE"
+        },
+        "mobster_parallel": {
+          "type": "string",
+          "default": "TRUE"
+        },
+        "mobster_pi_cutoff": {
+          "type": "number",
+          "default": 0.02
+        },
+        "mobster_n_cutoff": {
+          "type": "integer",
+          "default": 10
+        },
+        "mobster_silent": {
+          "type": "string",
+          "default": "FALSE"
+        },
+        "mobster_auto_setup": {
+          "type": "string",
+          "default": "NULL"
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "viber": {
+      "title": "Viber",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "viber_K": {
+          "type": "integer",
+          "default": 10
+        },
+        "viber_samples": {
+          "type": "integer",
+          "default": 10
+        },
+        "viber_alpha_0": {
+          "type": "number",
+          "default": 1e-6
+        },
+        "viber_a_0": {
+          "type": "integer",
+          "default": 1
+        },
+        "viber_b_0": {
+          "type": "integer",
+          "default": 1
+        },
+        "viber_maxIter": {
+          "type": "integer",
+          "default": 5000
+        },
+        "viber_epsilon_conv": {
+          "type": "number",
+          "default": 1e-10
+        },
+        "viber_q_init": {
+          "type": "string",
+          "default": "prior"
+        },
+        "viber_trace": {
+          "type": "string",
+          "default": "FALSE"
+        },
+        "viber_binomial_cutoff": {
+          "type": "number",
+          "default": 0.05
+        },
+        "viber_pi_cutoff": {
+          "type": "number",
+          "default": 0.02
+        },
+        "viber_re_assign": {
+          "type": "string",
+          "default": "FALSE"
+        },
+        "viber_dimensions_cutoff": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "ctree": {
+      "title": "CTree",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "ctree_sspace_cutoff": {
+          "type": "integer",
+          "default": 10000
+        },
+        "ctree_n_sampling": {
+          "type": "integer",
+          "default": 5000
+        },
+        "ctree_store_max": {
+          "type": "integer",
+          "default": 100
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "sparsesignature": {
+      "title": "SparseSignature",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "sparsesignatures_K": {
+          "type": "string",
+          "default": "2:10"
+        },
+        "sparsesignatures_background_signature": {
+          "type": "string",
+          "default": "NULL"
+        },
+        "sparsesignatures_beta": {
+          "type": "string",
+          "default": "NULL"
+        },
+        "sparsesignatures_normalize_counts": {
+          "type": "string",
+          "default": "TRUE"
+        },
+        "sparsesignatures_iterations": {
+          "type": "integer",
+          "default": 30
+        },
+        "sparsesignatures_nmf_runs": {
+          "type": "integer",
+          "default": 10
+        },
+        "sparsesignatures_max_iterations_lasso": {
+          "type": "integer",
+          "default": 10000
+        },
+        "sparsesignatures_num_processes": {
+          "type": "string",
+          "default": "all"
+        },
+        "sparsesignatures_cross_validation_entries": {
+          "type": "number",
+          "default": 0.01
+        },
+        "sparsesignatures_cross_validation_repetitions": {
+          "type": "integer",
+          "default": 50
+        },
+        "sparsesignatures_cross_validation_iterations": {
+          "type": "integer",
+          "default": 5
+        },
+        "sparsesignatures_lambda_values_beta": {
+          "type": "string",
+          "default": "c(0.01, 0.05, 0.1, 0.2)"
+        },
+        "sparsesignatures_lambda_rate_alpha": {
+          "type": "integer",
+          "default": 0
+        },
+        "sparsesignatures_verbose": {
+          "type": "string",
+          "default": "TRUE"
+        },
+        "sparsesignatures_seed": {
+          "type": "integer",
+          "default": 12345
+        },
+        "sparsesignatures_lambda_values_alpha": {
+          "type": "string",
+          "default": "c(0.00, 0.01, 0.05, 0.10)"
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "sigprofiler": {
+      "title": "SigProfiler",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "publish_dir_mode_genome_sigprofiler": {
+          "type": "string",
+          "default": "move",
+          "description": "Mode of publishing the SigProfiler genome."
+        },
+        "download_sigprofiler_genome": {
+          "type": "boolean",
+          "default": true
+        },
+        "genome_installed_path": {
+          "type": "string"
+        },
+        "sigprofiler_exome": {
+          "type": "boolean"
+        },
+        "sigprofiler_input_type": {
+          "type": "string",
+          "default": "matrix"
+        },
+        "sigprofiler_minimum_signatures": {
+          "type": "integer",
+          "default": 1
+        },
+        "sigprofiler_maximum_signatures": {
+          "type": "integer",
+          "default": 25
+        },
+        "sigprofiler_context_type": {
+          "type": "string",
+          "default": "96,DINUC,ID"
+        },
+        "sigprofiler_nmf_replicates": {
+          "type": "integer",
+          "default": 100
+        },
+        "sigprofiler_resample": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigprofiler_matrix_normalization": {
+          "type": "string",
+          "default": "gmm"
+        },
+        "sigprofiler_nmf_init": {
+          "type": "string",
+          "default": "random"
+        },
+        "sigprofiler_min_nmf_iterations": {
+          "type": "integer",
+          "default": 10000
+        },
+        "sigprofiler_max_nmf_iterations": {
+          "type": "integer",
+          "default": 1000000
+        },
+        "sigprofiler_nmf_test_conv": {
+          "type": "integer",
+          "default": 10000
+        },
+        "sigprofiler_seeds": {
+          "type": "string",
+          "default": "random"
+        },
+        "sigprofiler_stability": {
+          "type": "number",
+          "default": 0.8
+        },
+        "sigprofiler_cpu": {
+          "type": "integer",
+          "default": -1
+        },
+        "sigprofiler_min_stability": {
+          "type": "number",
+          "default": 0.2
+        },
+        "sigprofiler_combined_stability": {
+          "type": "integer",
+          "default": 1
+        },
+        "sigprofiler_make_decomposition_plots": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigprofiler_collapse_to_SBS96": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigprofiler_cosmic_version": {
+          "type": "number",
+          "default": 3.4
+        },
+        "sigprofiler_get_all_signature_matrices": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigprofiler_export_probabilities": {
+          "type": "boolean",
+          "default": true
+        },
+        "sigprofiler_chrom_based": {
+          "type": "boolean"
+        },
+        "sigprofiler_bed_file": {
+          "type": "string",
+          "default": "None"
+        },
+        "sigprofiler_plot": {
+          "type": "boolean"
+        },
+        "sigprofiler_seqInfo": {
+          "type": "boolean"
+        },
+        "sigprofiler_precision": {
+          "type": "string",
+          "default": "single"
+        },
+        "sigprofiler_cushion": {
+          "type": "integer",
+          "default": 100
+        },
+        "sigprofiler_gpu": {
+          "type": "boolean"
+        },
+        "sigprofiler_tsb_stat": {
+          "type": "boolean"
+        },
+        "sigprofiler_batch_size": {
+          "type": "integer",
+          "default": 1
+        },
+        "sigprofiler_allow_stability_drop": {
+          "type": "boolean"
+        },
+        "sigprofiler_nmf_tolerance": {
+          "type": "number",
+          "default": 1e-15
+        },
+        "igenomes_base": {
+          "type": "string",
+          "default": "s3://ngi-igenomes/igenomes/"
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "tinc": {
+      "title": "TINC",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "tinc_normal_contamination_lv": {
+          "type": "integer",
+          "default": 3
+        },
+        "tinc_cutoff_lv_assignment": {
+          "type": "number",
+          "default": 0.75
+        },
+        "tinc_vaf_range_tumour": {
+          "type": "string",
+          "default": "c(0, 0.7)"
+        },
+        "tinc_cutoff_miscalled_clonal": {
+          "type": "number",
+          "default": 0.6
+        },
+        "tinc_N": {
+          "type": "integer",
+          "default": 20000
+        },
+        "tinc_fast": {
+          "type": "string",
+          "default": "TRUE"
+        }
+      },
+      "fa_icon": "fas fa-briefcase"
+    },
+    "generic_options": {
+      "title": "Generic options",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "email": {
+          "type": "boolean",
+          "description": "Email address for completion summary."
+        },
+        "email_on_fail": {
+          "type": "boolean",
+          "description": "Email address for completion summary, only when pipeline fails."
+        },
+        "name": {
+          "type": "boolean"
+        },
+        "monochrome_logs": {
+          "type": "boolean",
+          "description": "Do not use coloured log outputs."
+        },
+        "plaintext_email": {
+          "type": "boolean",
+          "description": "Send plain-text email instead of HTML."
+        }
+      }
+    },
+    "new_group_3": {
+      "title": "New Group 3",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "custom_config_version": {
+          "type": "string",
+          "default": "master",
+          "description": "Git commit id for Institutional configs."
+        },
+        "custom_config_base": {
+          "type": "string",
+          "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+          "description": "Base directory for Institutional configs."
+        },
+        "config_profile_description": {
+          "type": "boolean",
+          "description": "Institutional config description."
+        },
+        "config_profile_contact": {
+          "type": "boolean",
+          "description": "Institutional config contact information."
+        },
+        "config_profile_url": {
+          "type": "boolean",
+          "description": "Institutional config URL link."
+        }
+      },
+      "fa_icon": "fas fa-university"
+    },
+    "new_group_2": {
+      "title": "New Group 2",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "max_memory": {
+          "type": "string",
+          "default": "128 GB",
+          "description": "Maximum amount of memory that can be requested for any single job."
+        },
+        "max_cpus": {
+          "type": "integer",
+          "default": 16,
+          "description": "Maximum number of CPUs that can be requested for any single job."
+        },
+        "max_time": {
+          "type": "string",
+          "default": "10d",
+          "description": "Maximum amount of time that can be requested for any single job."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/$defs/input_output_options"
+    },
+    {
+      "$ref": "#/$defs/main_options"
+    },
+    {
+      "$ref": "#/$defs/variant_annotation"
+    },
+    {
+      "$ref": "#/$defs/driver_annotation"
+    },
+    {
+      "$ref": "#/$defs/vcf2cnaqc"
+    },
+    {
+      "$ref": "#/$defs/cnaqc"
+    },
+    {
+      "$ref": "#/$defs/joincnaqc"
+    },
+    {
+      "$ref": "#/$defs/pyclonevi"
+    },
+    {
+      "$ref": "#/$defs/mobster"
+    },
+    {
+      "$ref": "#/$defs/viber"
+    },
+    {
+      "$ref": "#/$defs/ctree"
+    },
+    {
+      "$ref": "#/$defs/sparsesignature"
+    },
+    {
+      "$ref": "#/$defs/sigprofiler"
+    },
+    {
+      "$ref": "#/$defs/tinc"
+    },
+    {
+      "$ref": "#/$defs/generic_options"
+    },
+    {
+      "$ref": "#/$defs/new_group_3"
+    },
+    {
+      "$ref": "#/$defs/new_group_2"
+    }
+  ],
+  "properties": {
+    "igenomes_ignore": {
+      "type": "boolean"
+    },
+    "tracedir": {
+      "type": "string",
+      "default": "null/pipeline_info"
+    },
+    "hostnames": {
+      "type": "boolean"
+    }
+  }
 }

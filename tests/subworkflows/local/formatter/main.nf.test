@@ -1,0 +1,98 @@
+nextflow_workflow {
+
+    name "Test Workflow FORMATTER"
+
+    script "subworkflows/local/formatter/main.nf"
+    workflow "FORMATTER"
+
+    test("Run without failures for vcf") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER" 
+                ]
+                
+                vcf = file(params.local_testdata_base_path + '/VCF/MSeq_Set06/Set6_42.WGS.filtered.vcf.gz', checkIfExists: true)
+                tbi = file(params.local_testdata_base_path + '/VCF/MSeq_Set06/Set6_42.WGS.filtered.vcf.gz.tbi', checkIfExists: true)
+                // Create a tuple with metadata and file path
+                input[0] = tuple(meta, vcf, tbi)
+                input[1] = "vcf"
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow.out).match()
+        }
+    
+    }
+
+    //Second test on the same workflow
+    test("Run without failures for cna") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    cancer_type: "PANCANCER" ,
+                    cna_caller : "sequenza"
+                ]
+                cna_segs = file(params.local_testdata_base_path + '/CNA/MSeq_Set06/42/Set6_42.smoothedSegs.txt', checkIfExists: true)
+                cna_extra = file(params.local_testdata_base_path + '/CNA/MSeq_Set06/42/Set6_42_confints_CP.txt', checkIfExists: true)
+
+                input[0] = Channel.fromList([meta, [cna_segs, cna_extra]])
+                input[1] = "cna"
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow.out).match()
+        }
+
+
+    }
+
+    //Third test on the same workflow
+    test("Run without failures for rds") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER" 
+                ]
+                joinCNAqc_rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
+                tumor_samples = meta.tumour_sample // "Set6_42"
+                input[0] = tuple(meta, joinCNAqc_rds, tumor_samples)
+                input[1] = "rds"
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow.out).match()
+        }
+    
+    }
+
+}

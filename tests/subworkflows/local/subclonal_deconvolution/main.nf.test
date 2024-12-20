@@ -1,0 +1,35 @@
+nextflow_workflow {
+
+    name "Test Workflow SUBCLONAL_DECONVOLUTION"
+
+    script "subworkflows/local/subclonal_deconvolution/main.nf"
+    workflow "SUBCLONAL_DECONVOLUTION"
+
+    test("Run without failures") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER" 
+                ]
+                
+                joinCNAqc_rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
+                // Create a tuple with metadata and file paths
+                input[0] = tuple(meta, joinCNAqc_rds, meta.tumour_sample)
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow.out).match()
+        }
+    
+    }
+}

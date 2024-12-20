@@ -1,0 +1,42 @@
+/* NOTES:
+* Let's test it for input coming from SPN01
+* which has stopped only at CTREE.
+*/
+nextflow_process {
+
+    name "Test Process GET_POSITIONS_REL"
+    script "modules/local/get_positions/main_rel.nf"
+    process "GET_POSITIONS_REL"
+
+    test("Should run without failures") {
+
+        when {
+            params {
+                // define module specific parameters here
+                params.local_testdata_base_path = "/orfeo/LTS/LADE/LT_storage/tolloi/tumourevo/results"
+            }
+            process {
+                """
+                meta = [
+                    id : "SCOUT_SPN01_SS_SPN01_100X_0.9p_Sample_B",
+                    dataset : "SCOUT",
+                    patient : "SPN01_SS",
+                    tumour_sample: "SPN01_100X_0.9p_Sample_B",
+                    normal_sample: "SPN01_normal_sample",
+                    cancer_type: "PANCANCER" 
+                ]
+                rds = file(params.local_testdata_base_path + "/formatter/vcf2cnaqc/SCOUT/SPN01_SS/SPN01_100X_0.9p_Sample_B/SCOUT_SPN01_SS_SPN01_100X_0.9p_Sample_B_snv.rds", checkIfExists: true)
+                all_pos = file(params.local_testdata_base_path + "/lifter/positions/SCOUT/SPN01_SS/SCOUT_SPN01_SS_all_positions.rds", checkIfExists: true)
+                input[0] = tuple(meta, rds, all_pos)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}
