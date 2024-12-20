@@ -12,5 +12,3 @@ template:
   org: nf-core
   outdir: .
   version: 1.0dev
-lint:
-  actions_awsfulltest: False
