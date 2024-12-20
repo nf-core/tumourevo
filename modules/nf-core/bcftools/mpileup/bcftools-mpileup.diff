@@ -1,0 +1,21 @@
+Changes in module 'nf-core/bcftools/mpileup'
+'modules/nf-core/bcftools/mpileup/environment.yml' is unchanged
+'modules/nf-core/bcftools/mpileup/meta.yml' is unchanged
+Changes in 'bcftools/mpileup/main.nf':
+--- modules/nf-core/bcftools/mpileup/main.nf
++++ modules/nf-core/bcftools/mpileup/main.nf
+@@ -31,7 +31,7 @@
+     def bgzip_mpileup = save_mpileup ? "bgzip ${prefix}.mpileup" : ""
+     def intervals = intervals ? "-T ${intervals}" : ""
+     """
+-    echo "${meta.id}" > sample_name.list
++    echo "${meta.tumour_sample}" > sample_name.list
+ 
+     bcftools \\
+         mpileup \\
+
+'modules/nf-core/bcftools/mpileup/tests/main.nf.test.snap' was removed
+'modules/nf-core/bcftools/mpileup/tests/tags.yml' was removed
+'modules/nf-core/bcftools/mpileup/tests/nextflow.config' was removed
+'modules/nf-core/bcftools/mpileup/tests/main.nf.test' was removed
+************************************************************
