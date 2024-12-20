@@ -1,45 +1,8 @@
 # nf-core/tumourevo: Usage
 
-## Table of contents
+## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/tumourevo/usage](https://nf-co.re/tumourevo/usage)
 
-- [nf-core/tumourevo: Usage](#nf-coretumourevo-usage)
-  - [Table of contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Running the pipeline](#running-the-pipeline)
-    - [Quickstart](#quickstart)
-    - [Input: Sample sheet configurations](#input-sample-sheet-configurations)
-      - [Overview: Samplesheet Columns](#overview-samplesheet-columns)
-    - [Pipeline modalities](#pipeline-modalities)
-      - [Variant calling](#variant-calling)
-        - [1. Multi-sample variant calling](#1-multi-sample-variant-calling)
-          - [Examples](#examples)
-        - [2. Single sample variant calling](#2-single-sample-variant-calling)
-      - [Filtering data](#filtering-data)
-      - [Driver annotation](#driver-annotation)
-    - [Available tools](#available-tools)
-    - [Updating the pipeline](#updating-the-pipeline)
-    - [Reproducibility](#reproducibility)
-  - [Main arguments](#main-arguments)
-    - [`-profile`](#-profile)
-    - [Job resources](#job-resources)
-    - [Automatic resubmission](#automatic-resubmission)
-  - [Custom resource requests](#custom-resource-requests)
-  - [Other command line parameters](#other-command-line-parameters)
-    - [`--outdir`](#--outdir)
-    - [`--email`](#--email)
-    - [`--email_on_fail`](#--email_on_fail)
-    - [`--max_multiqc_email_size`](#--max_multiqc_email_size)
-    - [`-name`](#-name)
-    - [`-resume`](#-resume)
-    - [`-c`](#-c)
-    - [`--custom_config_version`](#--custom_config_version)
-    - [`--custom_config_base`](#--custom_config_base)
-    - [`--max_memory`](#--max_memory)
-    - [`--max_time`](#--max_time)
-    - [`--max_cpus`](#--max_cpus)
-    - [`--plaintext_email`](#--plaintext_email)
-    - [`--monochrome_logs`](#--monochrome_logs)
-    - [`--multiqc_config`](#--multiqc_config)
+> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
 ## Introduction
 
@@ -47,42 +10,20 @@
 
 Through the analysis of variant and copy-number calls, it reconstructs the evolutionary process leading to the observed tumour genome. Most of the analyses can be done at mutliple levels: single sample, multiple samples from the same patient (multi-region/longitudinal assays), and multiple patients from distinct cohorts.
 
-## Running the pipeline
+## Samplesheet input
 
-### Quickstart
-
-The typical command for running the pipeline is as follows:
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
 
 ```bash
-nextflow run nf-core/tumourevo \
- -r <VERSION> \
- -profile <PROFILE> \
- --input <INPUT CSV> \
- --outdir ./results
- --tools <TOOLS> \
- --filter 
+--input '[path to samplesheet file]'
 ```
 
-`-r <VERSION>` is optional but strongly recommended for reproducibility and should match the latest version.
+### Full samplesheet
 
-`-profile <PROFILE>` is mandatory and should reflect either your own institutional profile or any pipeline profile specified in the [profile section](##-profile).
-
-This documentation imply that any `nextflow run nf-core/tumourevo` command is run with the appropriate `-r` and `-profile` commands.
-
-This will launch the pipeline and perform variant calling with the tools specified in `--tools`, see the [parameter section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for details on the available tools.
-
-Unless running with the `test` profile, the paths of input files must be provided within the `<INPUT CSV>` file specified in `--input`, see the [input section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for input requirements.
-
-Note that the pipeline will create the following files in your working directory:
-
-```bash
-work            # Directory containing the nextflow working files
-results         # Finished results (configurable, see below)
-.nextflow_log   # Log file from Nextflow
-# Other nextflow hidden files, eg. history of pipeline runs and old logs.
-```
-
-### Input: Sample sheet configurations
+/*The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. 
+The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to 
+match those defined in the table below.
+*/
 
 You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use the parameter `--input` to specify its location. It has to be a comma-separated file with at least 5 columns, and a header row as shown in the examples below.
 
@@ -97,6 +38,14 @@ Multiple patients from the same dataset must be specified with the same `dataset
 **tumourevo** will output sample-specific results in a different directory for _each sample_, patient-specific results in a common directory for _each patient_, and dataset-specific results in a common directory for _each dataset_.
 
 Output from different workflows, subworkflows and modules will be in a specific directory for each dataset, patient, sample and tool configuration.
+
+A minimal input sample sheet example for two samples from the same patient:
+
+```csv title="samplesheet.csv"
+dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,S1,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1/segments.txt,/CNA/patient1/S1/purity_ploidy.txt,caller,PANCANCER
+dataset1,patient1,S2,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S2/segments.txt,/CNA/patient1/S2/purity_ploidy.txt,caller,PANCANCER
+```
 
 #### Overview: Samplesheet Columns
 
@@ -115,7 +64,7 @@ Output from different workflows, subworkflows and modules will be in a specific 
 | `tumour_alignment`  | Full path to the tumour bam file. <br /> _Optional_                                                       |
 | `tumour_alignment_index`  | Full path to the tumour bam index file. <br /> _Optional_                                              |
 
-An [example samplesheet](https://github.com/caravagnalab/tumourevo/blob/dev/test_input.csv) has been provided with the pipeline.
+An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
 ### Pipeline modalities
 
@@ -176,75 +125,18 @@ If you can not include the bam files in the input csv, the pipeline will run any
 <!-- You can use the `multisample` mode of tumourevo to analyse samples from multi-region and longitudinal assays. This allows you to track in space and time the existing tumour populations, and better understand its heterogeneity. This modality integrates data across multiple samples, thus improving the resolution of subclonal structures and providing insights into the evolutionary dynamics and progression of the tumour.
 Two of the avaiable tools for subclonal deconvolution, `pyclonevi` and `viber` can by-design be run in multi-sample mode, inferring the subclonal structure of samples. If you add `mobster` to the `--tool` parameter when running the pipeline in this modality, it will be run at first on each individual sample (since the tool does not support at the moment multi-sample analysis) in order to recognize neutral tail mutations and remove them. The mutations data manipulated in this way will then be processed by either `pyclone`, `viber` or both using the multivariate subclonal deconvolution as described before.  -->
 
-#### Filtering data
+#### 3. Filtering data
 
 During the QC step, the pipeline will combine purity, copy number and mutation data to perform quality control on the copy number calls, by applying the [CNAqc algorithm](https://caravagnalab.github.io/CNAqc/). Each segment (for each sample) will be flagged as passing or not the QC, in the given combination of estimated purity and ploidy. According to CNAqc, a badly called segment should be recalled with a different purity estimation, in order to obtain more reliable results. 
 After CNAqc quality control, all the segments (coming from samples of the same patient) are used to build a multi-sample CNAqc object, in which a common segmentation is applied. In this way, only those regions that are shared among all samples will be kept in the new object. It is possible to control wheter to include or not in the new segmentation the segments, for each sample, that do not pass the QC test using the `--filter` flag. If it is setted to true, only QC passing segments for each sample will be used to build the mCNAqc object and will then be passed to the subclonal deconvolution steps. This will lead to exclude some regions of the genome and the mutations that sit on it, but should result in more precise analyses. Otherwise, keeping also the segments that do not pass the QC will result in not loosing any mutation but might lead to less precise results in the subclonal deconvolution steps. 
 
-
-<!-- 
-Using the `--filter` flag it is possible to control how the pipeline handles different steps, in particular regarding the QC workflow.
-Setting `--filter TRUE` will -->
-
-<!-- #### Subclonal deconvolution
-
-##### The `remove_tail` parameter
-
-###### Examples
-
-Running the pipeline without mobster
-
-```bash
-nextflow run nf-core/tumourevo \
- -r <VERSION> \
- -profile <PROFILE> \
- --samples <INPUT CSV> \
- --publish_dir ./results \
- --mode multisample \
- --tools pyclone,viber,ctree,sparsesignature,sigprofiler
-```
-
-Running the pipeline with mobster -->
-
-<!-- mobster lavora single sample, mentre pyclone e viber anche multisample -->
-<!-- 
-```bash
-nextflow run nf-core/tumourevo \
- -r <VERSION> \
- -profile <PROFILE> \
- --samples <INPUT CSV> \
- --publish_dir ./results \
- --mode multisample \
- --tools mobster,pyclone,viber,ctree,sparsesignature,sigprofiler
-```
-
-Minimal input file (two samples from the same patient):
-
-```bash
-dataset,patient,sample,vcf,vcf_tbi,cna_dir,cna_caller
-dataset1,patient1,S1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1,caller
-dataset1,patient1,S2,patient1_S2.vcf.gz,patient1_S2.vcf.gz.tbi,/CNA/patient1/S2,caller
-``` -->
-
-#### Driver annotation
+#### 4. Driver annotation
 
 You can retrieve tumour-specific drivers in the driver annotation step by specifying the tumour type in the input csv. Pan-cancer drivers will be retrieved by specifying `PANCANCER` as tumour type in the input csv file.
 For this step, we currently refer to [IntOGen latest release](https://www.nature.com/articles/s41568-020-0290-x), but it is also possible to provide a custom driver table that will be used in the analysis.
 Please note that the tumour types reported in the input file must correspond to those present in the table used for the annotation (default driver table used can be found [here](https://github.com/caravagnalab/nextflow_modules/blob/main/2023-05-31_IntOGen-Drivers/Unfiltered_drivers.tsv))
 
-<!-- add a snapshot of the driver table -->
-
-<!-- Input file:
-
-```bash
-dataset,patient,sample,vcf,vcf_tbi,cna_dir,cna_caller,tumour_bam,tumour_bai,tumour_type
-dataset1,patient1,S1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1,caller,patient1/BAM/S1,patient1/BAM/S1.bam.bai,BRCA
-dataset1,patient1,S2,patient1_S2.vcf.gz,patient1_S2.vcf.gz.tbi,/CNA/patient1/S2,caller,patient1/BAM/S2,patient1/BAM/S2.bam.bai,BRCA 
-dataset1,patient1,S1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient2/S1,caller,patient1/BAM/S1,patient1/BAM/S1.bam.bai,BRCA 
-dataset1,patient2,S2,patient2_S2.vcf.gz,patient2_S2.vcf.gz.tbi,/CNA/patient2/S2,caller,patient2/BAM/S2,patient2/BAM/S2.bam.bai,BRCA 
-``` -->
-
-### Available tools
+### 5. Available tools
 
 We report the different tools included in the pipeline.
 
@@ -271,109 +163,64 @@ We report the different tools included in the pipeline.
     - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
     - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/) 
 
-<!-- ### Start with annotation
+## Running the pipeline
 
-Example of the values used for these parameters:
+The typical command for running the pipeline is as follows:
 
 ```bash
-ref_genome_vep =  "$HOME/ref_genomes/Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta"
-vep_dir_cache  =  "$HOME/ref_genomes/VEP/"
-vep_cache_version = "110"
-vep_species = "homo_sapience" 
-assembly = "GRCh38"
+nextflow run nf-core/tumourevo \
+ -r <VERSION> \
+ -profile <PROFILE> \
+ --input <INPUT CSV> \
+ --outdir ./results
+ --tools <TOOLS>
 ```
 
-Using VEP plugins:
-`--plugin` - plugin modules should be installed in the Plugin subdirectory of the VEP cache directory (defaults to "$HOME/.vep/").
-To enable specify `--plugin SingleLetterAA`. -->
+`-r <VERSION>` is optional but strongly recommended for reproducibility and should match the latest version.
 
-<!-- ### Start with Maftools
+`-profile <PROFILE>` is mandatory and should reflect either your own institutional profile or any pipeline profile specified in the [profile section](##-profile).
 
-`read.maf` function reads multiple MAF files (e.g. multisample/multipatient cohort), summarizes it in various ways and stores it as an MAF object.
-MAF object contains main maf file, summarized data and any associated sample annotations.
-For visualization it uses `plotmafSummary` function to plot the summary of the maf file, which displays number of variants in each sample and variant types summarized by Variant_Classification. Better representation of maf file can be shown as oncoplots using `oncoplot` function. -->
+This documentation imply that any `nextflow run nf-core/tumourevo` command is run with the appropriate `-r` and `-profile` commands.
 
-<!-- ### Subclonal Deconvolution
+This will launch the pipeline and perform variant calling with the tools specified in `--tools`, see the [parameter section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for details on the available tools.
 
-This step can be started either from XXX files or XXXX. The CSV must contain at least the columns XXX.
+Unless running with the `test` profile, the paths of input files must be provided within the `<INPUT CSV>` file specified in `--input`, see the [input section]([https://github.com/caravagnalab/nf-core-tumourevo/tree/dev]) for input requirements.
 
-The following parameters can be tuned for this step:
-
-- XXX
-- XXX
-  
-The available tools for this step are XXX.
-
-**NB: When running this step, XXXX*** -->
-
-<!-- #### Examples
-
-Minimal input file:
+Note that the pipeline will create the following files in your working directory:
 
 ```bash
-patient,sample,lane,fastq_1,fastq_2
-patient1,test_sample,lane_1,test_1.fastq.gz,test_2.fastq.gz
+work            # Directory containing the nextflow working files
+results         # Finished results (configurable, see below)
+.nextflow_log   # Log file from Nextflow
+# Other nextflow hidden files, eg. history of pipeline runs and old logs.
+```
+If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, 
+you can specify these in a params file.
+
+Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <file>`.
+
+> [!WARNING]
+> Do not use `-c <file>` to specify parameters as this will result in errors. Custom config files specified with `-c` must only be used for [tuning process resource specifications](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources), other infrastructural tweaks (such as output directories), or module arguments (args).
+
+The above pipeline run specified with a params file in yaml format:
+
+```bash
+nextflow run nf-core/tumourevo \
+ -r <VERSION> \
+ -profile <PROFILE> \
+ -params-file params.yaml
 ```
 
-In this example, the sample comes from multiple patients:
+with:
 
-```bash
-patient,sample,lane,fastq_1,fastq_2
-patient1,test_sample,lane_1,test_L001_1.fastq.gz,test_L001_2.fastq.gz
-patient1,test_sample,lane_2,test_L002_1.fastq.gz,test_L002_2.fastq.gz
-patient1,test_sample,lane_3,test_L003_1.fastq.gz,test_L003_2.fastq.gz
-``` -->
-
-<!-- ### Clone Tree Inference
-
-This step can be started either from XXX files or XXXX. The CSV must contain at least the columns XXX.
-
-The following parameters can be tuned for this step:
-
-- XXX
-- XXX
-  
-The available tools for this step are XXX.
-
-**NB: When running this step, XXXX*** -->
-
-<!-- #### Examples
-
-Minimal input file:
-
-```bash
-patient,sample,lane,fastq_1,fastq_2
-patient1,test_sample,lane_1,test_1.fastq.gz,test_2.fastq.gz
+```yaml title="params.yaml"
+input: './samplesheet.csv'
+outdir: './results/'
+genome: 'GRCh38'
+<...>
 ```
 
-In this example, the sample comes from multiple patients:
-
-```bash
-patient,sample,lane,fastq_1,fastq_2
-patient1,test_sample,lane_1,test_L001_1.fastq.gz,test_L001_2.fastq.gz
-patient1,test_sample,lane_2,test_L002_1.fastq.gz,test_L002_2.fastq.gz
-patient1,test_sample,lane_3,test_L003_1.fastq.gz,test_L003_2.fastq.gz
-``` -->
-
-<!-- ### Starting with Signature Deconvolution
-
-This step can be started from `rds` multisample CNAqc object. The CSV must contain at least the columns:
-
-```bash
-dataset,joint_table
-
-```
-When running this step, the mutation's information of the dataset of interest is extracted from multisample `mCNAqc` object and converted to `txt` format in order to import the constructed data file in R or Python. Mutation frequency count data is generated from point mutation data-frames. The optimal signature number and sparsity is determined by cross-validation (SparseSignatures), followed by discovering the signatures within the dataset. -->
-
-<!-- #### Examples
-
-Minimal input file:
-
-```bash
-dataset,joint_table
-CLL,mcnaqc_miltisample.rds
-``` 
--->
+You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
 ### Updating the pipeline
 
@@ -385,252 +232,110 @@ nextflow pull nf-core/tumourevo
 
 ### Reproducibility
 
-It's a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
+It is a good idea to specify the pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [nf-core/tumourevo releases page](https://github.com/nf-core/tumourevo/releases) and find the latest version number - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`.
+First, go to the [nf-core/tumourevo releases page](https://github.com/nf-core/tumourevo/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
 
-This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
+This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future. For example, at the bottom of the MultiQC reports.
 
-## Main arguments
+To further assist in reproducibility, you can use share and reuse [parameter files](#running-the-pipeline) to repeat pipeline runs with the same settings without having to write out a command with every single parameter.
+
+> [!TIP]
+> If you wish to share such profile (such as upload as supplementary material for academic publications), make sure to NOT include cluster specific paths to files, nor institutional specific profiles.
+
+## Core Nextflow arguments
+
+> [!NOTE]
+> These options are part of Nextflow and use a _single_ hyphen (pipeline parameters use a double-hyphen)
 
 ### `-profile`
 
 Use this parameter to choose a configuration profile. Profiles can give configuration presets for different compute environments.
 
-Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Conda) - see below.
+Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
 
+> [!IMPORTANT]
 > We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
 
-The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
+The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to check if your system is suported, please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
 
 Note that multiple profiles can be loaded, for example: `-profile test,docker` - the order of arguments is important!
 They are loaded in sequence, so later profiles can overwrite earlier profiles.
 
-If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended.
+If `-profile` is not specified, the pipeline will run locally and expect all software to be installed and available on the `PATH`. This is _not_ recommended, since it can lead to different results on different machines dependent on the computer environment.
 
-- `docker`
-    - A generic configuration profile to be used with [Docker](http://docker.com/)
-    - Pulls software from dockerhub: [`nfcore/tumourevo`](http://hub.docker.com/r/nfcore/tumourevo/)
-- `singularity`
-    - A generic configuration profile to be used with [Singularity](http://singularity.lbl.gov/)
-    - Pulls software from DockerHub: [`nfcore/tumourevo`](http://hub.docker.com/r/nfcore/tumourevo/)
-- `conda`
-    - Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker or Singularity.
-    - A generic configuration profile to be used with [Conda](https://conda.io/docs/)
-    - Pulls most software from [Bioconda](https://bioconda.github.io/)
 - `test`
-    - A profile with a complete configuration for automated testing
-    - Includes links to test data so needs no other parameters
-
-<!-- TODO nf-core: Document required command line parameters -->
-
-<!-- ### `--reads`
-
-Use this to specify the location of your input FastQ files. For example:
-
-```bash
---reads 'path/to/data/sample_*_{1,2}.fastq'
-```
-
-Please note the following requirements:
-
-1. The path must be enclosed in quotes
-2. The path must have at least one `*` wildcard character
-3. When using the pipeline with paired end data, the path must use `{1,2}` notation to specify read pairs.
-
-If left unspecified, a default pattern is used: `data/*{1,2}.fastq.gz`
-
-### `--single_end`
-
-By default, the pipeline expects paired-end data. If you have single-end data, you need to specify `--single_end` on the command line when you launch the pipeline. A normal glob pattern, enclosed in quotation marks, can then be used for `--reads`. For example:
-
-```bash
---single_end --reads '*.fastq'
-```
-
-It is not possible to run a mixture of single-end and paired-end files in one run. -->
-
-<!-- ## Reference genomes
-
-The pipeline config files come bundled with paths to the illumina iGenomes reference index files. If running with docker or AWS, the configuration is set up to use the [AWS-iGenomes](https://ewels.github.io/AWS-iGenomes/) resource.
-
-### `--genome` (using iGenomes)
-
-There are 31 different species supported in the iGenomes references. To run the pipeline, you must specify which to use with the `--genome` flag.
-
-You can find the keys to specify the genomes in the [iGenomes config file](../conf/igenomes.config). Common genomes that are supported are:
-
-* Human
-  * `--genome GRCh37`
-* Mouse
-  * `--genome GRCm38`
-* _Drosophila_
-  * `--genome BDGP6`
-* _S. cerevisiae_
-  * `--genome 'R64-1-1'`
-
-> There are numerous others - check the config file for more.
-
-Note that you can use the same configuration setup to save sets of reference files for your own use, even if they are not part of the iGenomes resource. See the [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for instructions on where to save such a file.
-
-The syntax for this reference configuration is as follows:
-
-<!-- TODO nf-core: Update reference genome example according to what is needed -->
-
-<!-- ```nextflow
-params {
-  genomes {
-    'GRCh37' {
-      fasta   = '<path to the genome fasta file>' // Used if no star index given
-    }
-    // Any number of additional genomes, key is used with --genome
-  }
-}
-``` -->
-
-<!-- TODO nf-core: Describe reference path flags -->
-
-<!-- ### `--fasta`
-
-If you prefer, you can specify the full path to your reference genome when you run the pipeline:
-
-```bash
---fasta '[path to Fasta reference]'
-```
-
-### `--igenomes_ignore`
-
-Do not load `igenomes.config` when running the pipeline. You may choose this option if you observe clashes between custom parameters and those supplied in `igenomes.config`. -->
-
-### Job resources
-
-### Automatic resubmission
-
-Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with an error code of `143` (exceeded requested resources) it will automatically resubmit with higher requests (2 x original, then 3 x original). If it still fails after three times then the pipeline is stopped.
-
-## Custom resource requests
-
-Wherever process-specific requirements are set in the pipeline, the default value can be changed by creating a custom config file. See the files hosted at [`nf-core/configs`](https://github.com/nf-core/configs/tree/master/conf) for examples.
-
-If you are likely to be running `nf-core` pipelines regularly it may be a good idea to request that your custom config file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your pipeline of choice using the `-c` parameter (see definition below). You can then create a pull request to the `nf-core/configs` repository with the addition of your config file, associated documentation file (see examples in [`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending [`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
-
-If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack).
-
-<!-- ## AWS Batch specific parameters
-
-Running the pipeline on AWS Batch requires a couple of specific parameters to be set according to your AWS Batch configuration. Please use [`-profile awsbatch`](https://github.com/nf-core/configs/blob/master/conf/awsbatch.config) and then specify all of the following parameters.
-
-### `--awsqueue`
-
-The JobQueue that you intend to use on AWS Batch.
-
-### `--awsregion`
-
-The AWS region in which to run your job. Default is set to `eu-west-1` but can be adjusted to your needs.
-
-### `--awscli`
-
-The [AWS CLI](https://www.nextflow.io/docs/latest/awscloud.html#aws-cli-installation) path in your custom AMI. Default: `/home/ec2-user/miniconda/bin/aws`.
-
-Please make sure to also set the `-w/--work-dir` and `--outdir` parameters to a S3 storage bucket of your choice - you'll get an error message notifying you if you didn't. -->
-
-## Other command line parameters
-
-<!-- TODO nf-core: Describe any other command line flags here -->
-
-### `--outdir`
-
-The output directory where the results will be saved.
-
-### `--email`
-
-Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.
-
-### `--email_on_fail`
-
-This works exactly as with `--email`, except emails are only sent if the workflow is not successful.
-
-### `--max_multiqc_email_size`
-
-Threshold size for MultiQC report to be attached in notification email. If file generated by pipeline exceeds the threshold, it will not be attached (Default: 25MB).
-
-### `-name`
-
-Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic.
-
-This is used in the MultiQC report (if not default) and in the summary HTML / e-mail (always).
-
-**NB:** Single hyphen (core Nextflow option)
+  - A profile with a complete configuration for automated testing
+  - Includes links to test data so needs no other parameters
+- `docker`
+  - A generic configuration profile to be used with [Docker](https://docker.com/)
+- `singularity`
+  - A generic configuration profile to be used with [Singularity](https://sylabs.io/docs/)
+- `podman`
+  - A generic configuration profile to be used with [Podman](https://podman.io/)
+- `shifter`
+  - A generic configuration profile to be used with [Shifter](https://nersc.gitlab.io/development/shifter/how-to-use/)
+- `charliecloud`
+  - A generic configuration profile to be used with [Charliecloud](https://hpc.github.io/charliecloud/)
+- `apptainer`
+  - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
+- `wave`
+  - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
+- `conda`
+  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
 
 ### `-resume`
 
-Specify this when restarting a pipeline. Nextflow will used cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously.
+Specify this when restarting a pipeline. Nextflow will use cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously. For input to be considered the same, not only the names must be identical but the files' contents as well. For more info about this parameter, see [this blog post](https://www.nextflow.io/blog/2019/demystifying-nextflow-resume.html).
 
 You can also supply a run name to resume a specific run: `-resume [run-name]`. Use the `nextflow log` command to show previous run names.
 
-**NB:** Single hyphen (core Nextflow option)
-
 ### `-c`
 
-Specify the path to a specific config file (this is a core NextFlow command).
+Specify the path to a specific config file (this is a core Nextflow command). See the [nf-core website documentation](https://nf-co.re/usage/configuration) for more information.
 
-**NB:** Single hyphen (core Nextflow option)
+## Custom configuration
 
-Note - you can use this to override pipeline defaults.
+### Resource requests
 
-### `--custom_config_version`
+Whilst the default requirements set within the pipeline will hopefully work for most people and with most input data, you may find that you want to customise the compute resources that the pipeline requests. Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the pipeline steps, if the job exits with any of the error codes specified [here](https://github.com/nf-core/rnaseq/blob/4c27ef5610c87db00c3c5a3eed10b1d161abf575/conf/base.config#L18) it will automatically be resubmitted with higher resources request (2 x original, then 3 x original). If it still fails after the third attempt then the pipeline execution is stopped.
 
-Provide git commit id for custom Institutional configs hosted at `nf-core/configs`. This was implemented for reproducibility purposes. Default: `master`.
+To change the resource requests, please see the [max resources](https://nf-co.re/docs/usage/configuration#max-resources) and [tuning workflow resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources) section of the nf-core website.
+
+### Custom Containers
+
+In some cases, you may wish to change the container or conda environment used by a pipeline steps for a particular tool. By default, nf-core pipelines use containers and software from the [biocontainers](https://biocontainers.pro/) or [bioconda](https://bioconda.github.io/) projects. However, in some cases the pipeline specified version maybe out of date.
+
+To use a different container from the default container or conda environment specified in a pipeline, please see the [updating tool versions](https://nf-co.re/docs/usage/configuration#updating-tool-versions) section of the nf-core website.
+
+### Custom Tool Arguments
+
+A pipeline might not always support every possible argument or option of a particular tool used in pipeline. Fortunately, nf-core pipelines provide some freedom to users to insert additional parameters that the pipeline does not include by default.
+
+To learn how to provide additional arguments to a particular tool of the pipeline, please see the [customising tool arguments](https://nf-co.re/docs/usage/configuration#customising-tool-arguments) section of the nf-core website.
+
+### nf-core/configs
+
+In most cases, you will only need to create a custom config as a one-off but if you and others within your organisation are likely to be running nf-core pipelines regularly and need to use the same settings regularly it may be a good idea to request that your custom config file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your pipeline of choice using the `-c` parameter. You can then create a pull request to the `nf-core/configs` repository with the addition of your config file, associated documentation file (see examples in [`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending [`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
+
+See the main [Nextflow documentation](https://www.nextflow.io/docs/latest/config.html) for more information about creating your own configuration files.
+
+If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack) on the [`#configs` channel](https://nfcore.slack.com/channels/configs).
+
+## Running in the background
+
+Nextflow handles job submissions and supervises the running jobs. The Nextflow process must run until the pipeline is finished.
+
+The Nextflow `-bg` flag launches Nextflow in the background, detached from your terminal so that the workflow does not stop if you log out of your session. The logs are saved to a file.
+
+Alternatively, you can use `screen` / `tmux` or similar tool to create a detached session which you can log back into at a later time.
+Some HPC setups also allow you to run nextflow within a cluster job submitted your job scheduler (from where it submits more jobs).
+
+## Nextflow memory requirements
+
+In some cases, the Nextflow Java virtual machines can start to request a large amount of memory.
+We recommend adding the following line to your environment to limit this (typically in `~/.bashrc` or `~./bash_profile`):
 
 ```bash
-## Download and use config file with following git commid id
---custom_config_version d52db660777c4bf36546ddb188ec530c3ada1b96
+NXF_OPTS='-Xms1g -Xmx4g'
 ```
-
-### `--custom_config_base`
-
-If you're running offline, nextflow will not be able to fetch the institutional config files
-from the internet. If you don't need them, then this is not a problem. If you do need them,
-you should download the files from the repo and tell nextflow where to find them with the
-`custom_config_base` option. For example:
-
-```bash
-## Download and unzip the config files
-cd /path/to/my/configs
-wget https://github.com/nf-core/configs/archive/master.zip
-unzip master.zip
-
-## Run the pipeline
-cd /path/to/my/data
-nextflow run /path/to/pipeline/ --custom_config_base /path/to/my/configs/configs-master/
-```
-
-> Note that the nf-core/tools helper package has a `download` command to download all required pipeline
-> files + singularity containers + institutional configs in one go for you, to make this process easier.
-
-### `--max_memory`
-
-Use to set a top-limit for the default memory requirement for each process.
-Should be a string in the format integer-unit. eg. `--max_memory '8.GB'`
-
-### `--max_time`
-
-Use to set a top-limit for the default time requirement for each process.
-Should be a string in the format integer-unit. eg. `--max_time '2.h'`
-
-### `--max_cpus`
-
-Use to set a top-limit for the default CPU requirement for each process.
-Should be a string in the format integer-unit. eg. `--max_cpus 1`
-
-### `--plaintext_email`
-
-Set to receive plain-text e-mails instead of HTML formatted.
-
-### `--monochrome_logs`
-
-Set to disable colourful command line output and live life in monochrome.
-
-### `--multiqc_config`
-
-Specify a path to a custom MultiQC configuration file.

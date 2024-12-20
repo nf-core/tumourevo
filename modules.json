@@ -1,10 +1,10 @@
 {
-  "name": "nf-core/evoverse",
-  "homePage": "https://github.com/nf-core/evoverse",
-  "repos": {
-    "https://github.com/nf-core/modules.git": {
-      "modules": {
-        "nf-core": {
+  "name": "nf-core/tumourevo",
+    "homePage": "https://github.com/nf-core/tumourevo",
+    "repos": {
+        "https://github.com/nf-core/modules.git": {
+            "modules": {
+                "nf-core": {
           "bcftools/mpileup": {
             "branch": "master",
             "git_sha": "a5ba4d59c2b248c0379b0f8aeb4e7e754566cd1f",
