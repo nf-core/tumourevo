@@ -55,7 +55,7 @@ workflow NFCORE_TUMOUREVO {
         ensemblvep_info = Channel.of([ [ id:"${params.vep_cache_version}_${params.vep_genome}" ], params.vep_genome, params.vep_species, params.vep_cache_version ])
         DOWNLOAD_CACHE_VEP(ensemblvep_info)
         vep_cache = DOWNLOAD_CACHE_VEP.out.ensemblvep_cache.map{ meta, cache -> [ cache ] }
-        
+
     } else {
         if (params.vep_cache.endsWith("tar.gz")){
             path = params.vep_cache ? Channel.fromPath(params.vep_cache).map{ it -> [ [id:it.baseName], it ] }.collect() : Channel.empty()
@@ -75,7 +75,7 @@ workflow NFCORE_TUMOUREVO {
             vep_cache  = ANNOTATION_CACHE_INITIALISATION.out.ensemblvep_cache
         }
     }
-    
+
     TUMOUREVO (
         input,
         fasta,

@@ -6,7 +6,7 @@ workflow DOWNLOAD_CACHE_VEP {
 
     main:
         ENSEMBLVEP_DOWNLOAD(ensemblvep_info)
-    
+
     emit:
         ensemblvep_cache = ENSEMBLVEP_DOWNLOAD.out.cache.collect()  // channel: [ meta, cache ]
 }

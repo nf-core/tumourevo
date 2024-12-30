@@ -5,7 +5,7 @@ process VCF_PROCESSING {
 
     input:
         tuple val(meta), path(vcf), path(tbi)
-    
+
     output:
         tuple val(meta), path("*.rds"), emit: rds
 
@@ -13,16 +13,17 @@ process VCF_PROCESSING {
         task.ext.when == null || task.ext.when
 
     script:
-        def args = task.ext.args ?: ''    
-        def prefix = task.ext.prefix ?: "${meta.id}"
-        //def filter_mutations = args!='' && args.filter_mutations ?  "$args.filter_mutations" : ""
-        def filter_mutations = args.filter_mutations ? "$args.filter_mutations": "NULL"
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    //def filter_mutations = args!='' && args.filter_mutations ?  "$args.filter_mutations" : ""
+    def filter_mutations = args.filter_mutations ? "$args.filter_mutations": "NULL"
 
     """
-    #!/usr/bin/env Rscript 
+    #!/usr/bin/env Rscript
+
     library(tidyverse)
     library(vcfR)
-    
+
     source(paste0("$moduleDir", '/parser_vcf.R'))
 
     # Read vcf file
@@ -33,10 +34,10 @@ process VCF_PROCESSING {
 
     if (TRUE %in% grepl(pattern = 'Mutect', x = source)){
         calls = parse_Mutect(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
-        
+
     } else if (TRUE %in% grepl(pattern = 'strelka', x = source)){
         calls = parse_Strelka(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
-    
+
     } else if (TRUE %in% grepl(pattern = 'Platypus', x = source)){
         calls = parse_Platypus(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample", filter_mutations = as.logical("$filter_mutations"))
 

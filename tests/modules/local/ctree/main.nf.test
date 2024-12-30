@@ -18,9 +18,9 @@ nextflow_process {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
-                ]
-                ctree_input = 
+                    cancer_type: "PANCANCER"
+                    ]
+                //ctree_input =
                 input[0] = tuple("MSeq_Set06_Set6_42", "Set06", "Set6_42", ctree_input)
                 """
             }

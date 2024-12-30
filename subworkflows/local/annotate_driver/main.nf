@@ -1,20 +1,16 @@
 //
 // DRIVER_ANNOTATION SUB-WORKFLOW
-// 
+//
 
-//include { BUILD_REFERENCE } from '../../../modules/local/build_reference/main.nf'
-//include { DNDSCV } from '../../../modules/local/dndscv/main.nf'
 include { ANNOTATE_DRIVER } from '../../../modules/local/annotate_driver/main.nf'
-//include { JOIN_ANNOTATION } from '../../../modules/local/join_annotation/main.nf'
-
 
 workflow DRIVER_ANNOTATION {
-    take:        
+    take:
         rds
         driver_list
         //cds
         //genome
-    
+
     main:
         //if (params.dndscv_refcds_rda) {
         //    rda = Channel.from(file(params.dndscv_refcds_rda, checkIfExists: true))
@@ -32,7 +28,7 @@ workflow DRIVER_ANNOTATION {
         //    rda = BUILD_REFERENCE.out.dnds_reference
         //    dndscv_ch = rds.combine(driver_list).combine(rda)
         //}
-        
+
         ANNOTATE_DRIVER(rds.combine(driver_list))
         //DNDSCV(dndscv_ch) // add dndsCV statistics and columns "known_driver" (based on driver list, default IntoGen) and "potential_driver"
 

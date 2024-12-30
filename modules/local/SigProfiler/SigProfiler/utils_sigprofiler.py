@@ -21,7 +21,7 @@ def process_tsv_join(tsv_join):
     # Read each file into a pandas DataFrame and ensure all columns are of type 'string'
     tables = []
     for p_table in patients_tsv:
-        df = pd.read_csv(p_table, sep='\\t', dtype=str)  
+        df = pd.read_csv(p_table, sep='\\t', dtype=str)
         tables.append(df)
     multisample_table = pd.concat(tables, ignore_index=True)
     return multisample_table

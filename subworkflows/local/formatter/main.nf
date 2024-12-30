@@ -18,15 +18,16 @@ workflow FORMATTER {
                 out = VCF_PROCESSING(input)
 
         } else if (extension == "cna"){
-                input_cna = input.map{ meta, cna  -> 
+                input_cna = input.map{ meta, cna  ->
                     [ meta, cna[0], cna[1] ]
                 }
                 out = CNA_PROCESSING(input_cna)
 
-         } else if (extension == "rds"){ // for pyclone-vi
+        } else if (extension == "rds"){ // for pyclone-vi
                 out = RDS_PROCESSING(input)
-         }
+        }
 
     emit:
         out
 }
+

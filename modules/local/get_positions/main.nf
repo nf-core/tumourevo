@@ -17,12 +17,10 @@ process GET_POSITIONS_ALL {
     #!/usr/bin/env Rscript
 
     library(tidyverse)
-    
     positions = lapply(strsplit("$rds_list", " ")[[1]], FUN = function(rds){
         df = readRDS(rds)
         df = df[[1]]\$mutations %>% dplyr::mutate(id = paste(chr, from, to, sep = ":")) %>% dplyr::select(chr, from, to, ref, alt, id)
-    }) 
-
+    })
     all = positions %>% dplyr::bind_rows() %>% dplyr::distinct() %>% dplyr::select(-id)
     saveRDS(object = all, file = paste0("$prefix", "_all_positions.rds"))
     #write.table(file = paste0("$prefix", "_all_positions.bed"), all, quote = F, sep = "\t", row.names = F, col.names = T)

@@ -243,7 +243,7 @@ The results of this step are collected in `{pubslish_dir}/signature_deconvolutio
   - exposure RDS plot
 
 </details>
-  
+
 ### SigProfiler
 
 [SigProfiler](https://osf.io/t6j7u/wiki/home/) is a python framework that allows _de novo_ extraction of mutational signatures from data generated in a matrix format. The tool identifies the number of operative mutational signatures, their activities in each sample, and the probability for each signature to cause a specific mutation type in a cancer sample. The tool makes use of `SigProfilerMatrixGenerator` and `SigProfilerPlotting`, seamlessly integrating with other `SigProfiler` tools.

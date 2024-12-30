@@ -25,13 +25,13 @@ workflow TUMOUREVO {
     fasta
     drivers_table
     vep_cache
-  
-  main:
-    input = input_samplesheet.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra -> 
+
+main:
+    input = input_samplesheet.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra ->
             meta = meta + [id: "${meta.dataset}_${meta.patient}_${meta.tumour_sample}"]
             [meta.dataset + meta.patient, meta, vcf, tbi, bam, bai, cna_segs, cna_extra] }
-            | groupTuple 
-            | map { id, meta, vcf, tbi, bam, bai, cna_segs, cna_extra -> 
+            | groupTuple
+            | map { id, meta, vcf, tbi, bam, bai, cna_segs, cna_extra ->
                 n = vcf.baseName.unique().size()
                 [id, meta, vcf, tbi, bam, bai, cna_segs, cna_extra, n ]}
             | transpose
@@ -45,20 +45,20 @@ workflow TUMOUREVO {
             }
 
 
-    input_vcf = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  -> 
+    input_vcf = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  ->
             [ meta, vcf, tbi ]
             }
 
-    input_cna = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  -> 
+    input_cna = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  ->
             [ meta, [cna_segs, cna_extra] ]
             }
 
-    input_bam = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  -> 
+    input_bam = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  ->
             [ meta, bam, bai ]
-            } 
+            }
 
     ch_extra_files = []
-    VCF_ANNOTATE_ENSEMBLVEP(input_vcf, 
+    VCF_ANNOTATE_ENSEMBLVEP(input_vcf,
                             fasta,
                             params.vep_genome,
                             params.vep_species,
@@ -68,15 +68,15 @@ workflow TUMOUREVO {
     vcf_file = FORMATTER_VCF(VCF_ANNOTATE_ENSEMBLVEP.out.vcf_tbi, "vcf")
     FORMATTER_CNA(input_cna, "cna")
 
-    join_input = vcf_file.join(input_bam).map{ meta, rds, bam, bai -> 
+    join_input = vcf_file.join(input_bam).map{ meta, rds, bam, bai ->
             [ meta, rds, bam, bai ] }
             .branch { meta, rds, bam, bai ->
                 to_lift: meta.lifter == true
                 multisample: meta.lifter == false
             }
 
-    out_lifter = LIFTER(join_input.to_lift, fasta) 
-    rds_input = join_input.multisample.map{ meta, rds, bam, bai -> 
+    out_lifter = LIFTER(join_input.to_lift, fasta)
+    rds_input = join_input.multisample.map{ meta, rds, bam, bai ->
             [meta, rds]
             }
     vcf_rds = rds_input.concat(out_lifter)
@@ -86,7 +86,7 @@ workflow TUMOUREVO {
 
     in_cnaqc = cna_out.join(annotation)
     QC(in_cnaqc)
-    
+
     if (params.filter == true){
         SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_PASS)
         SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_PASS)

@@ -6,7 +6,7 @@ include { XXX } from '../../../modules/local/xxx/main'
 
 
 workflow GENOME_INTERPRETER {
-    take: 
+    take:
         cnaqc
         drivers
         signatures
@@ -18,7 +18,7 @@ workflow GENOME_INTERPRETER {
         annotated_maf = ADD_GENOMIC_INFO(maf, cnaqc, drivers,clusters, signatures) // a process that attaches information from copy numbers, drivers, subclonal and signature deconvolution to the maf files
         maf_plot = MAFPLOT(maf)
         xxx
-    
+
     emit:
-       xxx
+        xxx
 }
