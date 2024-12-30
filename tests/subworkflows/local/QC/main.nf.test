@@ -16,9 +16,8 @@ nextflow_workflow {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 // From cna2cnaqc
                 cna_rds = file(params.local_testdata_base_path + "/from_cna2CNAqc/MSeq_Set06_Set6_42_cna.rds", checkIfExists: true)
                 // From vcf2cnaqc
@@ -33,6 +32,5 @@ nextflow_workflow {
             assert workflow.success
             //assert snapshot(workflow.out).match()
         }
-    
     }
 }

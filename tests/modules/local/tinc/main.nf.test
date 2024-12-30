@@ -19,14 +19,12 @@ nextflow_process {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "Set6_54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 // From cna2cnaqc
                 cna_rds = file(params.local_testdata_base_path + "/from_cna2CNAqc/MSeq_Set06_Set6_42_cna.rds", checkIfExists: true)
                 // From vcf2cnaqc
                 snv_rds = file(params.local_testdata_base_path + "/from_dndscv/MSeq_Set06_Set6_42_dnds.rds", checkIfExists: true)
-                
                 // Create a tuple with metadata and file path
                 input[0] = tuple(meta, cna_rds, snv_rds)
                 """
@@ -41,6 +39,7 @@ nextflow_process {
     }
 
 }
+
 
 /** Infos:
 *   it requires at least 4 cores to run!

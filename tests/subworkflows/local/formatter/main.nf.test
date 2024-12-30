@@ -16,9 +16,8 @@ nextflow_workflow {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 vcf = file(params.local_testdata_base_path + '/VCF/MSeq_Set06/Set6_42.WGS.filtered.vcf.gz', checkIfExists: true)
                 tbi = file(params.local_testdata_base_path + '/VCF/MSeq_Set06/Set6_42.WGS.filtered.vcf.gz.tbi', checkIfExists: true)
                 // Create a tuple with metadata and file path
@@ -32,7 +31,6 @@ nextflow_workflow {
             assert workflow.success
             //assert snapshot(workflow.out).match()
         }
-    
     }
 
     //Second test on the same workflow
@@ -78,7 +76,7 @@ nextflow_workflow {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
                 joinCNAqc_rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
                 tumor_samples = meta.tumour_sample // "Set6_42"
@@ -92,7 +90,5 @@ nextflow_workflow {
             assert workflow.success
             //assert snapshot(workflow.out).match()
         }
-    
     }
-
 }

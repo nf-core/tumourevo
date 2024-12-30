@@ -16,12 +16,9 @@ nextflow_workflow {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
-                bam = 
-                bai = 
                 fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
 
                 // Create a tuple with metadata and file paths
@@ -35,6 +32,5 @@ nextflow_workflow {
             assert workflow.success
             //assert snapshot(workflow.out).match()
         }
-    
     }
 }

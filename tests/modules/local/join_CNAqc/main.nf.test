@@ -8,7 +8,7 @@ nextflow_process {
             params {
                 // define module specific parameters here. Example:
                 // outdir = "tests/results"
-            }            
+            }
             process {
                 """
                 meta = [
@@ -17,7 +17,7 @@ nextflow_process {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
                 rds_list = file(params.local_testdata_base_path + "/from_CNAqc/MSeq_Set06_Set6_42_qc.rds", checkIfExists: true)
                 input[0] = tuple(meta, rds_list, meta.tumor_sample)

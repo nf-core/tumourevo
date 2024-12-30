@@ -18,14 +18,12 @@ nextflow_workflow {
                 meta = [
                     id : "MSeq_Set06_Set6_42",
                     tumour_sample: "Set6_42",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 snv_rds = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/VCF.rds', checkIfExists: true)
                 driver_list = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/driver_list.txt', checkIfExists: true)
                 cds_table = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/BioMart_human_GRCh37_chr3_segment.txt', checkIfExists: true)
                 genome_fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
-                
                 // Create a tuple with metadata and file path
                 input[0] = Channel.from([tuple(meta, snv_rds)])
                 input[1] = Channel.from(driver_list)
@@ -52,14 +50,12 @@ nextflow_workflow {
                 meta = [
                     id : "MSeq_Set06_Set6_42",
                     tumour_sample: "Set6_42",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 snv_rds = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/VCF.rds', checkIfExists: true)
                 driver_list = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/driver_list.txt', checkIfExists: true)
                 cds_table = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/BioMart_human_GRCh37_chr3_segment.txt', checkIfExists: true)
                 genome_fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
-                
                 // Create a tuple with metadata and file path
                 input[0] = Channel.from([tuple(meta, snv_rds)])
                 input[1] = Channel.from(driver_list)
