@@ -729,8 +729,7 @@
                     "default": "https://raw.githubusercontent.com/nf-core/test-datasets/"
                 },
                 "trace_report_suffix": {
-                    "type": "string",
-                    "default": "2024-12-30_10-35-58"
+                    "type": "string"
                 },
                 "validate_params": {
                     "type": "boolean",
