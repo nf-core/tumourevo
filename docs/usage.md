@@ -142,16 +142,14 @@ We report the different tools included in the pipeline.
 
 1. **Gene annotation**
 
-
-    - [EnsemblVEP]()
+   - [EnsemblVEP]()
 
 2. **Driver annotation**
 
 3. **Quality control**
 
-
-    - [TINC](https://caravagnalab.github.io/TINC/)
-    - [CNAqc](https://caravagnalab.github.io/CNAqc/)
+   - [TINC](https://caravagnalab.github.io/TINC/)
+   - [CNAqc](https://caravagnalab.github.io/CNAqc/)
 
   <!-- #### TINC
 
@@ -159,17 +157,15 @@ We report the different tools included in the pipeline.
 
 1. **Subclonal deconvolution**
 
-
-    - [MOBSTER](https://caravagnalab.github.io/mobster/)
-    - [PyClone-VI](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03919-2)
-    - [VIBER](https://caravagnalab.github.io/VIBER/index.html)
-    - [Ctree](https://caravagnalab.github.io/ctree/)
+   - [MOBSTER](https://caravagnalab.github.io/mobster/)
+   - [PyClone-VI](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03919-2)
+   - [VIBER](https://caravagnalab.github.io/VIBER/index.html)
+   - [Ctree](https://caravagnalab.github.io/ctree/)
 
 2. **Signature deconvolution**
 
-
-    - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
-    - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/)
+   - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
+   - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/)
 
 ## Running the pipeline
 
