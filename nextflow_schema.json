@@ -730,7 +730,7 @@
                 },
                 "trace_report_suffix": {
                     "type": "string",
-                    "default": "2024-12-20_16-00-35"
+                    "default": "2024-12-30_10-35-58"
                 },
                 "validate_params": {
                     "type": "boolean",
