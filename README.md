@@ -39,8 +39,8 @@ different strategies will be applied.
     <img title="tumourevo workflow" src="docs/images/workflow_last.png" width=90%>
 </p>
 
+- Variant Annotation (`VEP`)
 - Quality Control (`CNAqc`, `TINC`)
-- Variant Annotation (`VEP`, `maftools`)
 - Driver Annotation
 - Subclonal Deconvolution (`PyClone`, `MOBSTER`, `VIBER`)
 - Clone Tree Inference (`ctree`)
@@ -69,7 +69,8 @@ nextflow run nf-core/tumourevo \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR> \
-   --genome GRCh37
+   --genome GRCh37 \
+   --fasta <PATH>
 ```
 
 > [!WARNING]
