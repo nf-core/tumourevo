@@ -34,12 +34,12 @@
         "main_options": {
             "title": "Main options",
             "type": "object",
-            "description": "",
+            "description": "Most common options used for the pipeline.",
             "default": "",
             "properties": {
                 "fasta": {
                     "type": "string",
-                    "description": "Path to reference fast file."
+                    "description": "Path to reference fasta file."
                 },
                 "genome": {
                     "type": "string",
@@ -57,7 +57,7 @@
                 },
                 "filter": {
                     "type": "string",
-                    "description": "Flag for filtering QC mutations or not."
+                    "description": "Flag for filtering or not QC mutations."
                 }
             },
             "required": ["genome"],
@@ -66,11 +66,12 @@
         "variant_annotation": {
             "title": "Variant Annotation",
             "type": "object",
-            "description": "",
+            "description": "Variant Annotation parameters.",
             "default": "",
             "properties": {
                 "download_cache_vep": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Parameter for downloading VEP cache."
                 },
                 "vep_cache": {
                     "type": "string",
@@ -99,7 +100,7 @@
         "driver_annotation": {
             "title": "Driver Annotation",
             "type": "object",
-            "description": "",
+            "description": "Driver Annotation parameters.",
             "default": "",
             "properties": {
                 "drivers_table": {
@@ -113,7 +114,7 @@
         "vcf2cnaqc": {
             "title": "VCF2CNAqc",
             "type": "object",
-            "description": "",
+            "description": "Filtering parameters from vcf file.",
             "default": "",
             "properties": {
                 "vcf_filter_mutations": {
@@ -127,76 +128,98 @@
         "cnaqc": {
             "title": "CNAqc",
             "type": "object",
-            "description": "",
+            "description": "CNAqc tool parameters.",
             "default": "",
             "properties": {
                 "cnaqc_karyotypes": {
                     "type": "string",
-                    "default": "c(\\'1:0\\', \\'1:1\\', \\'2:0\\', \\'2:1\\', \\'2:2\\')"
+                    "default": "c(\\'1:0\\', \\'1:1\\', \\'2:0\\', \\'2:1\\', \\'2:2\\')",
+                    "description": "For clonal simple CNAs, the list of segments to test.",
+                    "help_text": "By default LOH regions (A, AA), diploid regions (AB), and amplification regions (AAB, AABB) are tested, corresponding to '1:0', '1:1', '2:1', '2:0', '2:2' in \"Major:minor\" notation."
                 },
                 "cnaqc_min_karyotype_size": {
                     "type": "integer",
-                    "default": 0
+                    "default": 0,
+                    "description": "For clonal simple CNAs, a filter for the segments to test.",
+                    "help_text": "The segment size is defined based on the number of mutations mapped, this cut is on the proportion relative to the whole set of segments one wishes to analyse (defined by `karyotypes`). For example, by setting `min_karyotype_size = 0.2` one would QC clonal simple CNAs that contain at least 20 The default of this parameter is `0` (all QCed)."
                 },
                 "cnaqc_min_absolute_karyotype_mutations": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "For clonal simple CNAs, as min_karyotype_size but with a cut measured on absolute mutation counts.",
+                    "help_text": "For example, by setting `min_absolute_karyotype_mutations = 150` one would QC clonal simple CNAs that contain at least `150` mutations. The default of this parameter is `100`."
                 },
                 "cnaqc_p_binsize_peaks": {
                     "type": "number",
-                    "default": 0.005
+                    "default": 0.005,
+                    "description": "For clonal simple CNAs, peaks detected will be filtered if, in a peak, we map less than p_binsize_peaks * N mutations.",
+                    "help_text": "The value N is obtained couting all mutations that map in all peaks. By default this parameters is `0.005`."
                 },
                 "cnaqc_matching_epsilon": {
                     "type": "string",
-                    "default": "NULL"
+                    "default": "NULL",
+                    "description": "Deprecated parameter."
                 },
                 "cnaqc_purity_error": {
                     "type": "number",
-                    "default": 0.05
+                    "default": 0.05,
+                    "description": "For clonal simple CNAs, the purity error tolerance to determine QC pass or fail.",
+                    "help_text": "This can be set automatically using function auto_tolerance to optimise the analysis based on a desired rate of false positives matches, as a function of the data coverage and (putative) purity.\n\n"
                 },
                 "cnaqc_vaf_tolerance": {
                     "type": "number",
-                    "default": 0.015
+                    "default": 0.015,
+                    "description": "For clonal simple CNAs, a tolerance in comparing bands overlaps which is applied to the raw VAF values."
                 },
                 "cnaqc_n_bootstrap": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "For clonal simple CNAs, the number of times peak detection is bootstrapped (by default 1).",
+                    "help_text": "This helps sometimes finding peaks that might be visually observable but fail to be detected by the underlying peak-detection heuristics."
+                },
+                "cnaqc_kernel_adjust": {
                     "type": "integer",
                     "default": 1
                 },
                 "cnaqc_matching_strategy": {
                     "type": "string",
-                    "default": "rightmost"
+                    "default": "rightmost",
+                    "description": "For clonal simple CNAs, if \"closest\" the closest peak will be used to match the expected peak. If \"rightmost\" peaks are matched prioritizing right to left peaks (the higher-VAF gets matched first); this strategy is more correct in principle but works only if there are no spurious peaks in the estimated density."
                 },
                 "cnaqc_kde": {
                     "type": "string",
-                    "default": "TRUE"
+                    "default": "TRUE",
+                    "description": "Deprecated parameter."
                 },
                 "cnaqc_starting_state_subclonal_evolution": {
                     "type": "string",
-                    "default": "1:1"
+                    "default": "1:1",
+                    "description": "For subclonal simple CNAs, the starting state to determine linear versus branching evolutionary models."
+                },
+                "cnaqc_cluster_subclonal_CCF": {
+                    "type": "string",
+                    "default": "FALSE",
+                    "description": "For subclonal simple CNAs, the starting state to determine linear versus branching evolutionary models."
+                },
+                "cnaqc_muts_per_karyotype": {
+                    "type": "integer",
+                    "default": 25,
+                    "description": "Minimum number of mutations that are required to be mapped to a karyotype in order to compute CCF values (default 25)."
+                },
+                "cnaqc_cutoff_QC_PASS": {
+                    "type": "number",
+                    "default": 0.1,
+                    "description": "For the entropy-based method, percentage of mutations that can be not-assigned (NA) in a karyotype.",
+                    "help_text": " If the karyotype has more than cutoff_QC_PASS percentage of non-assigned mutations, then the overall set of CCFs is failed for the karyotype."
+                },
+                "cnaqc_method": {
+                    "type": "string",
+                    "default": "ENTROPY",
+                    "description": "Either \"ENTROPY\" (default) or \"ROUGH\", to reflect the two different algorithms to compute CCF."
                 },
                 "cnaqc_plot_cn": {
                     "type": "string",
                     "default": "absolute"
-                },
-                "cnaqc_muts_per_karyotype": {
-                    "type": "integer",
-                    "default": 25
-                },
-                "cnaqc_cutoff_QC_PASS": {
-                    "type": "number",
-                    "default": 0.1
-                },
-                "cnaqc_cluster_subclonal_CCF": {
-                    "type": "string",
-                    "default": "FALSE"
-                },
-                "cnaqc_method": {
-                    "type": "string",
-                    "default": "ENTROPY"
-                },
-                "cnaqc_kernel_adjust": {
-                    "type": "integer",
-                    "default": 1
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -204,7 +227,7 @@
         "joincnaqc": {
             "title": "JoinCNAqc",
             "type": "object",
-            "description": "",
+            "description": "joinCNAqc",
             "default": "",
             "properties": {
                 "joincnaqc_qc_filter": {
