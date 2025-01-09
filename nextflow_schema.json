@@ -57,7 +57,7 @@
                 },
                 "filter": {
                     "type": "boolean",
-                    "default": "true",
+                    "default": true,
                     "description": "Flag for filtering or not QC mutations."
                 }
             },
@@ -815,5 +815,6 @@
         {
             "$ref": "#/$defs/other"
         }
-    ]
+    ],
+    "properties": {}
 }
