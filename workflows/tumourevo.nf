@@ -65,8 +65,9 @@ main:
                             params.vep_cache_version,
                             vep_cache,
                             ch_extra_files)
+
     vcf_file = FORMATTER_VCF(VCF_ANNOTATE_ENSEMBLVEP.out.vcf_tbi, "vcf")
-    FORMATTER_CNA(input_cna, "cna")
+    cna_file = FORMATTER_CNA(input_cna, "cna")
 
     join_input = vcf_file.join(input_bam).map{ meta, rds, bam, bai ->
             [ meta, rds, bam, bai ] }
@@ -76,15 +77,14 @@ main:
             }
 
     out_lifter = LIFTER(join_input.to_lift, fasta)
+
     rds_input = join_input.multisample.map{ meta, rds, bam, bai ->
             [meta, rds]
             }
     vcf_rds = rds_input.concat(out_lifter)
-
     annotation = DRIVER_ANNOTATION(vcf_rds, drivers_table)
-    cna_out = FORMATTER_CNA.out
 
-    in_cnaqc = cna_out.join(annotation)
+    in_cnaqc = cna_file.join(annotation)
     QC(in_cnaqc)
 
     if (params.filter == true){

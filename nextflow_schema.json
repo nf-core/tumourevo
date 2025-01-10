@@ -50,15 +50,15 @@
                     "default": "mobster,viber,pyclone-vi,sparsesignatures,sigprofiler",
                     "description": "List of tools for running the pipeline."
                 },
-                "publish_dir_mode": {
-                    "type": "string",
-                    "default": "copy",
-                    "description": "Method used to save pipeline results to output directory."
-                },
                 "filter": {
                     "type": "boolean",
                     "default": true,
                     "description": "Flag for filtering or not QC mutations."
+                },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "description": "Method used to save pipeline results to output directory."
                 }
             },
             "required": ["genome"],
@@ -180,7 +180,8 @@
                 },
                 "cnaqc_kernel_adjust": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "For KDE-based matches the adjust density parameter; see density."
                 },
                 "cnaqc_matching_strategy": {
                     "type": "string",
@@ -250,19 +251,27 @@
             "properties": {
                 "pyclonevi_density": {
                     "type": "string",
-                    "default": "beta-binomial"
+                    "default": "beta-binomial",
+                    "description": "The probability density used to model the read count data. Choices are beta-binomial and binomial.",
+                    "help_text": "binomial is a common choice for sequencing data. beta-binomial is useful when the data is over-dispersed which has been observed frequently in sequencing data."
                 },
                 "pyclonevi_n_restarts": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "Number of random restarts of variational inference.",
+                    "help_text": "More restarts will have a higher probability of finding the optimal variational approximation. This also increases running time."
                 },
                 "pyclonevi_n_grid_point": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "Number of grid points used for approximating the posterior distribution.",
+                    "help_text": " Higher values should be used for deeply sequenced data."
                 },
                 "pyclonevi_n_cluster": {
                     "type": "integer",
-                    "default": 20
+                    "default": 20,
+                    "description": "The number of clusters to use while fitting.",
+                    "help_text": "This should be set to a value larger than the expected number of clusters. The software will then automatically determine how many to use. In general this value should increase if as more samples are used."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -275,55 +284,68 @@
             "properties": {
                 "mobster_K": {
                     "type": "string",
-                    "default": "1:5"
+                    "default": "1:5",
+                    "description": "A vector with the number of Beta components to use. All values of K must be positive and strictly greater than 0."
                 },
                 "mobster_init": {
                     "type": "string",
-                    "default": "peaks"
+                    "default": "peaks",
+                    "description": "Initial values for the parameters of the model. Can be either \"random\" or \"peaks\" ."
                 },
                 "mobster_samples": {
                     "type": "integer",
-                    "default": 5
+                    "default": 5,
+                    "description": "Number of fits that should be attempted for each configuration of the model tested."
                 },
                 "mobster_tail": {
                     "type": "string",
-                    "default": "c(TRUE,FALSE)"
+                    "default": "c(TRUE,FALSE)",
+                    "description": "Boolean value whether to use or not tail mutations for subclonal deconvolution."
                 },
                 "mobster_epsilon": {
                     "type": "number",
-                    "default": 1e-10
+                    "default": 1e-10,
+                    "description": "Tolerance for convergency estimation."
                 },
                 "mobster_maxIter": {
                     "type": "integer",
-                    "default": 250
+                    "default": 250,
+                    "description": "Maximum number of steps for a fit."
                 },
                 "mobster_fit_type": {
                     "type": "string",
-                    "default": "MM"
+                    "default": "MM",
+                    "description": "A string that determines the type of fit. Can be either \"MLE\" , for the Maximum Likelihood Estimate of the Beta parameters, or \"MM\"for the Moment Matching."
                 },
                 "mobster_seed": {
                     "type": "integer",
-                    "default": 12345
+                    "default": 12345,
+                    "description": "Seed for the random numbers generator"
                 },
                 "mobster_model_selection": {
                     "type": "string",
-                    "default": "reICL"
+                    "default": "reICL",
+                    "description": "Score to minimize to select the best model; this has to be one of 'reICL', 'ICL', 'BIC', 'AIC' or 'NLL'."
                 },
                 "mobster_trace": {
                     "type": "string",
-                    "default": "FALSE"
+                    "default": "FALSE",
+                    "description": "Boolean value whether to return the trace of model fit."
                 },
                 "mobster_parallel": {
                     "type": "string",
-                    "default": "TRUE"
+                    "default": "TRUE",
+                    "description": "Boolean value whether to run the fit in parallel."
                 },
                 "mobster_pi_cutoff": {
                     "type": "number",
-                    "default": 0.02
+                    "default": 0.02,
+                    "description": "The minimum mixing proportion of a cluster to be returned as output."
                 },
                 "mobster_n_cutoff": {
                     "type": "integer",
-                    "default": 10
+                    "default": 10,
+                    "description": "The minimum number of mutations assigned to a cluster to be returned as output."
                 },
                 "mobster_silent": {
                     "type": "string",
@@ -331,7 +353,8 @@
                 },
                 "mobster_auto_setup": {
                     "type": "string",
-                    "default": "NULL"
+                    "default": "NULL",
+                    "description": "Overrides all the parameters with a predefined set of values, in order to implement different analyses."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -344,55 +367,69 @@
             "properties": {
                 "viber_K": {
                     "type": "integer",
-                    "default": 10
+                    "default": 10,
+                    "description": "The maximum number of clusters returned"
                 },
                 "viber_samples": {
                     "type": "integer",
-                    "default": 10
+                    "default": 10,
+                    "description": "The number of fits to be computed."
                 },
                 "viber_alpha_0": {
                     "type": "number",
-                    "default": 1e-6
+                    "default": 1e-6,
+                    "description": "The concentration parameter of the Dirichlet mixture."
                 },
                 "viber_a_0": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "The prior Beta hyperparameter for each Binomial component a"
                 },
                 "viber_b_0": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "The prior Beta hyperparameter for each Binomial component b"
                 },
                 "viber_maxIter": {
                     "type": "integer",
-                    "default": 5000
+                    "default": 5000,
+                    "description": "The maximum number of fit iterations"
                 },
                 "viber_epsilon_conv": {
                     "type": "number",
-                    "default": 1e-10
+                    "default": 1e-10,
+                    "description": "The epsilon to measure convergence as ELBO absolute difference"
                 },
                 "viber_q_init": {
                     "type": "string",
-                    "default": "prior"
+                    "default": "prior",
+                    "description": "Initialization of the q-distribution to compute the approximation of the posterior distributions.",
+                    "help_text": "This can be set in three different waysL equal to the prior (q_init = 'prior'), via kmeans clustering (q_init = 'kmeans') and capturing points which are private to each dimension (q_init = 'private')."
                 },
                 "viber_trace": {
                     "type": "string",
-                    "default": "FALSE"
+                    "default": "FALSE",
+                    "description": "Boolean value whether to return the trace of model fit."
                 },
                 "viber_binomial_cutoff": {
                     "type": "number",
-                    "default": 0.05
+                    "default": 0.05,
+                    "description": "The minimum Binomial success probability when applying a heuristic procedure to filter clusters after Variational Inference."
                 },
                 "viber_pi_cutoff": {
                     "type": "number",
-                    "default": 0.02
+                    "default": 0.02,
+                    "description": "The minimum size of the mixture component when applying a heuristic procedure to filter clusters after Variational Inference."
                 },
                 "viber_re_assign": {
                     "type": "string",
-                    "default": "FALSE"
+                    "default": "FALSE",
+                    "description": "Boolean value whether point assigned to a cluster that is filtered our, are re-assigned from the density function."
                 },
                 "viber_dimensions_cutoff": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "The minimum number of dimensions where we want to detect a Binomial component when applying a heuristic procedure to filter clusters after Variational Inference."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -815,6 +852,5 @@
         {
             "$ref": "#/$defs/other"
         }
-    ],
-    "properties": {}
+    ]
 }
