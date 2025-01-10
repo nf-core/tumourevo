@@ -1,6 +1,6 @@
 process SPARSE_SIGNATURES {
     tag "$meta.id"
-    container = 'docker://lvaleriani/sparsesignature:v2'
+    container = 'docker://lvaleriani/sparsesignature:version1.0'
 
 
     input:

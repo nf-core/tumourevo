@@ -1,6 +1,6 @@
 process JOIN_POSITIONS {
     tag "$meta.id"
-    container = 'docker://lvaleriani/cnaqc:dev1'
+    container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:
     tuple val(meta), path(rds), path(vcf_pileup), path(positions)

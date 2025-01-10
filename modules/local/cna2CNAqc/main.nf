@@ -1,7 +1,7 @@
 process CNA_PROCESSING {
     tag "$meta.id"
 
-    container "docker://lvaleriani/cnaqc:dev1"
+    container "docker://lvaleriani/cnaqc:version1.0"
 
     input:
         tuple val(meta), path(cna_segs), path(cna_extra)

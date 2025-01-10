@@ -1,6 +1,6 @@
 process GET_POSITIONS_ALL {
     tag "$meta.id"
-    container = 'docker://lvaleriani/cnaqc:dev1'
+    container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:
     tuple val(meta), path(rds_list, stageAs: '*.rds')

@@ -4,7 +4,7 @@
 
 process RDS_PROCESSING {
     tag "$meta.id"
-    container = 'docker://lvaleriani/cnaqc:dev1'
+    container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:
         tuple val(meta), path(rds_join), val(tumour_samples)
