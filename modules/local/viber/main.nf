@@ -1,7 +1,6 @@
 process VIBER {
     tag "$meta.id"
-    // container='file:///fast/cdslab/ebusca00/singularity/cdslab.sif'
-    container = 'docker://elenabuscaroli/viber:latest'
+    container = 'docker://elenabuscaroli/viber:version0.1'
 
     input:
     tuple val(meta), path(rds_join), val(tumour_samples) //rds from either JOIN_CNAQC or JOIN_FIT, should be always grouped
@@ -18,7 +17,6 @@ process VIBER {
 script:
     // viber fit params
     def args = task.ext.args ?: ""
-    // def prefix = task.ext.prefix ?:"${meta.id}_remove_tail_$args.remove_tail"
     def prefix = task.ext.prefix ?:"${meta.id}"
     def K = args!="" && args.K ? "$args.K" : ""
     def alpha_0 = args!="" && args.alpha_0 ? "$args.alpha_0" : ""
@@ -190,5 +188,12 @@ script:
     ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_viber.pdf"), height=210, width=210, units="mm", dpi = 200)
     ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_viber.png"), height=210, width=210, units="mm", dpi = 200)
 
+    """
+
+    stub:
+    """
+    echo "${task.process}:" > versions.yml
+    echo ' CNAqc: 1.0.0' >> versions.yml
+    echo ' viber: 0.1.0' >> versions.yml
     """
 }

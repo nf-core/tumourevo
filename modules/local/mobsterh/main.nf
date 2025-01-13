@@ -1,7 +1,6 @@
 process MOBSTERh {
     tag "$meta.id"
-    // container='file:///fast/cdslab/ebusca00/singularity/cdslab.sif'
-    container = 'docker://elenabuscaroli/mobster:latest'
+    container = 'docker://elenabuscaroli/mobster:version1.0'
 
     input:
         tuple val(meta), path(rds_join) // rds from JOIN_CNAQC
@@ -117,5 +116,12 @@ process MOBSTERh {
         ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_mobster.pdf"), height=210, width=210, units="mm", dpi = 200)
         ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_mobster.png"), height=210, width=210, units="mm", dpi = 200)
     })
+    """
+
+    stub:
+    """
+    echo "${task.process}:" > versions.yml
+    echo ' CNAqc: 1.0.0' >> versions.yml
+    echo ' mobster: 1.0.0' >> versions.yml
     """
 }

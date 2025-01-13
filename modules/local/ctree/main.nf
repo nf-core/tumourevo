@@ -1,7 +1,6 @@
 process CTREE {
     tag "$meta.id"
-    // container='file:///fast/cdslab/ebusca00/singularity/cdslab.sif'
-    container = 'docker://elenabuscaroli/ctree:latest'
+    container = 'docker://elenabuscaroli/ctree:version1.1'
 
     input:
 
@@ -27,8 +26,6 @@ process CTREE {
 
     library(ctree)
     library(dplyr)
-    library(VIBER)
-    library(mobster)
     library(ggplot2)
 
     outdir = ""
@@ -113,6 +110,7 @@ process CTREE {
 
         ## viber
         if (class(best_fit) == "vb_bmm") {
+            library(VIBER)
             fn_name = VIBER::get_clone_trees
             subclonal_tool = "VIBER"
 
@@ -127,6 +125,7 @@ process CTREE {
 
         ## mobster
         if (class(best_fit) == "dbpmm") {
+            library(mobster)
             fn_name = mobster::get_clone_trees
             subclonal_tool = "MOBSTERh"
             sample_id = unique(best_fit[["data"]][["sample_id"]])
@@ -187,5 +186,13 @@ process CTREE {
         ggplot2::ggsave(plot=report_fig, filename=paste0(outdir, "$prefix", "_REPORT_plots_", ctree_output, ".png"), height=297, width=210, units="mm", dpi=200)
     }
 
+    """
+
+    stub:
+    """
+    echo "${task.process}:" > versions.yml
+    echo ' ctree: 1.1.0' >> versions.yml
+    echo ' viber: 0.1.0' >> versions.yml
+    echo ' mobster: 1.0.0' >> versions.yml
     """
 }
