@@ -227,24 +227,26 @@
             "fa_icon": "fas fa-briefcase"
         },
         "joincnaqc": {
-            "title": "JoinCNAqc",
+            "title": "joinCNAqc",
             "type": "object",
             "description": "joinCNAqc",
             "default": "",
             "properties": {
                 "joincnaqc_qc_filter": {
                     "type": "string",
-                    "default": "FALSE"
+                    "default": "FALSE",
+                    "description": "If TRUE the mutations flagged as FAILED by CNAqc are discarded while building the joinCNAqc segmentation, if FALSE they are kept in the new object."
                 },
                 "joincnaqc_keep_original": {
                     "type": "string",
-                    "default": "TRUE"
+                    "default": "TRUE",
+                    "description": "If TRUE the original CNAqc object is kept in the joinCNAqc object, otherwise it is lost."
                 }
             },
             "fa_icon": "fas fa-briefcase"
         },
-        "pyclonevi": {
-            "title": "PyCloneVI",
+        "pyclone_vi": {
+            "title": "pyClone-VI",
             "type": "object",
             "description": "",
             "default": "",
@@ -277,7 +279,7 @@
             "fa_icon": "fas fa-briefcase"
         },
         "mobster": {
-            "title": "Mobster",
+            "title": "mobster",
             "type": "object",
             "description": "",
             "default": "",
@@ -360,7 +362,7 @@
             "fa_icon": "fas fa-briefcase"
         },
         "viber": {
-            "title": "Viber",
+            "title": "viber",
             "type": "object",
             "description": "",
             "default": "",
@@ -435,22 +437,25 @@
             "fa_icon": "fas fa-briefcase"
         },
         "ctree": {
-            "title": "CTree",
+            "title": "ctree",
             "type": "object",
             "description": "",
             "default": "",
             "properties": {
                 "ctree_sspace_cutoff": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "If there are less than this number of tree available, all the structures are examined in an exhaustive fashion. Otherwise, if there are more than this, a Monte Carlo sampler is used."
                 },
                 "ctree_n_sampling": {
                     "type": "integer",
-                    "default": 5000
+                    "default": 5000,
+                    "description": "f a Monte Carlo sampler is used, n.sampling distinct trees are sampled and scored."
                 },
                 "ctree_store_max": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "When a number of trees are generated, scored and ranked, a maximum of store.max are returned to the user (these are selected following the ranking)."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -688,27 +693,33 @@
             "properties": {
                 "tinc_normal_contamination_lv": {
                     "type": "integer",
-                    "default": 3
-                },
-                "tinc_cutoff_lv_assignment": {
-                    "type": "number",
-                    "default": 0.75
+                    "default": 3,
+                    "description": "A number that represent the normal contamination level for which the sample is considered passed or failed."
                 },
                 "tinc_vaf_range_tumour": {
                     "type": "string",
-                    "default": "c(0, 0.7)"
+                    "default": "c(0, 0.7)",
+                    "description": "A range `[x, y]` so that only mutations with VAF in that range are actually used to determine the TIN/ TIT levels of the input."
                 },
                 "tinc_cutoff_miscalled_clonal": {
                     "type": "number",
-                    "default": 0.6
+                    "default": 0.6,
+                    "description": "An upper bound on the VAF of a cluster in the tumour data. Clusters above this value will be considered miscalled clonal clusters (e.g., due to LOH etc.)."
+                },
+                "tinc_cutoff_lv_assignment": {
+                    "type": "number",
+                    "default": 0.75,
+                    "description": "Consider only latent variables with responsibilities above this cutoff."
                 },
                 "tinc_N": {
                     "type": "integer",
-                    "default": 20000
+                    "default": 20000,
+                    "description": "If there are more than `N` mutations in VAF range `VAF_range_tumour`, a random subset of size `N` is retained"
                 },
                 "tinc_fast": {
                     "type": "string",
-                    "default": "TRUE"
+                    "default": "TRUE",
+                    "description": "If `TRUE`, it runs the analysis with reduced sampling power and accuracy. Use this to obtain a result for preliminary inspection of your data, and then run `autofit` with this parameter set to `FALSE`."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -826,7 +837,7 @@
             "$ref": "#/$defs/joincnaqc"
         },
         {
-            "$ref": "#/$defs/pyclonevi"
+            "$ref": "#/$defs/pyclone_vi"
         },
         {
             "$ref": "#/$defs/mobster"
