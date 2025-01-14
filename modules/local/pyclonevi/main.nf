@@ -47,4 +47,10 @@ process PYCLONEVI {
 
     python3 $moduleDir/pyclone_ctree.py --joint ${prefix}_pyclone_input.tsv --best_fit ${prefix}_best_fit.txt --ctree_input ${prefix}_cluster_table.csv
     """
+
+    stub:
+    """
+    echo "${task.process}:" > versions.yml
+    echo ' pyclone: 0.1.3' >> versions.yml
+    """
 }
