@@ -1,4 +1,5 @@
-library(tidyverse)
+library(tidyr)
+library(dplyr)
 library(vcfR)
 
 parse_FreeBayes = function(vcf, tumour_id, normal_id, filter_mutations = FALSE){

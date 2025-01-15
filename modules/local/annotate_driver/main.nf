@@ -4,23 +4,22 @@ process ANNOTATE_DRIVER {
     container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:
-
     tuple val(meta), path(rds), path(driver_list)
 
     output:
-    tuple val(meta), path("*.rds"), emit: rds
+    tuple val(meta), path("*.rds"),     emit: rds
+    path "versions.yml",                emit: versions
 
 
     script:
-
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def args    =   task.ext.args   ?: ''
+    def prefix  =   task.ext.prefix ?: "${meta.id}"
 
     """
     #!/usr/bin/env Rscript
-
     library(dplyr)
     library(readr)
+    library(tidyr)
 
     data = readRDS("$rds")
     SNV = data[["$meta.tumour_sample"]]
@@ -66,8 +65,19 @@ process ANNOTATE_DRIVER {
         select(-tmp_s2) %>%
         mutate(is_driver = ifelse(is.na(is_driver), FALSE, is_driver))
 
-
     data[["$meta.tumour_sample"]]\$mutations = x
     saveRDS(object = data, file = paste0("$prefix", "_driver.rds"))
+
+    # version export
+    f <- file("versions.yml","w")
+    readr_version <- sessionInfo()\$otherPkgs\$readr\$Version
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    tidyr_version <- sessionInfo()\$otherPkgs\$tidyr\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    readr:", readr_version), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    writeLines(paste("    tidyr:", tidyr_version), f)
+    close(f)
+
     """
 }

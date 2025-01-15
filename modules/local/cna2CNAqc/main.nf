@@ -4,17 +4,18 @@ process CNA_PROCESSING {
     container "docker://lvaleriani/cnaqc:version1.0"
 
     input:
-        tuple val(meta), path(cna_segs), path(cna_extra)
+    tuple val(meta), path(cna_segs), path(cna_extra)
 
     output:
-        tuple val(meta), path("*.rds"), emit: rds
+    tuple val(meta), path("*.rds"),                            emit: rds
+    path "versions.yml",                                       emit: versions
 
     when:
-        task.ext.when == null || task.ext.when
+    task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def args    = task.ext.args     ?:  ''
+    def prefix  = task.ext.prefix   ?:  "${meta.id}"
 
     """
     #!/usr/bin/env Rscript
@@ -31,5 +32,15 @@ process CNA_PROCESSING {
     }
 
     saveRDS(object = CNA, file = paste0("$prefix", "_cna.rds"))
+
+    # version export
+    f <- file("versions.yml","w")
+    readr_version <- sessionInfo()\$otherPkgs\$readr\$Version
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    readr:", readr_version), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    close(f)
+
     """
 }

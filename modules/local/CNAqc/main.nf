@@ -3,18 +3,17 @@ process CNAQC {
     container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:
-
     tuple val(meta), path(cna_rds), path(snv_rds)
 
     output:
+    tuple val(meta), path("*_qc.rds"),                                  emit: qc_rds
+    tuple val(meta), path("*_data_plot.rds"), path("*_qc_plot.rds"),    emit: plot_rds
+    tuple val(meta), path("*_data.pdf"),                                emit: plot_pdf_data
+    tuple val(meta), path("*_qc.pdf"),                                  emit: plot_pdf_qc
+    path "versions.yml",                                                emit: versions
 
-    tuple val(meta), path("*_qc.rds"), emit: qc_rds
-    tuple val(meta), path("*_data_plot.rds"), path("*_qc_plot.rds"), emit: plot_rds
-    tuple val(meta), path("*_data.pdf"), emit: plot_pdf_data
-    tuple val(meta), path("*_qc.pdf"), emit: plot_pdf_qc
 
     script:
-
     def args                                = task.ext.args
     def prefix                              = task.ext.prefix                                       ?: "${meta.id}"
     def matching_strategy                   = args!='' && args.matching_strategy                    ?  "$args.matching_strategy" : ""
@@ -39,8 +38,7 @@ process CNAQC {
 
     """
     #!/usr/bin/env Rscript
-
-    library(tidyverse)
+    library(dplyr)
     library(CNAqc)
 
     SNV = readRDS("$snv_rds")
@@ -92,7 +90,6 @@ process CNAQC {
         nrow = 2
     )
 
-
     pl_exp = patchwork::wrap_plots(
         CNAqc::plot_gw_counts(tmp_x),
         CNAqc::plot_gw_vaf(tmp_x, N = 10000),
@@ -119,5 +116,15 @@ process CNAQC {
 
     ggplot2::ggsave(plot = pl_exp, filename = paste0("$prefix", "_data.pdf"), width = 210, height = 297, units="mm", dpi = 200)
     ggplot2::ggsave(plot = pl_qc, filename = paste0("$prefix", "_qc.pdf"), width = 210, height = 297, units="mm", dpi = 200)
+
+    # version export
+    f <- file("versions.yml","w")
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    cnaqc_version <- sessionInfo()\$otherPkgs\$CNAqc\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    CNAqc:", cnaqc_version), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    close(f)
+
     """
 }

@@ -6,17 +6,17 @@ process JOIN_POSITIONS {
     tuple val(meta), path(rds), path(vcf_pileup), path(positions)
 
     output:
-
-    tuple val(meta), path("*.rds"), emit: rds
+    tuple val(meta), path("*.rds"),     emit: rds
+    path "versions.yml",                emit: versions
 
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-
     """
     #!/usr/bin/env Rscript
-    library(tidyverse)
+    library(tidyr)
+    library(dplyr)
     library(vcfR)
 
     all_positions = readRDS("$positions")
@@ -64,5 +64,17 @@ process JOIN_POSITIONS {
 
     vcf[["$meta.tumour_sample"]]\$mutations = dplyr::bind_rows(mutations, bind)
     saveRDS(file = paste0("$prefix", "_pileup_VCF.rds"), object = vcf)
+
+
+    # version export
+    f <- file("versions.yml","w")
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    tidyr_version <- sessionInfo()\$otherPkgs\$tidyr\$Version
+    vcfR_version <- sessionInfo()\$otherPkgs\$vcfR\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    writeLines(paste("    tidyr:", tidyr_version), f)
+    writeLines(paste("    vcfR:", vcfR_version), f)
+    close(f)
     """
 }

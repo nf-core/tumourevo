@@ -3,15 +3,14 @@ process JOIN_CNAQC {
     container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:
-        tuple val(meta), path(rds_list, stageAs: '*.rds'), val(tumour_samples)
+    tuple val(meta), path(rds_list, stageAs: '*.rds'), val(tumour_samples)
 
     output:
-
-        tuple val(meta), path("*ALL.rds"), val(tumour_samples), emit: rds_all, optional: true
-        tuple val(meta), path("*PASS.rds"), val(tumour_samples), emit: rds_pass, optional: true
+    tuple val(meta), path("*ALL.rds"), val(tumour_samples),     emit: rds_all,  optional: true
+    tuple val(meta), path("*PASS.rds"), val(tumour_samples),    emit: rds_pass, optional: true
+    path "versions.yml",                                        emit: versions
 
     script:
-
     def args                                = task.ext.args
     def prefix                              = task.ext.prefix                                       ?: "${meta.id}"                                      ?: ''
     def qc_filter                           = args!='' && args.qc_filter                            ?  "$args.qc_filter" : ""
@@ -20,7 +19,7 @@ process JOIN_CNAQC {
     """
     #!/usr/bin/env Rscript
 
-    library(tidyverse)
+    library(dplyr)
     library(CNAqc)
 
     samples = substr("$tumour_samples", 2, nchar("$tumour_samples")-1)
@@ -47,5 +46,15 @@ process JOIN_CNAQC {
 
     saveRDS(object = out_all, file = paste0("$prefix", "_multi_cnaqc_ALL.rds"))
     saveRDS(object = out_PASS, file = paste0("$prefix", "_multi_cnaqc_PASS.rds"))
+
+    # version export
+    f <- file("versions.yml","w")
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    cnaqc_version <- sessionInfo()\$otherPkgs\$CNAqc\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    CNAqc:", cnaqc_version), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    close(f)
+
     """
 }

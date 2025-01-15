@@ -3,19 +3,20 @@ process GET_POSITIONS_REL {
     container = 'docker://lvaleriani/cnaqc:dev1'
 
     input:
-        tuple val(meta), path(rds), path(all_pos)
+    tuple val(meta), path(rds), path(all_pos)
 
     output:
-        tuple val(meta), path("*_positions_missing"), emit: bed
+    tuple val(meta), path("*_positions_missing"),   emit: bed
+    path "versions.yml",                            emit: versions
+
 
     script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def args    = task.ext.args     ?:  ''
+    def prefix  = task.ext.prefix   ?:  "${meta.id}"
 
     """
     #!/usr/bin/env Rscript
-
-    library(tidyverse)
+    library(dplyr)
 
     all_positions = readRDS("$all_pos") %>%
                 dplyr::mutate(id = paste(chr, from, to, sep = ":"))
@@ -27,8 +28,16 @@ process GET_POSITIONS_REL {
 
     missed = all_positions %>% filter(!(id %in%  positions\$id)) %>%
             dplyr::filter(chr %in% c(paste0('chr', seq(1,22)), 'chrX', 'chrY')) %>%
-            select(chr, from)
+            dplyr::select(chr, from)
 
     write.table(file = paste0("$meta.tumour_sample", "_positions_missing"), missed, quote = F, sep = "\t", row.names = F, col.names = F)
+
+    # version export
+    f <- file("versions.yml","w")
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    close(f)
+
     """
 }
