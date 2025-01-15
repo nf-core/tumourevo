@@ -1,6 +1,6 @@
 process SIGPROFILER {
     tag "$meta.id"
-    container = 'docker://katiad/sigprofiler:latest'
+    container = 'docker://katiad/sigprofiler:version1.0'
 
     input:
         tuple val(meta), path(tsv_list, stageAs: '*.tsv')
@@ -151,5 +151,13 @@ process SIGPROFILER {
         dest_dir = "$prefix/"
         source_dir = "results/"
         shutil.copytree(source_dir, dest_dir, dirs_exist_ok=True)
+"""
+
+stub:
+"""
+echo "${task.process}:" > versions.yml
+echo 'SigProfilerMatrixGenerator: v1.2.29' >> versions.yml
+echo 'SigProfilerExtractor: v1.1.24  ' >> versions.yml
+
 """
 }
