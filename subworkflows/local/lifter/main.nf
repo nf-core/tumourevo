@@ -40,7 +40,8 @@ workflow LIFTER {
         BCFTOOLS_MPILEUP(in_pileup, fasta, false)
         join = rds.join(BCFTOOLS_MPILEUP.out.vcf, by:[0])
 
-        out = JOIN_POSITIONS(join.combine(all_pos))
+        JOIN_POSITIONS(join.combine(all_pos))
+        out = JOIN_POSITIONS.out.rds
 
     emit:
         out
