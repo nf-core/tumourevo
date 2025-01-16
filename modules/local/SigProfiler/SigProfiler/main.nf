@@ -57,7 +57,7 @@ process SIGPROFILER {
     import multiprocessing
     from SigProfilerExtractor import sigpro as sig
     from SigProfilerMatrixGenerator.scripts import SigProfilerMatrixGeneratorFunc as matGen
-    #from utils_sigprofiler import input_processing, process_tsv_join
+
 
     if __name__ == '__main__':
 
