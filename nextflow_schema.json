@@ -468,67 +468,83 @@
             "properties": {
                 "sparsesignatures_K": {
                     "type": "string",
-                    "default": "2:10"
+                    "default": "2:10",
+                    "description": "The number of signatures (min. value = 2) to be fit to the dataset, including the background signature."
                 },
                 "sparsesignatures_background_signature": {
                     "type": "string",
-                    "default": "NULL"
+                    "default": "NULL",
+                    "description": "A numeric vector of length 96 provided by the user. The parameter is ignored if beta is given instead. If NULL, it is estimated through NMF."
                 },
                 "sparsesignatures_beta": {
                     "type": "string",
-                    "default": "NULL"
+                    "default": "NULL",
+                    "description": "The initial value of the signature matrix \u03b2. If NULL, it is estimated with a few runs of NMF. It must include the background signature as its first row."
                 },
                 "sparsesignatures_normalize_counts": {
                     "type": "string",
-                    "default": "TRUE"
+                    "default": "TRUE",
+                    "description": "If TRUE normalize the count matrix x row-wise before processing it. Useful for algorithm stability, when considerably different total counts of mutations are observed among the patients."
                 },
                 "sparsesignatures_iterations": {
                     "type": "integer",
-                    "default": 30
+                    "default": 30,
+                    "description": "The number of iterations of every single run of NMF LASSO."
                 },
                 "sparsesignatures_nmf_runs": {
                     "type": "integer",
-                    "default": 10
+                    "default": 10,
+                    "description": "Number of iterations to estimate the length(K) matrices beta (including the background signature) in case the argument beta is NULL. Ignored if beta is given."
                 },
                 "sparsesignatures_max_iterations_lasso": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "The number of sub-iterations involved in the sparsification phase, within a full NMF LASSO iteration."
                 },
                 "sparsesignatures_num_processes": {
                     "type": "string",
-                    "default": "all"
+                    "default": "all",
+                    "description": "The number of requested NMF worker subprocesses to spawn. If Inf, an adaptive maximum number is automatically chosen. If NA or NULL, the function is run as a single process."
                 },
                 "sparsesignatures_cross_validation_entries": {
                     "type": "number",
-                    "default": 0.01
+                    "default": 0.01,
+                    "description": "The cross-validation test size, i.e., the percentage of entries set to zero during NMF and used for validation."
                 },
                 "sparsesignatures_cross_validation_repetitions": {
                     "type": "integer",
-                    "default": 50
+                    "default": 50,
+                    "description": "The number of repetitions of the cross-validation procedure."
                 },
                 "sparsesignatures_cross_validation_iterations": {
                     "type": "integer",
-                    "default": 5
+                    "default": 5,
+                    "description": "The number of randomized restarts of a single cross-validation repetition, in case of poor fits."
                 },
                 "sparsesignatures_lambda_values_beta": {
                     "type": "string",
-                    "default": "c(0.01, 0.05, 0.1, 0.2)"
+                    "default": "c(0.01, 0.05, 0.1, 0.2)",
+                    "description": "The candidate values of the sparsity parameter for the signature matrix \u03b2 whose goodness of fit is assessed by cross-validation."
                 },
                 "sparsesignatures_lambda_rate_alpha": {
                     "type": "integer",
-                    "default": 0
+                    "default": 0,
+                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries \u03b1 whose goodness of fit is assessed by cross-validation."
                 },
                 "sparsesignatures_verbose": {
                     "type": "string",
-                    "default": "TRUE"
+                    "default": "TRUE",
+                    "description": "If TRUE, informative messages are printed on the R console over the execution."
                 },
                 "sparsesignatures_seed": {
                     "type": "integer",
-                    "default": 12345
+                    "default": 12345,
+                    "description": "Seed for the random number generation. To be set for reproducibility."
                 },
                 "sparsesignatures_lambda_values_alpha": {
                     "type": "string",
-                    "default": "c(0.00, 0.01, 0.05, 0.10)"
+                    "default": "c(0.00, 0.01, 0.05, 0.10)",
+                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries \u03b1 whose goodness of fit is assessed by cross-validation."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -546,141 +562,171 @@
                 },
                 "download_sigprofiler_genome": {
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+                    "description": "Specify True if the reference genome should be downloaded."
                 },
                 "genome_installed_path": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Specify the path to the reference genome (if downloaded by the user), e.g. path/to/genome/tsb"
                 },
                 "sigprofiler_exome": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Downsamples mutational matrices to the exome regions of the genome."
                 },
                 "sigprofiler_input_type": {
                     "type": "string",
-                    "default": "matrix"
+                    "default": "matrix",
+                    "description": "'matrix' is used for table format inputs using a tab separated file."
                 },
                 "sigprofiler_minimum_signatures": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "The minimum number of signatures to be extracted."
                 },
                 "sigprofiler_maximum_signatures": {
                     "type": "integer",
-                    "default": 25
+                    "default": 25,
+                    "description": "The maximum number of signatures to be extracted."
                 },
                 "sigprofiler_context_type": {
                     "type": "string",
-                    "default": "96,DINUC,ID"
+                    "default": "96,DINUC,ID",
+                    "description": "Mutation context name(s), separated by commas (,), that define the mutational contexts for signature extraction (default: \"96,DINUC,ID\"). In the default value, 96 represents the SBS96 context, DINUC represents the dinucleotide context, and ID represents the indel context."
                 },
                 "sigprofiler_nmf_replicates": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "The number of iteration to be performed to extract each number signature (default: 100)."
                 },
                 "sigprofiler_resample": {
                     "type": "string",
-                    "default": "True"
+                    "default": true,
+                    "description": "If True, add poisson noise to samples by resampling (default: True)."
                 },
                 "sigprofiler_matrix_normalization": {
                     "type": "string",
-                    "default": "gmm"
+                    "default": "gmm",
+                    "description": "Method of normalizing the genome matrix before it is analyzed by NMF (default: \"gmm\"). Options are, \"log2\", \"custom\" or \"none\"."
                 },
                 "sigprofiler_nmf_init": {
                     "type": "string",
-                    "default": "random"
+                    "default": "random",
+                    "description": "The initialization algorithm for W and H matrix of NMF (default: \"random\"). Options are \"random\", \"nndsvd\", \"nndsvda\", \"nndsvdar\" and \"nndsvd_min\"."
                 },
                 "sigprofiler_min_nmf_iterations": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "Value defines the minimum number of iterations to be completed before NMF converges."
                 },
                 "sigprofiler_max_nmf_iterations": {
                     "type": "integer",
-                    "default": 1000000
+                    "default": 1000000,
+                    "description": "Value defines the maximum number of iterations to be completed before NMF converges ."
                 },
                 "sigprofiler_nmf_test_conv": {
                     "type": "integer",
-                    "default": 10000
+                    "default": 10000,
+                    "description": "Value defines the number number of iterations to done between checking next convergence ."
                 },
                 "sigprofiler_seeds": {
                     "type": "string",
-                    "default": "random"
+                    "default": "random",
+                    "description": "Ensures reproducible NMF replicate resamples. Provide the path to the Seeds.txt file (found in the results folder from a previous analysis) to reproduce results."
                 },
                 "sigprofiler_stability": {
                     "type": "number",
-                    "default": 0.8
+                    "default": 0.8,
+                    "description": "The cutoff thresh-hold of the average stability (default: 0.8). Solutions with average stabilities below this thresh-hold will not be considered."
                 },
                 "sigprofiler_cpu": {
                     "type": "integer",
-                    "default": -1
+                    "default": -1,
+                    "description": "The number of processors to be used to extract the signatures (default: all processors)."
                 },
                 "sigprofiler_min_stability": {
                     "type": "number",
-                    "default": 0.2
+                    "default": 0.2,
+                    "description": "The cutoff thresh-hold of the minimum stability (default: 0.2). Solutions with minimum stabilities below this thresh-hold will not be considered."
                 },
                 "sigprofiler_combined_stability": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "The cutoff thresh-hold of the combined stability (sum of average and minimum stability) (default: 1.0). Solutions with combined stabilities below this thresh-hold will not be considered."
                 },
                 "sigprofiler_make_decomposition_plots": {
                     "type": "string",
-                    "default": "True"
+                    "default": true,
+                    "description": "Generate de novo to COSMIC signature decomposition plots as part of the results (default: True). Set to False to skip generating these plots."
                 },
                 "sigprofiler_collapse_to_SBS96": {
                     "type": "string",
-                    "default": "True"
+                    "default": true,
+                    "description": "If True, SBS288 and SBS1536 de novo signatures will be mapped to SBS96 reference signatures (default: True). If False, those will be mapped to reference signatures of the same context."
                 },
                 "sigprofiler_cosmic_version": {
                     "type": "number",
-                    "default": 3.4
+                    "default": 3.4,
+                    "description": "Defines the version of the COSMIC reference signatures (default: 3.4). Takes a positive float among 1, 2, 3, 3.1, 3.2, 3.3, and 3.4."
                 },
                 "sigprofiler_get_all_signature_matrices": {
                     "type": "string",
-                    "default": "True"
+                    "default": "False",
+                    "description": "Write to output Ws and Hs from all the NMF iterations."
                 },
                 "sigprofiler_export_probabilities": {
                     "type": "string",
-                    "default": "True"
+                    "default": true,
+                    "description": "Create the probability matrix."
                 },
                 "sigprofiler_chrom_based": {
                     "type": "string",
-                    "default": "False"
+                    "description": "Outputs chromosome-based matrices."
                 },
                 "sigprofiler_bed_file": {
                     "type": "string",
-                    "default": "None"
+                    "default": "None",
+                    "description": "Downsamples mutational matrices to custom regions of the genome. Requires the full path to the BED file."
                 },
                 "sigprofiler_plot": {
                     "type": "string",
-                    "default": "False"
+                    "description": "Integrates with SigProfilerPlotting to output all available visualizations for each matrix."
                 },
                 "sigprofiler_seqInfo": {
                     "type": "string",
-                    "default": "False"
+                    "description": "Ouputs original mutations into a text file that contains the SigProfilerMatrixGenerator classificaiton for each mutation.",
+                    "default": "true"
                 },
                 "sigprofiler_precision": {
                     "type": "string",
-                    "default": "single"
+                    "default": "single",
+                    "description": "Values should be single or double."
                 },
                 "sigprofiler_cushion": {
                     "type": "integer",
-                    "default": 100
+                    "default": 100,
+                    "description": "Adds an Xbp cushion to the exome/bed_file ranges for downsampling the mutations."
                 },
                 "sigprofiler_gpu": {
                     "type": "string",
-                    "default": "False"
+                    "description": "Defines if the GPU resource will used if available. If True, the GPU resources will be used in the computation. Note: All available CPU processors are used by default, which may cause a memory error. This error can be resolved by reducing the number of CPU processes through the cpu parameter."
                 },
                 "sigprofiler_tsb_stat": {
                     "type": "string",
-                    "default": "False"
+                    "description": "Outputs the results of a transcriptional strand bias test for the respective matrices."
                 },
                 "sigprofiler_batch_size": {
                     "type": "integer",
-                    "default": 1
+                    "default": 1,
+                    "description": "Will be effective only if the GPU is used. Defines the number of NMF replicates to be performed by each CPU during the parallel processing. Note: For batch_size values greater than 1, each NMF replicate will update until max_nmf_iterations is reached."
                 },
                 "sigprofiler_allow_stability_drop": {
                     "type": "string",
-                    "default": "False"
+                    "description": "Defines if solutions with a drop in stability with respect to the highest stable number of signatures will be considered."
                 },
                 "sigprofiler_nmf_tolerance": {
                     "type": "number",
-                    "default": 1e-15
+                    "default": 1e-15,
+                    "description": "Value defines the tolerance to achieve to converge."
                 }
             },
             "fa_icon": "fas fa-briefcase"
