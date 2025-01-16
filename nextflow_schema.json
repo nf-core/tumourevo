@@ -524,12 +524,12 @@
                 "sparsesignatures_lambda_values_beta": {
                     "type": "string",
                     "default": "c(0.01, 0.05, 0.1, 0.2)",
-                    "description": "The candidate values of the sparsity parameter for the signature matrix \u03b2 whose goodness of fit is assessed by cross-validation."
+                    "description": "The candidate values of the sparsity parameter for the signature matrix 'beta' whose goodness of fit is assessed by cross-validation."
                 },
                 "sparsesignatures_lambda_rate_alpha": {
                     "type": "integer",
                     "default": 0,
-                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries \u03b1 whose goodness of fit is assessed by cross-validation."
+                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries alpha whose goodness of fit is assessed by cross-validation."
                 },
                 "sparsesignatures_verbose": {
                     "type": "string",
@@ -544,7 +544,7 @@
                 "sparsesignatures_lambda_values_alpha": {
                     "type": "string",
                     "default": "c(0.00, 0.01, 0.05, 0.10)",
-                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries \u03b1 whose goodness of fit is assessed by cross-validation."
+                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries alpha whose goodness of fit is assessed by cross-validation."
                 }
             },
             "fa_icon": "fas fa-briefcase"
@@ -591,27 +591,27 @@
                 "sigprofiler_context_type": {
                     "type": "string",
                     "default": "96,DINUC,ID",
-                    "description": "Mutation context name(s), separated by commas (,), that define the mutational contexts for signature extraction (default: \"96,DINUC,ID\"). In the default value, 96 represents the SBS96 context, DINUC represents the dinucleotide context, and ID represents the indel context."
+                    "description": "Mutation context name(s), separated by commas (,), that define the mutational contexts for signature extraction. In the default value, 96 represents the SBS96 context, DINUC represents the dinucleotide context, and ID represents the indel context."
                 },
                 "sigprofiler_nmf_replicates": {
                     "type": "integer",
                     "default": 100,
-                    "description": "The number of iteration to be performed to extract each number signature (default: 100)."
+                    "description": "The number of iteration to be performed to extract each number signature."
                 },
                 "sigprofiler_resample": {
                     "type": "string",
                     "default": true,
-                    "description": "If True, add poisson noise to samples by resampling (default: True)."
+                    "description": "If True, add poisson noise to samples by resampling."
                 },
                 "sigprofiler_matrix_normalization": {
                     "type": "string",
                     "default": "gmm",
-                    "description": "Method of normalizing the genome matrix before it is analyzed by NMF (default: \"gmm\"). Options are, \"log2\", \"custom\" or \"none\"."
+                    "description": "Method of normalizing the genome matrix before it is analyzed by NMF. Options are, 'log2', 'custom' or 'none'."
                 },
                 "sigprofiler_nmf_init": {
                     "type": "string",
                     "default": "random",
-                    "description": "The initialization algorithm for W and H matrix of NMF (default: \"random\"). Options are \"random\", \"nndsvd\", \"nndsvda\", \"nndsvdar\" and \"nndsvd_min\"."
+                    "description": "The initialization algorithm for W and H matrix of NMF. Options are 'random', 'nndsvd', 'nndsvda', 'nndsvdar' and 'nndsvd_min'."
                 },
                 "sigprofiler_min_nmf_iterations": {
                     "type": "integer",
@@ -670,7 +670,7 @@
                 },
                 "sigprofiler_get_all_signature_matrices": {
                     "type": "string",
-                    "default": "False",
+                    "default": true,
                     "description": "Write to output Ws and Hs from all the NMF iterations."
                 },
                 "sigprofiler_export_probabilities": {
@@ -693,8 +693,7 @@
                 },
                 "sigprofiler_seqInfo": {
                     "type": "string",
-                    "description": "Ouputs original mutations into a text file that contains the SigProfilerMatrixGenerator classificaiton for each mutation.",
-                    "default": "true"
+                    "description": "Ouputs original mutations into a text file that contains the SigProfilerMatrixGenerator classificaiton for each mutation."
                 },
                 "sigprofiler_precision": {
                     "type": "string",
