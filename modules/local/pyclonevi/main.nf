@@ -10,6 +10,7 @@ process PYCLONEVI {
         tuple val(meta), path("*.tsv"), emit: pyclone_input
         tuple val(meta), path("*_all_fits.h5"), emit: pyclone_all_fits
         tuple val(meta), path("*_best_fit.txt"), emit: pyclone_best_fit
+        path "versions.yml", emit: versions
 
     script:
     def args = task.ext.args ?: ''
@@ -46,11 +47,13 @@ process PYCLONEVI {
     pyclone-vi write-results-file -i ${prefix}_all_fits.h5 -o ${prefix}_best_fit.txt
 
     python3 $moduleDir/pyclone_ctree.py --joint ${prefix}_pyclone_input.tsv --best_fit ${prefix}_best_fit.txt --ctree_input ${prefix}_cluster_table.csv
+
+
+    VERSION=\$(pip show pyclone-vi | grep Version | awk '{print \$NF}')
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        pyclone-vi: \$VERSION
+    END_VERSIONS
     """
 
-    stub:
-    """
-    echo "${task.process}:" > versions.yml
-    echo ' pyclone: 0.1.3' >> versions.yml
-    """
 }

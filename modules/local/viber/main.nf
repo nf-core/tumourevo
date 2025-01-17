@@ -13,6 +13,7 @@ process VIBER {
     tuple val(meta), path("*_REPORT_plots_viber.rds"), emit: viber_report_rds
     tuple val(meta), path("*_REPORT_plots_viber.pdf"), emit: viber_report_pdf
     tuple val(meta), path("*_REPORT_plots_viber.png"), emit: viber_report_png
+    path "versions.yml", emit: versions
 
 script:
     // viber fit params
@@ -188,12 +189,16 @@ script:
     ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_viber.pdf"), height=210, width=210, units="mm", dpi = 200)
     ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_viber.png"), height=210, width=210, units="mm", dpi = 200)
 
+
+    # version export
+    f = file("versions.yml","w")
+    cnaqc_version = sessionInfo()\$otherPkgs\$CNAqc\$Version
+    viber_version = sessionInfo()\$otherPkgs\$VIBER\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    CNAqc:", cnaqc_version), f)
+    writeLines(paste("    VIBER:", viber_version), f)
+    close(f)
+
     """
 
-    stub:
-    """
-    echo "${task.process}:" > versions.yml
-    echo ' CNAqc: 1.0.0' >> versions.yml
-    echo ' viber: 0.1.0' >> versions.yml
-    """
 }

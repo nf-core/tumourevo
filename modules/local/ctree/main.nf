@@ -12,6 +12,7 @@ process CTREE {
         tuple val(meta), path("**REPORT_plots_ctree_{VIBER,MOBSTERh,pyclonevi}.rds"), emit: ctree_report_rds, optional: true
         tuple val(meta), path("**REPORT_plots_ctree_{VIBER,MOBSTERh,pyclonevi}.pdf"), emit: ctree_report_pdf, optional: true
         tuple val(meta), path("**REPORT_plots_ctree_{VIBER,MOBSTERh,pyclonevi}.png"), emit: ctree_report_png, optional: true
+        path "versions.yml", emit: versions
 
     script:
 
@@ -25,6 +26,8 @@ process CTREE {
     #!/usr/bin/env Rscript
 
     library(ctree)
+    library(VIBER)
+    library(mobster)
     library(dplyr)
     library(ggplot2)
 
@@ -110,7 +113,6 @@ process CTREE {
 
         ## viber
         if (class(best_fit) == "vb_bmm") {
-            library(VIBER)
             fn_name = VIBER::get_clone_trees
             subclonal_tool = "VIBER"
 
@@ -125,7 +127,6 @@ process CTREE {
 
         ## mobster
         if (class(best_fit) == "dbpmm") {
-            library(mobster)
             fn_name = mobster::get_clone_trees
             subclonal_tool = "MOBSTERh"
             sample_id = unique(best_fit[["data"]][["sample_id"]])
@@ -186,13 +187,17 @@ process CTREE {
         ggplot2::ggsave(plot=report_fig, filename=paste0(outdir, "$prefix", "_REPORT_plots_", ctree_output, ".png"), height=297, width=210, units="mm", dpi=200)
     }
 
-    """
 
-    stub:
-    """
-    echo "${task.process}:" > versions.yml
-    echo ' ctree: 1.1.0' >> versions.yml
-    echo ' viber: 0.1.0' >> versions.yml
-    echo ' mobster: 1.0.0' >> versions.yml
+    # version export
+    f = file("versions.yml","w")
+    ctree_version = sessionInfo()\$otherPkgs\$ctree\$Version
+    viber_version = sessionInfo()\$otherPkgs\$VIBER\$Version
+    mobster_version = sessionInfo()\$otherPkgs\$mobster\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    ctree:", ctree_version), f)
+    writeLines(paste("    VIBER:", viber_version), f)
+    writeLines(paste("    mobster:", mobster_version), f)
+    close(f)
+
     """
 }
