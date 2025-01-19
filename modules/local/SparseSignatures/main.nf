@@ -13,6 +13,7 @@ process SPARSE_SIGNATURES {
         tuple val(meta), path("*_nmf_Lasso_out.rds"), emit: signatures_nmfOut_rds
         tuple val(meta), path("*_plot_all.rds"), emit: signatures_plot_rds
         tuple val(meta), path("*_plot_all.pdf"), emit: signatures_plot_pdf
+        path "versions.yml",                     emit: versions
 
     script:
 
@@ -183,6 +184,19 @@ process SPARSE_SIGNATURES {
     plt_all = patchwork::wrap_plots(plot_exposure, plot_signatures, ncol=2) + patchwork::plot_annotation(title = "$meta.id")
     ggplot2::ggsave(plot = plt_all, filename = paste0("$prefix", "_plot_all.pdf"), width = 210, height = 297, units="mm", dpi = 200)
     saveRDS(object = plt_all, file = paste0("$prefix", "_plot_all.rds"))
+
+    # version export
+    f <- file("versions.yml","w")
+    SparseSignatures_version <- sessionInfo()\$otherPkgs\$SparseSignatures\$Version
+    dplyr_version <- sessionInfo()\$otherPkgs\$dplyr\$Version
+    ggplot2_version <- sessionInfo()\$otherPkgs\$ggplot2\$Version
+    patchwork_version <- sessionInfo()\$otherPkgs\$patchwork\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    SparseSignatures:", SparseSignatures_version), f)
+    writeLines(paste("    dplyr:", dplyr_version), f)
+    writeLines(paste("    ggplot2:", ggplot2_version), f)
+    writeLines(paste("    patchwork:", patchwork_version), f)
+    close(f)
 
     """
 }
