@@ -10,15 +10,16 @@ process DOWNLOAD_GENOME_SIGPROFILER {
 
 
     script:
+    
     """
     SigProfilerMatrixGenerator install $reference_genome -v .
 
 
-    //VERSION=\$(pip show SigProfilerMatrixGenerator | grep Version | awk '{print \$NF}')
-    //cat <<-END_VERSIONS > versions.yml
-    //"${task.process}":
-        //SigProfilerMatrixGenerator: \$VERSION
-    //END_VERSIONS
+    VERSION=\$(pip show SigProfilerMatrixGenerator | grep Version | awk '{print \$NF}')
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        SigProfilerMatrixGenerator: \$VERSION
+    END_VERSIONS
 
     """
 
