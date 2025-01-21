@@ -32,7 +32,7 @@ process ANNOTATE_DRIVER {
             dplyr::group_by(SYMBOL) %>%
             dplyr::reframe(CGC_CANCER_GENE = any(CGC_CANCER_GENE), dplyr::across(dplyr::everything())) %>%
             dplyr::filter(CGC_CANCER_GENE) %>%
-            dplyr::filter(CANCER_TYPE = "$meta.cancer_type")
+            dplyr::filter(CANCER_TYPE == "$meta.cancer_type")
     } else {
         drivers_table = drivers_table %>%
             dplyr::group_by(SYMBOL) %>%
