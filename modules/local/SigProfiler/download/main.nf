@@ -10,7 +10,6 @@ process DOWNLOAD_GENOME_SIGPROFILER {
 
 
     script:
-    
     """
     SigProfilerMatrixGenerator install $reference_genome -v .
 
@@ -20,8 +19,5 @@ process DOWNLOAD_GENOME_SIGPROFILER {
     "${task.process}":
         SigProfilerMatrixGenerator: \$VERSION
     END_VERSIONS
-
     """
-
-
 }

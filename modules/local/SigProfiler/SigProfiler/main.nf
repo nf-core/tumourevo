@@ -152,18 +152,14 @@ process SIGPROFILER {
         dest_dir = "$prefix/"
         source_dir = "results/"
         shutil.copytree(source_dir, dest_dir, dirs_exist_ok=True)
-
-        
+ 
         # Write version
-
         SigProfilerMatrixGenerator_version = os.popen("pip show SigProfilerMatrixGenerator | grep Version | awk '{print $NF}'").read().strip()
         SigProfilerExtractor_version = os.popen("pip show SigProfilerExtractor | grep Version | awk '{print $NF}'").read().strip()
-
         with open("versions.yml", "w") as f:
             f.write(f'"$task.process":\n')
             f.write(f'    SigProfilerMatrixGenerator: {SigProfierMatrixGenerator_version}\n')
             f.write(f'    SigProfilerExtractor: {SigProfilerExtractor_version}\n')
-
     """
 
 }
