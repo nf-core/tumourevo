@@ -56,6 +56,7 @@ process SIGPROFILER {
     import shutil
     import pandas as pd
     import multiprocessing
+    from importlib.metadata import version
     from SigProfilerExtractor import sigpro as sig
     from SigProfilerMatrixGenerator.scripts import SigProfilerMatrixGeneratorFunc as matGen
 
@@ -154,12 +155,15 @@ process SIGPROFILER {
         shutil.copytree(source_dir, dest_dir, dirs_exist_ok=True)
 
         # Write version
-        SigProfilerMatrixGenerator_version = os.popen("pip show SigProfilerMatrixGenerator | grep Version | awk '{print $NF}'").read().strip()
-        SigProfilerExtractor_version = os.popen("pip show SigProfilerExtractor | grep Version | awk '{print $NF}'").read().strip()
-        with open("versions.yml", "w") as f:
-            f.write(f'"$task.process":\n')
-            f.write(f'    SigProfilerMatrixGenerator: {SigProfierMatrixGenerator_version}\n')
-            f.write(f'    SigProfilerExtractor: {SigProfilerExtractor_version}\n')
+
+        SigProfilerMatrixGenerator_version = version("SigProfilerMatrixGenerator")
+        SigProfilerExtractor_version = version("SigProfilerExtractor")
+
+        with open('versions.yml', 'a') as f:
+            f.write('"${task.process}":'+"\\n")
+            f.write("\tSigProfilerMatrixGenerator: {SigProfilerMatrixGenerator_version}\\n")
+            f.write("\tSigProfilerExtractor: {SigProfilerExtractor_version}\\n")
+
     """
 
 }

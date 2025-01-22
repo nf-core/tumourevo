@@ -54,7 +54,8 @@ workflow SIGNATURE_DECONVOLUTION {
             [meta.subMap('dataset', 'id'), tsv]}
             | groupTuple
 
-        Sigprofiler_out = SIGPROFILER(input_sigprofiler, genome_path)
+        SIGPROFILER(input_sigprofiler, genome_path)
+        Sigprofiler_out = SIGPROFILER.out.sigprofiler_results
     }
 
     emit:
