@@ -11,6 +11,7 @@ process TINC {
         tuple val(meta), path("*_plot.rds"), emit: plot_rds
         tuple val(meta), path("*.pdf"), emit: plot_pdf
         tuple val(meta), path("*_qc.csv"), emit: tinc_csv
+        path "versions.yml", emit: versions
 
     script:
 
@@ -91,6 +92,17 @@ process TINC {
     saveRDS(file = paste0("${prefix}", "_plot.rds"), object = tinc_plot)
     ggplot2::ggsave(plot = tinc_plot, filename = paste0("${prefix}", "_plot.pdf"), width = 210, height = 297, units="mm", dpi = 200)
     saveRDS(file = paste0("${prefix}", "_fit.rds"), object = TINC_fit)
+
+    # version export
+    f <- file("versions.yml","w")
+    tidyverse_version <- sessionInfo()\$otherPkgs\$tidyverse\$Version
+    cnaqc_version <- sessionInfo()\$otherPkgs\$CNAqc\$Version
+    tinc_version <- sessionInfo()\$otherPkgs\$TINC\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    CNAqc:", cnaqc_version), f)
+    writeLines(paste("    tidyverse:", tidyverse_version), f)
+    writeLines(paste("    TINC:", tinc_version), f)
+    close(f)
 
     """
 }
