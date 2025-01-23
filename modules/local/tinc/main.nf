@@ -3,7 +3,7 @@ process TINC {
     label "process_single"
     container 'docker://vvvirgy/tinc:v2' // define the running container
     // conda "${moduleDir}/environment.yml"
-    
+
     input:
         tuple val(meta), path(cna_RDS), path(snv_RDS)
 
