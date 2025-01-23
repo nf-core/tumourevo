@@ -1,10 +1,16 @@
-Changes in module 'nf-core/ensemblvep/vep'
+Changes in component 'nf-core/ensemblvep/vep'
 'modules/nf-core/ensemblvep/vep/environment.yml' is unchanged
 'modules/nf-core/ensemblvep/vep/meta.yml' is unchanged
 Changes in 'ensemblvep/vep/main.nf':
 --- modules/nf-core/ensemblvep/vep/main.nf
 +++ modules/nf-core/ensemblvep/vep/main.nf
-@@ -6,7 +6,7 @@
+@@ -1,12 +1,12 @@
+ process ENSEMBLVEP_VEP {
+     tag "$meta.id"
+-    label 'process_medium'
++    label 'process_low'
+ 
+     conda "${moduleDir}/environment.yml"
      container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
          'https://depot.galaxyproject.org/singularity/ensembl-vep:111.0--pl5321h2a3209d_0' :
          'biocontainers/ensembl-vep:111.0--pl5321h2a3209d_0' }"

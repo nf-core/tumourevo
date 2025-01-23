@@ -1,9 +1,17 @@
-Changes in module 'nf-core/bcftools/mpileup'
+Changes in component 'nf-core/bcftools/mpileup'
 'modules/nf-core/bcftools/mpileup/environment.yml' is unchanged
 'modules/nf-core/bcftools/mpileup/meta.yml' is unchanged
 Changes in 'bcftools/mpileup/main.nf':
 --- modules/nf-core/bcftools/mpileup/main.nf
 +++ modules/nf-core/bcftools/mpileup/main.nf
+@@ -1,6 +1,6 @@
+ process BCFTOOLS_MPILEUP {
+     tag "$meta.id"
+-    label 'process_medium'
++    label "process_low"
+ 
+     conda "${moduleDir}/environment.yml"
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
 @@ -31,7 +31,7 @@
      def bgzip_mpileup = save_mpileup ? "bgzip ${prefix}.mpileup" : ""
      def intervals = intervals ? "-T ${intervals}" : ""
