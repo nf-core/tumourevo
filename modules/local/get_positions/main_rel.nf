@@ -1,5 +1,6 @@
 process GET_POSITIONS_REL {
     tag "$meta.id"
+    label "process_single"
     container = 'docker://lvaleriani/cnaqc:dev1'
 
     input:

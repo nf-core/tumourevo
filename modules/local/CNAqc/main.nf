@@ -1,5 +1,6 @@
 process CNAQC {
     tag "$meta.id"
+    label "process_low"
     container = 'docker://lvaleriani/cnaqc:version1.0'
 
     input:

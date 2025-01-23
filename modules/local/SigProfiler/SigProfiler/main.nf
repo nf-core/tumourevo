@@ -1,5 +1,6 @@
 process SIGPROFILER {
     tag "$meta.id"
+    label "process_high"
     container = 'docker://katiad/sigprofiler:version1.0'
 
     input:
@@ -161,8 +162,8 @@ process SIGPROFILER {
 
         with open('versions.yml', 'a') as f:
             f.write('"${task.process}":'+"\\n")
-            f.write("\tSigProfilerMatrixGenerator: "+SigProfilerMatrixGenerator_version+"\\n")
-            f.write("\tSigProfilerExtractor: "+SigProfilerExtractor_version+"\\n")
+            f.write("    SigProfilerMatrixGenerator: "+SigProfilerMatrixGenerator_version+"\\n")
+            f.write("    SigProfilerExtractor: "+SigProfilerExtractor_version+"\\n")
 
     """
 

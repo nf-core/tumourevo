@@ -1,5 +1,6 @@
 process MOBSTERh {
     tag "$meta.id"
+    label "process_single"
     container = 'docker://elenabuscaroli/mobster:version1.0'
 
     input:

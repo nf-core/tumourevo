@@ -1,21 +1,22 @@
 process VIBER {
     tag "$meta.id"
+    label "process_single"
     container = 'docker://elenabuscaroli/viber:version0.1'
 
     input:
-    tuple val(meta), path(rds_join), val(tumour_samples) //rds from either JOIN_CNAQC or JOIN_FIT, should be always grouped
+        tuple val(meta), path(rds_join), val(tumour_samples) //rds from either JOIN_CNAQC or JOIN_FIT, should be always grouped
 
     output:
-    tuple val(meta), path("*_viber_best_st_fit.rds"), emit: viber_rds
-    tuple val(meta), path("*_viber_best_st_heuristic_fit.rds"), emit: viber_heuristic_rds
-    tuple val(meta), path("*_${plot1}"), emit: viber_plots_rds
-    tuple val(meta), path("*_${plot2}"), emit: viber_heuristic_plots_rds
-    tuple val(meta), path("*_REPORT_plots_viber.rds"), emit: viber_report_rds
-    tuple val(meta), path("*_REPORT_plots_viber.pdf"), emit: viber_report_pdf
-    tuple val(meta), path("*_REPORT_plots_viber.png"), emit: viber_report_png
-    path "versions.yml", emit: versions
+        tuple val(meta), path("*_viber_best_st_fit.rds"), emit: viber_rds
+        tuple val(meta), path("*_viber_best_st_heuristic_fit.rds"), emit: viber_heuristic_rds
+        tuple val(meta), path("*_${plot1}"), emit: viber_plots_rds
+        tuple val(meta), path("*_${plot2}"), emit: viber_heuristic_plots_rds
+        tuple val(meta), path("*_REPORT_plots_viber.rds"), emit: viber_report_rds
+        tuple val(meta), path("*_REPORT_plots_viber.pdf"), emit: viber_report_pdf
+        tuple val(meta), path("*_REPORT_plots_viber.png"), emit: viber_report_png
+        path "versions.yml", emit: versions
 
-script:
+    script:
     // viber fit params
     def args = task.ext.args ?: ""
     def prefix = task.ext.prefix ?:"${meta.id}"

@@ -1,8 +1,9 @@
 process TINC {
-
     tag "$meta.id"
+    label "process_single"
     container 'docker://vvvirgy/tinc:v2' // define the running container
     // conda "${moduleDir}/environment.yml"
+    
     input:
         tuple val(meta), path(cna_RDS), path(snv_RDS)
 
@@ -14,7 +15,6 @@ process TINC {
         path "versions.yml", emit: versions
 
     script:
-
     def args                                = task.ext.args
     def prefix                              = task.ext.prefix                                       ?: "${meta.id}"
     def vaf_range_tumour                    = args!='' && args.vaf_range_tumour                     ?  "$args.vaf_range_tumour"  : ""

@@ -1,4 +1,5 @@
 process DOWNLOAD_GENOME_SIGPROFILER {
+    label "process_single"
     container = 'docker://katiad/sigprofiler:version1.0'
 
     input:

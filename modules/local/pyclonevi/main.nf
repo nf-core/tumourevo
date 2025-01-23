@@ -1,5 +1,6 @@
 process PYCLONEVI {
     tag "$meta.id"
+    label "process_low"
     container = 'https://depot.galaxyproject.org/singularity/pyclone-vi%3A0.1.3--pyhca03a8a_0'
 
     input:

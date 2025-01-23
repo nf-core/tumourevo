@@ -1,9 +1,9 @@
 process CTREE {
     tag "$meta.id"
+    label "process_low"
     container = 'docker://elenabuscaroli/ctree:version1.1'
 
     input:
-
         tuple val(meta), path(ctree_input)
 
     output:
@@ -15,7 +15,6 @@ process CTREE {
         path "versions.yml", emit: versions
 
     script:
-
     def args = task.ext.args ?: ""
     def prefix = task.ext.prefix ?: "${meta.id}"
     def sspace_cutoff = args!="" && args.sspace_cutoff ? "$args.sspace_cutoff" : ""

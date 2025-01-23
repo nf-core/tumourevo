@@ -1,6 +1,6 @@
 process VCF_PROCESSING {
     tag "$meta.id"
-
+    label "process_single"
     container "docker://lvaleriani/cnaqc:version1.0"
 
     input:

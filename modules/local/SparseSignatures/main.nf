@@ -1,7 +1,7 @@
 process SPARSE_SIGNATURES {
     tag "$meta.id"
+    label "process_long"
     container = 'docker://lvaleriani/sparsesignature:version1.0'
-
 
     input:
 
@@ -16,7 +16,6 @@ process SPARSE_SIGNATURES {
         path "versions.yml", emit: versions
 
     script:
-
     def args                         = task.ext.args
     def prefix                       = task.ext.prefix                                    ?: "${meta.id}"
     def K                            = args!='' && args.K                                 ? "$args.K" : ""
