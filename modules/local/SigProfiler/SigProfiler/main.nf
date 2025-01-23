@@ -150,9 +150,9 @@ process SIGPROFILER {
                                 export_probabilities = bool(eval("$export_probabilities")))
 
         # save the output results
-        dest_dir = "$prefix/"
-        source_dir = "results/"
-        shutil.copytree(source_dir, dest_dir, dirs_exist_ok=True)
+        source_dir = "$prefix/"
+        dest_dir = "results/"
+        shutil.copytree(source_dir, "results", dirs_exist_ok=True)
 
         # Write version
 
@@ -161,8 +161,8 @@ process SIGPROFILER {
 
         with open('versions.yml', 'a') as f:
             f.write('"${task.process}":'+"\\n")
-            f.write("\tSigProfilerMatrixGenerator: {SigProfilerMatrixGenerator_version}\\n")
-            f.write("\tSigProfilerExtractor: {SigProfilerExtractor_version}\\n")
+            f.write("\tSigProfilerMatrixGenerator: "+SigProfilerMatrixGenerator_version+"\\n")
+            f.write("\tSigProfilerExtractor: "+SigProfilerExtractor_version+"\\n")
 
     """
 
