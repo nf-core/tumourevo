@@ -19,19 +19,19 @@
 
 ## Introduction
 
-**nf-core/tumourevo** is a bioinformatics pipeline to model tumour evolution from whole-genome sequencing (WGS) data. The pipeline performs state-of-the-art downstream analysis of variant and copy-number calls from tumour-normal matched sequecing assays, reconstructing the evolutionary processes leading to the observed tumour genome. This analysis can be done  at the level of single samples, multiple samples from the same patient (multi-region/longitudinal assays), and of multiple patients from distinct cohorts.
+**nf-core/tumourevo** is a bioinformatics pipeline to model tumour evolution from whole-genome sequencing (WGS) data. The pipeline performs state-of-the-art downstream analysis of variant and copy-number calls from tumour-normal matched sequecing assays, reconstructing the evolutionary processes leading to the observed tumour genome. This analysis can be done at the level of single samples, multiple samples from the same patient (multi-region/longitudinal assays), and of multiple patients from distinct cohorts.
 
-The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. 
-It comes with docker containers making installation trivial and results highly reproducible. The [Nextflow DSL2]([https://www.nextflow.io](https://www.nextflow.io/docs/latest/dsl1.html)) 
-implementation of this pipeline uses one container per process which makes it easier to maintain and update software dependencies. Where possible, these processes have been submitted to and 
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner.
+It comes with docker containers making installation trivial and results highly reproducible. The [Nextflow DSL2](<[https://www.nextflow.io](https://www.nextflow.io/docs/latest/dsl1.html)>)
+implementation of this pipeline uses one container per process which makes it easier to maintain and update software dependencies. Where possible, these processes have been submitted to and
 installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
 ## Pipeline Summary
 
-The tumourevo pipeline supports variant annotation, driver annotation, quality control processes, subclonal deconvolution and signature deconvolution analysis through various tools. 
+The tumourevo pipeline supports variant annotation, driver annotation, quality control processes, subclonal deconvolution and signature deconvolution analysis through various tools.
 It can be used to analyse both single sample experiments and longitudinal/multi-region assays, in which multiple samples of the same patient are avaiable.
 As input, you must provide at least information on the samples, the VCF file from one of the supported callers and the output of one of the supported copy number caller.
-By default, if multiple samples from the same patient are provided, they will be analysed in a multivariate framework (which affects in particular the subclonal deconvolution deconvolution steps) 
+By default, if multiple samples from the same patient are provided, they will be analysed in a multivariate framework (which affects in particular the subclonal deconvolution deconvolution steps)
 to retrieve information useful in the reconstruction of the evolutionary process. Depending on the variant calling strategy (single sample or multi sample) and the provided input files,
 different strategies will be applied.
 
@@ -39,9 +39,9 @@ different strategies will be applied.
     <img title="tumourevo workflow" src="docs/images/workflow_last.png" width=90%>
 </p>
 
+- Variant Annotation (`VEP`)
 - Quality Control (`CNAqc`, `TINC`)
-- Variant Annotation (`VEP`, `maftools`)
-- Driver Annotation (`SOPRANO`, `dndsCV`)
+- Driver Annotation
 - Subclonal Deconvolution (`PyClone`, `MOBSTER`, `VIBER`)
 - Clone Tree Inference (`ctree`)
 - Signature Deconvolution (`SparseSignatures`, `SigProfiler`)
@@ -57,28 +57,24 @@ First, prepare a samplesheet with your input data that looks as follows:
 `samplesheet.csv`:
 
 ```csv
-dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type
-dataset1,patient1,S1,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1/segments.txt,/CNA/patient1/S1/purity_ploidy.txt,caller,PANCANCER
-dataset1,patient1,S2,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S2/segments.txt,/CNA/patient1/S2/purity_ploidy.txt,caller,PANCANCER
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,sample1,N1,patient1_sample1.vcf.gz,patient1_sample1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER
+dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER
 ```
 
--->
-
 Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
-
 
 ```bash
 nextflow run nf-core/tumourevo \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR> \
-   --genome GRCh37
+   --genome GRCh37 \
+   --fasta <PATH>
 ```
 
 > [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any 
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any
 > configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/tumourevo/usage) and the [parameter documentation](https://nf-co.re/tumourevo/parameters).
@@ -97,15 +93,14 @@ The nf-core/tumourevo pipeline comes with documentation about the pipeline, foun
 
 1. [Installation](https://nf-co.re/usage/installation)
 2. Pipeline configuration
-    - [Local installation](https://nf-co.re/usage/local_installation)
-    - [Adding your own system config](https://nf-co.re/usage/adding_own_config)
-    - [Reference genomes](https://nf-co.re/usage/reference_genomes)
+   - [Local installation](https://nf-co.re/usage/local_installation)
+   - [Adding your own system config](https://nf-co.re/usage/adding_own_config)
+   - [Reference genomes](https://nf-co.re/usage/reference_genomes)
 3. [Running the pipeline](docs/usage.md)
 4. [Output and how to interpret the results](docs/output.md)
 5. [Troubleshooting](https://nf-co.re/usage/troubleshooting)
 
 <!-- TODO nf-core: Add a brief overview of what the pipeline does and how it works -->
-
 
 ## Contributions and Support
 

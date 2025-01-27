@@ -88,7 +88,7 @@
                     }
                 ]
             },
-	        "vcf": {
+            "vcf": {
                 "errorMessage": "VCF file cannot contain spaces and must have extension '.vcf' or '.vcf.gz'",
                 "anyOf": [
                     {
@@ -148,7 +148,7 @@
                 "format": "file-path",
                 "exists": true
             },
-	        "cna_segments": {
+            "cna_segments": {
                 "errorMessage": "CNA segments file cannot contain spaces'",
                 "anyOf": [
                     {
@@ -179,6 +179,16 @@
                 "exists": true
             }
         },
-        "required": ["dataset", "patient", "tumour_sample", "normal_sample", "vcf", "tbi", "cna_segments", "cna_extra", "cna_caller"]
+        "required": [
+            "dataset",
+            "patient",
+            "tumour_sample",
+            "normal_sample",
+            "vcf",
+            "tbi",
+            "cna_segments",
+            "cna_extra",
+            "cna_caller"
+        ]
     }
 }

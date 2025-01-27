@@ -14,7 +14,7 @@ nextflow_process {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
                 joinCNAqc_rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
                 tumor_samples = "Set6_42"

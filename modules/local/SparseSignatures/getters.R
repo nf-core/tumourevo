@@ -1,52 +1,52 @@
 get_sample <- function(m_cnaqc_obj,
-                       sample,
-                       which_obj) {
+                    sample,
+                    which_obj) {
     if (class(m_cnaqc_obj) != "m_cnaqc") {
         wrong_class_all = class(m_cnaqc_obj)
-        
+
         cli::cli_abort(
             c("cnaqc_objs must be a {.field m_cnaqc} object",
-              "x" = "{.var m_cnaqc_obj} is a {.cls {class(m_cnaqc_obj)}}")
+            "x" = "{.var m_cnaqc_obj} is a {.cls {class(m_cnaqc_obj)}}")
         )
     }
-    
+
     consented_obj <- c("shared", "original")
-    
+
     if ((which_obj %in% consented_obj) == FALSE) {
-        
+
         cli::cli_abort("{.var which_obj} must be one of {.val shared} or {.val original}")
-        
+
     }
-    
+
     # define the element names
-    
+
     if (which_obj == "original") {
-        
+
         type = "original_cnaqc_objc"
-        
+
         # check if the original cnaqc obj exist
-        
+
         check_or = any(names(m_cnaqc_obj) == type)
-        
+
         if (check_or == FALSE) {
-            cli::cli_abort(c("mCNAqc object was build without keeping original CNAqc objects"), 
-                           "x" = "It is not possible to retrieve the required samples")
+            cli::cli_abort(c("mCNAqc object was build without keeping original CNAqc objects"),
+                        "x" = "It is not possible to retrieve the required samples")
         } else {
-            
+
             cli::cli_h1("Retrieving original {.cls CNAqc} objects")
             cnaqc_samples = m_cnaqc_obj[[type]][sample]
-            
+
         }
-        
+
     } else {
-        
+
         type = "cnaqc_obj_new_segmentation"
-        
+
         cli::cli_h1("Retrieving {.cls CNAqc} objects with the new segmentation")
-        
+
         cnaqc_samples = m_cnaqc_obj[[type]][sample]
     }
-    
+
     return(cnaqc_samples)
 }
 
@@ -70,7 +70,7 @@ get_sample_name <-function(x) {
 
         cli::cli_abort(
             c("must provide a {.field m_cnaqc} object",
-              "x" = "{.var x} is a {.cls {class(x)}}")
+            "x" = "{.var x} is a {.cls {class(x)}}")
         )
     }
 }

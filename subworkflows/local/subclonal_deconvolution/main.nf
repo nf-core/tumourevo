@@ -9,7 +9,7 @@ include { CTREE as CTREE_PYCLONEVI } from "../../../modules/local/ctree/main"
 include { CTREE as CTREE_VIBER } from "../../../modules/local/ctree/main"
 
 workflow SUBCLONAL_DECONVOLUTION {
-    take: 
+    take:
     rds_join // tuple val(meta), path("*.rds"), val(tumour_samples), emit: rds
 
     main:
@@ -17,17 +17,17 @@ workflow SUBCLONAL_DECONVOLUTION {
     ctree_mobster_pdf = null
     viber_pdf = null
     ctree_viber_pdf = null
-    pyclone_fits = null 
+    pyclone_fits = null
     pyclone_best = null
     pyclone_table = null
     ctree_pyclone_pdf = null
 
     if (params.tools && params.tools.split(",").contains("mobster")) {
-        joinCNAqc = rds_join.transpose().map{ meta, rds, sample -> 
+        joinCNAqc = rds_join.transpose().map{ meta, rds, sample ->
             meta = meta + ["tumour_sample": sample, "id":"${meta.dataset}_${meta.patient}_${sample}"]
             [meta, rds]}
         MOBSTERh(joinCNAqc)
-        // in_join = MOBSTERh.out.mobster_best_rds.map{ meta, rds -> 
+        // in_join = MOBSTERh.out.mobster_best_rds.map{ meta, rds ->
         //     meta = meta + [id: "${meta.dataset}_${meta.patient}"]
         //     sample = meta.tumour_sample
         //     [meta.subMap("dataset", "patient", "id"), rds, sample]}

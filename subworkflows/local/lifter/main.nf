@@ -16,23 +16,21 @@ workflow LIFTER {
     main:
         out = Channel.empty()
 
-        bam = data.map{ meta, rds, bam, bai -> 
+        bam = data.map{ meta, rds, bam, bai ->
             [meta, bam]
         }
 
-        rds = data.map{ meta, rds, bam, bai -> 
+        rds = data.map{ meta, rds, bam, bai ->
                 [meta, rds]
         }
 
-        all_rds = data.map{ meta, rds, bam, bai -> 
+        all_rds = data.map{ meta, rds, bam, bai ->
             meta = meta + [id: "${meta.dataset}_${meta.patient}"]
             [meta.subMap('dataset', 'patient', 'id', 'normal_sample'), rds]}
             | groupTuple
 
-        
-
         GET_POSITIONS_ALL(all_rds)
-        all_pos = GET_POSITIONS_ALL.out.all_pos.transpose().map{ meta, rds -> 
+        all_pos = GET_POSITIONS_ALL.out.all_pos.transpose().map{ meta, rds ->
                 [rds]
         }
 
@@ -42,9 +40,10 @@ workflow LIFTER {
         BCFTOOLS_MPILEUP(in_pileup, fasta, false)
         join = rds.join(BCFTOOLS_MPILEUP.out.vcf, by:[0])
 
-        out = JOIN_POSITIONS(join.combine(all_pos))
+        JOIN_POSITIONS(join.combine(all_pos))
+        out = JOIN_POSITIONS.out.rds
 
     emit:
-        out 
+        out
 
 }

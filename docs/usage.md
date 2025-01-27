@@ -12,7 +12,7 @@ Through the analysis of variant and copy-number calls, it reconstructs the evolu
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 10 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
@@ -20,12 +20,8 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-/*The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. 
-The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to 
+The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 10 columns to
 match those defined in the table below.
-*/
-
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use the parameter `--input` to specify its location. It has to be a comma-separated file with at least 5 columns, and a header row as shown in the examples below.
 
 It is recommended to use the absolute path of the files, but a relative path should also work.
 
@@ -42,27 +38,27 @@ Output from different workflows, subworkflows and modules will be in a specific 
 A minimal input sample sheet example for two samples from the same patient:
 
 ```csv title="samplesheet.csv"
-dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type
-dataset1,patient1,S1,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1/segments.txt,/CNA/patient1/S1/purity_ploidy.txt,caller,PANCANCER
-dataset1,patient1,S2,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S2/segments.txt,/CNA/patient1/S2/purity_ploidy.txt,caller,PANCANCER
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,sample1,N1,patient1_sample1.vcf.gz,patient1_sample1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER
+dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER
 ```
 
 #### Overview: Samplesheet Columns
 
-| Column    | Description                                                                                                                                                                                                                                                                                                                       |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dataset` | **Dataset ID**; when sequencing data from multiple datasets is analysed, it designates the source dataset of each patient; must be unique for each dataset, but one dataset can contain samples from multiple patients. <br /> _Required_                                                                                      |
-| `patient` | **Patient ID**; designates the patient/subject; must be unique for each patient, but one patient can have multiple samples (e.g. from multiple regions or multiple time points). <br /> _Required_                                                                                                                                |
-| `tumour_sample`  | **Sample ID** for each sample; more than one sample for each subject is possible. Must match the sample ID present in the VCF.  <br /> _Required_
-| `normal_sample` | **Normal sample ID** of each sample. Must match the normal sample ID present in the VCF. <br /> _Required_      |                                 |
-| `vcf`  | Full path to the vcf file. <br /> _Required_                                                                                                        |
-| `tbi`  | Full path to the vcf `tabix` index file. <br /> _Required_                                                                                      |
-|`cna_caller`| Name of the copy number caller used to generate your data. <br /> _Required_ |
-| `cna_segments` | Full path to the segmentation files and copy number state from copy-number calling. <br /> _Required_ |
-| `cna_extra` | Full path to files including the ploidy and purity estimate from the copy-number caller. <br /> _Required_ |
-| `cancer_type` | Tumour type (either `PANCANCER` or one of the tumour type present in the driver table) <br /> _Required_ |
-| `tumour_alignment`  | Full path to the tumour bam file. <br /> _Optional_                                                       |
-| `tumour_alignment_index`  | Full path to the tumour bam index file. <br /> _Optional_                                              |
+| Column                   | Description                                                                                                                                                                                                                               |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| `dataset`                | **Dataset ID**; when sequencing data from multiple datasets is analysed, it designates the source dataset of each patient; must be unique for each dataset, but one dataset can contain samples from multiple patients. <br /> _Required_ |
+| `patient`                | **Patient ID**; designates the patient/subject; must be unique for each patient, but one patient can have multiple samples (e.g. from multiple regions or multiple time points). <br /> _Required_                                        |
+| `tumour_sample`          | **Sample ID** for each sample; more than one sample for each subject is possible. Must match the sample ID present in the VCF. <br /> _Required_                                                                                          |
+| `normal_sample`          | **Normal sample ID** of each sample. Must match the normal sample ID present in the VCF. <br /> _Required_                                                                                                                                |     |
+| `vcf`                    | Full path to the vcf file. <br /> _Required_                                                                                                                                                                                              |
+| `tbi`                    | Full path to the vcf `tabix` index file. <br /> _Required_                                                                                                                                                                                |
+| `cna_caller`             | Name of the copy number caller used to generate your data. <br /> _Required_                                                                                                                                                              |
+| `cna_segments`           | Full path to the segmentation files and copy number state from copy-number calling. <br /> _Required_                                                                                                                                     |
+| `cna_extra`              | Full path to files including the ploidy and purity estimate from the copy-number caller. <br /> _Required_                                                                                                                                |
+| `cancer_type`            | Tumour type (either `PANCANCER` or one of the tumour type present in the driver table) <br /> _Required_                                                                                                                                  |
+| `tumour_alignment`       | Full path to the tumour bam file. <br /> _Optional_                                                                                                                                                                                       |
+| `tumour_alignment_index` | Full path to the tumour bam index file. <br /> _Optional_                                                                                                                                                                                 |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -80,7 +76,7 @@ E' possibile usarla sia nel caso di vc multi sample che indipendente -->
 
 Modern tools (ie: Platypus and Mutect2) allow to perform variant calling directly in multisample mode. If the VCFs provided as input are already multisample, no additional step is required.
 
-<!-- If the variant calling had been performed indepentently on each sample from the same patient, 
+<!-- If the variant calling had been performed indepentently on each sample from the same patient,
 
 If you run the pipeline in `singlesample` mode, all the samples, even if belonging to the same patient, are assumed to be independent. In this framework, the subclonal deconvolution is affected, identifying clonal and subclonal composition of the sample starting from allele frequency of detected somatic variants and identifying mutagenic processes for each independent element.  -->
 
@@ -102,10 +98,10 @@ nextflow run nf-core/tumourevo \
 
 Minimal input file, two samples from the same patient:
 
-```bash
-dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type
-dataset1,patient1,S1,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1/segments.txt,/CNA/patient1/S1/purity_ploidy.txt,caller,PANCANCER
-dataset1,patient1,S2,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S2/segments.txt,/CNA/patient1/S2/purity_ploidy.txt,caller,PANCANCER
+```csv
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,sample1,N1,patient1_sample1.vcf.gz,patient1_sample1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER
+dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER
 ```
 
 ##### 2. Single sample variant calling
@@ -114,10 +110,10 @@ If the variant calling performed independently on each sample, even if coming fr
 
 Input file for two patients without joint variant calling, bam files available:
 
-```bash
-dataset,patient,sample,normal_sample,vcf,vcf_tbi,cna_segments,cna_extra,cna_caller,cancer_type,tumour_bam,tumour_bai
-dataset1,patient1,S1,N1,patient1_S1.vcf.gz,patient1_S1.vcf.gz.tbi,/CNA/patient1/S1/segments.txt,/CNA/patient1/S1/purity_ploidy.txt,caller,PANCANCER,patient1/BAM/S1.bam,patient1/BAM/S1.bam.bai 
-dataset1,patient1,S2,N1,patient1_S2.vcf.gz,patient1_S2.vcf.gz.tbi,/CNA/patient1/S2/segments.txt,/CNA/patient1/S2/purity_ploidy.txt,caller,PANCANCER,,patient1/BAM/S2.bam,patient1/BAM/S2.bam.bai  
+```csv
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type,tumour_alignment,tumour_alignment_index
+dataset1,patient1,sample1,N1,patient1_sample1.vcf.gz,patient1_sample1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER,patient1/BAM/sample1.bam,patient1/BAM/sample1.bam.bai
+dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER,patient1/BAM/sample2.bam,patient1/BAM/sample2.bam.bai
 ```
 
 If you can not include the bam files in the input csv, the pipeline will run anyway, treating each sample as independent.
@@ -127,8 +123,8 @@ Two of the avaiable tools for subclonal deconvolution, `pyclonevi` and `viber` c
 
 #### 3. Filtering data
 
-During the QC step, the pipeline will combine purity, copy number and mutation data to perform quality control on the copy number calls, by applying the [CNAqc algorithm](https://caravagnalab.github.io/CNAqc/). Each segment (for each sample) will be flagged as passing or not the QC, in the given combination of estimated purity and ploidy. According to CNAqc, a badly called segment should be recalled with a different purity estimation, in order to obtain more reliable results. 
-After CNAqc quality control, all the segments (coming from samples of the same patient) are used to build a multi-sample CNAqc object, in which a common segmentation is applied. In this way, only those regions that are shared among all samples will be kept in the new object. It is possible to control wheter to include or not in the new segmentation the segments, for each sample, that do not pass the QC test using the `--filter` flag. If it is setted to true, only QC passing segments for each sample will be used to build the mCNAqc object and will then be passed to the subclonal deconvolution steps. This will lead to exclude some regions of the genome and the mutations that sit on it, but should result in more precise analyses. Otherwise, keeping also the segments that do not pass the QC will result in not loosing any mutation but might lead to less precise results in the subclonal deconvolution steps. 
+During the QC step, the pipeline will combine purity, copy number and mutation data to perform quality control on the copy number calls, by applying the [CNAqc algorithm](https://caravagnalab.github.io/CNAqc/). Each segment (for each sample) will be flagged as passing or not the QC, in the given combination of estimated purity and ploidy. According to CNAqc, a badly called segment should be recalled with a different purity estimation, in order to obtain more reliable results.
+After CNAqc quality control, all the segments (coming from samples of the same patient) are used to build a multi-sample CNAqc object, in which a common segmentation is applied. In this way, only those regions that are shared among all samples will be kept in the new object. It is possible to control wheter to include or not in the new segmentation the segments, for each sample, that do not pass the QC test using the `--filter` flag. If it is setted to true, only QC passing segments for each sample will be used to build the mCNAqc object and will then be passed to the subclonal deconvolution steps. This will lead to exclude some regions of the genome and the mutations that sit on it, but should result in more precise analyses. Otherwise, keeping also the segments that do not pass the QC will result in not loosing any mutation but might lead to less precise results in the subclonal deconvolution steps.
 
 #### 4. Driver annotation
 
@@ -140,28 +136,32 @@ Please note that the tumour types reported in the input file must correspond to 
 
 We report the different tools included in the pipeline.
 
-  1. **Gene annotation**
-    - [EnsemblVEP]()
+1. **Gene annotation**
 
-  2. **Driver annotation**
+   - [EnsemblVEP]()
 
-  3. **Quality control**
-    - [TINC](https://caravagnalab.github.io/TINC/)
-    - [CNAqc](https://caravagnalab.github.io/CNAqc/)
+2. **Driver annotation**
+
+3. **Quality control**
+
+   - [TINC](https://caravagnalab.github.io/TINC/)
+   - [CNAqc](https://caravagnalab.github.io/CNAqc/)
 
   <!-- #### TINC
 
   #### INCOMMON -->
 
-  1. **Subclonal deconvolution**
-    - [MOBSTER](https://caravagnalab.github.io/mobster/)
-    - [PyClone-VI](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03919-2)
-    - [VIBER](https://caravagnalab.github.io/VIBER/index.html)
-    - [Ctree](https://caravagnalab.github.io/ctree/)
+1. **Subclonal deconvolution**
 
-  2. **Signature deconvolution**
-    - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
-    - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/) 
+   - [MOBSTER](https://caravagnalab.github.io/mobster/)
+   - [PyClone-VI](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03919-2)
+   - [VIBER](https://caravagnalab.github.io/VIBER/index.html)
+   - [Ctree](https://caravagnalab.github.io/ctree/)
+
+2. **Signature deconvolution**
+
+   - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
+   - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/)
 
 ## Running the pipeline
 
@@ -194,7 +194,8 @@ results         # Finished results (configurable, see below)
 .nextflow_log   # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
-If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command, 
+
+If you wish to repeatedly use the same parameters for multiple runs, rather than specifying each flag in the command,
 you can specify these in a params file.
 
 Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <file>`.

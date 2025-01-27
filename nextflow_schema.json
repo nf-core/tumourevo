@@ -1,800 +1,912 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/nf-core/tumourevo/master/nextflow_schema.json",
-  "title": "nf-core/tumourevo pipeline parameters",
-  "description": "Analysis pipleine to model tumour clonal evolution from WGS data (driver annotation, quality control of copy number calls, subclonal and mutational signature deconvolution)",
-  "type": "object",
-  "$defs": {
-    "input_output_options": {
-      "title": "Input/output options",
-      "type": "object",
-      "fa_icon": "fas fa-terminal",
-      "description": "Define where the pipeline should find input data and save output data.",
-      "required": ["input", "outdir"],
-      "properties": {
-        "input": {
-          "type": "string",
-          "format": "file-path",
-          "exists": true,
-          "schema": "assets/schema_input.json",
-          "mimetype": "text/csv",
-          "pattern": "^\\S+\\.csv$",
-          "description": "Path to comma-separated file containing information about the samples in the experiment.",
-          "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
-          "fa_icon": "fas fa-file-csv"
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/tumourevo/master/nextflow_schema.json",
+    "title": "nf-core/tumourevo pipeline parameters",
+    "description": "Analysis pipleine to model tumour clonal evolution from WGS data (driver annotation, quality control of copy number calls, subclonal and mutational signature deconvolution)",
+    "type": "object",
+    "$defs": {
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define where the pipeline should find input data and save output data.",
+            "required": ["input", "outdir"],
+            "properties": {
+                "input": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_input.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "outdir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
+                    "fa_icon": "fas fa-folder-open"
+                }
+            }
         },
-        "outdir": {
-          "type": "string",
-          "format": "directory-path",
-          "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
-          "fa_icon": "fas fa-folder-open"
+        "main_options": {
+            "title": "Main options",
+            "type": "object",
+            "description": "Most common options used for the pipeline.",
+            "default": "",
+            "properties": {
+                "fasta": {
+                    "type": "string",
+                    "description": "Path to reference fasta file."
+                },
+                "genome": {
+                    "type": "string",
+                    "description": "Reference genome name."
+                },
+                "tools": {
+                    "type": "string",
+                    "default": "mobster,viber,pyclone-vi,sparsesignatures,sigprofiler",
+                    "description": "List of tools for running the pipeline."
+                },
+                "filter": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Flag for filtering or not QC mutations."
+                },
+                "publish_dir_mode": {
+                    "type": "string",
+                    "default": "copy",
+                    "description": "Method used to save pipeline results to output directory."
+                }
+            },
+            "required": ["genome"],
+            "fa_icon": "fas fa-cog"
+        },
+        "variant_annotation": {
+            "title": "Variant Annotation",
+            "type": "object",
+            "description": "Variant Annotation parameters.",
+            "default": "",
+            "properties": {
+                "download_cache_vep": {
+                    "type": "string",
+                    "description": "Parameter for downloading VEP cache."
+                },
+                "vep_cache": {
+                    "type": "string",
+                    "description": "Path to VEP cache."
+                },
+                "vep_cache_version": {
+                    "type": "string",
+                    "description": "VEP cache version."
+                },
+                "vep_species": {
+                    "type": "string",
+                    "description": "VEP species."
+                },
+                "vep_genome": {
+                    "type": "string",
+                    "description": "VEP reference genome name."
+                },
+                "vep_custom_args": {
+                    "type": "string",
+                    "default": "--everything --filter_common --per_gene --total_length --offline --format vcf",
+                    "description": "Add an extra custom argument to VEP."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "driver_annotation": {
+            "title": "Driver Annotation",
+            "type": "object",
+            "description": "Driver Annotation parameters.",
+            "default": "",
+            "properties": {
+                "drivers_table": {
+                    "type": "string",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/refs/heads/tumourevo/data/DRIVER_ANNOTATION/ANNOTATE_DRIVER/Compendium_Cancer_Genes.tsv",
+                    "description": "Path to driver table."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "vcf2cnaqc": {
+            "title": "VCF2CNAqc",
+            "type": "object",
+            "description": "Filtering parameters from vcf file.",
+            "default": "",
+            "properties": {
+                "vcf_filter_mutations": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "Flag for filtering mutations from vcf."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "cnaqc": {
+            "title": "CNAqc",
+            "type": "object",
+            "description": "CNAqc tool parameters.",
+            "default": "",
+            "properties": {
+                "cnaqc_karyotypes": {
+                    "type": "string",
+                    "default": "c(\\'1:0\\', \\'1:1\\', \\'2:0\\', \\'2:1\\', \\'2:2\\')",
+                    "description": "For clonal simple CNAs, the list of segments to test.",
+                    "help_text": "By default LOH regions (A, AA), diploid regions (AB), and amplification regions (AAB, AABB) are tested, corresponding to '1:0', '1:1', '2:1', '2:0', '2:2' in \"Major:minor\" notation."
+                },
+                "cnaqc_min_karyotype_size": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "For clonal simple CNAs, a filter for the segments to test.",
+                    "help_text": "The segment size is defined based on the number of mutations mapped, this cut is on the proportion relative to the whole set of segments one wishes to analyse (defined by `karyotypes`). For example, by setting `min_karyotype_size = 0.2` one would QC clonal simple CNAs that contain at least 20 The default of this parameter is `0` (all QCed)."
+                },
+                "cnaqc_min_absolute_karyotype_mutations": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "For clonal simple CNAs, as min_karyotype_size but with a cut measured on absolute mutation counts.",
+                    "help_text": "For example, by setting `min_absolute_karyotype_mutations = 150` one would QC clonal simple CNAs that contain at least `150` mutations. The default of this parameter is `100`."
+                },
+                "cnaqc_p_binsize_peaks": {
+                    "type": "number",
+                    "default": 0.005,
+                    "description": "For clonal simple CNAs, peaks detected will be filtered if, in a peak, we map less than p_binsize_peaks * N mutations.",
+                    "help_text": "The value N is obtained couting all mutations that map in all peaks. By default this parameters is `0.005`."
+                },
+                "cnaqc_matching_epsilon": {
+                    "type": "string",
+                    "default": "NULL",
+                    "description": "Deprecated parameter."
+                },
+                "cnaqc_purity_error": {
+                    "type": "number",
+                    "default": 0.05,
+                    "description": "For clonal simple CNAs, the purity error tolerance to determine QC pass or fail.",
+                    "help_text": "This can be set automatically using function auto_tolerance to optimise the analysis based on a desired rate of false positives matches, as a function of the data coverage and (putative) purity.\n\n"
+                },
+                "cnaqc_vaf_tolerance": {
+                    "type": "number",
+                    "default": 0.015,
+                    "description": "For clonal simple CNAs, a tolerance in comparing bands overlaps which is applied to the raw VAF values."
+                },
+                "cnaqc_n_bootstrap": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "For clonal simple CNAs, the number of times peak detection is bootstrapped (by default 1).",
+                    "help_text": "This helps sometimes finding peaks that might be visually observable but fail to be detected by the underlying peak-detection heuristics."
+                },
+                "cnaqc_kernel_adjust": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "For KDE-based matches the adjust density parameter; see density."
+                },
+                "cnaqc_matching_strategy": {
+                    "type": "string",
+                    "default": "rightmost",
+                    "description": "For clonal simple CNAs, if \"closest\" the closest peak will be used to match the expected peak. If \"rightmost\" peaks are matched prioritizing right to left peaks (the higher-VAF gets matched first); this strategy is more correct in principle but works only if there are no spurious peaks in the estimated density."
+                },
+                "cnaqc_kde": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "Deprecated parameter."
+                },
+                "cnaqc_starting_state_subclonal_evolution": {
+                    "type": "string",
+                    "default": "1:1",
+                    "description": "For subclonal simple CNAs, the starting state to determine linear versus branching evolutionary models."
+                },
+                "cnaqc_cluster_subclonal_CCF": {
+                    "type": "string",
+                    "default": "FALSE",
+                    "description": "For subclonal simple CNAs, the starting state to determine linear versus branching evolutionary models."
+                },
+                "cnaqc_muts_per_karyotype": {
+                    "type": "integer",
+                    "default": 25,
+                    "description": "Minimum number of mutations that are required to be mapped to a karyotype in order to compute CCF values (default 25)."
+                },
+                "cnaqc_cutoff_QC_PASS": {
+                    "type": "number",
+                    "default": 0.1,
+                    "description": "For the entropy-based method, percentage of mutations that can be not-assigned (NA) in a karyotype.",
+                    "help_text": " If the karyotype has more than cutoff_QC_PASS percentage of non-assigned mutations, then the overall set of CCFs is failed for the karyotype."
+                },
+                "cnaqc_method": {
+                    "type": "string",
+                    "default": "ENTROPY",
+                    "description": "Either \"ENTROPY\" (default) or \"ROUGH\", to reflect the two different algorithms to compute CCF."
+                },
+                "cnaqc_plot_cn": {
+                    "type": "string",
+                    "default": "absolute"
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "joincnaqc": {
+            "title": "joinCNAqc",
+            "type": "object",
+            "description": "joinCNAqc",
+            "default": "",
+            "properties": {
+                "joincnaqc_qc_filter": {
+                    "type": "string",
+                    "default": "FALSE",
+                    "description": "If TRUE the mutations flagged as FAILED by CNAqc are discarded while building the joinCNAqc segmentation, if FALSE they are kept in the new object."
+                },
+                "joincnaqc_keep_original": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "If TRUE the original CNAqc object is kept in the joinCNAqc object, otherwise it is lost."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "pyclone_vi": {
+            "title": "pyClone-VI",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "pyclonevi_density": {
+                    "type": "string",
+                    "default": "beta-binomial",
+                    "description": "The probability density used to model the read count data. Choices are beta-binomial and binomial.",
+                    "help_text": "binomial is a common choice for sequencing data. beta-binomial is useful when the data is over-dispersed which has been observed frequently in sequencing data."
+                },
+                "pyclonevi_n_restarts": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Number of random restarts of variational inference.",
+                    "help_text": "More restarts will have a higher probability of finding the optimal variational approximation. This also increases running time."
+                },
+                "pyclonevi_n_grid_point": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Number of grid points used for approximating the posterior distribution.",
+                    "help_text": " Higher values should be used for deeply sequenced data."
+                },
+                "pyclonevi_n_cluster": {
+                    "type": "integer",
+                    "default": 20,
+                    "description": "The number of clusters to use while fitting.",
+                    "help_text": "This should be set to a value larger than the expected number of clusters. The software will then automatically determine how many to use. In general this value should increase if as more samples are used."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "mobster": {
+            "title": "mobster",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "mobster_K": {
+                    "type": "string",
+                    "default": "1:5",
+                    "description": "A vector with the number of Beta components to use. All values of K must be positive and strictly greater than 0."
+                },
+                "mobster_init": {
+                    "type": "string",
+                    "default": "peaks",
+                    "description": "Initial values for the parameters of the model. Can be either \"random\" or \"peaks\" ."
+                },
+                "mobster_samples": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "Number of fits that should be attempted for each configuration of the model tested."
+                },
+                "mobster_tail": {
+                    "type": "string",
+                    "default": "c(TRUE,FALSE)",
+                    "description": "Boolean value whether to use or not tail mutations for subclonal deconvolution."
+                },
+                "mobster_epsilon": {
+                    "type": "number",
+                    "default": 1e-10,
+                    "description": "Tolerance for convergency estimation."
+                },
+                "mobster_maxIter": {
+                    "type": "integer",
+                    "default": 250,
+                    "description": "Maximum number of steps for a fit."
+                },
+                "mobster_fit_type": {
+                    "type": "string",
+                    "default": "MM",
+                    "description": "A string that determines the type of fit. Can be either \"MLE\" , for the Maximum Likelihood Estimate of the Beta parameters, or \"MM\"for the Moment Matching."
+                },
+                "mobster_seed": {
+                    "type": "integer",
+                    "default": 12345,
+                    "description": "Seed for the random numbers generator"
+                },
+                "mobster_model_selection": {
+                    "type": "string",
+                    "default": "reICL",
+                    "description": "Score to minimize to select the best model; this has to be one of 'reICL', 'ICL', 'BIC', 'AIC' or 'NLL'."
+                },
+                "mobster_trace": {
+                    "type": "string",
+                    "default": "FALSE",
+                    "description": "Boolean value whether to return the trace of model fit."
+                },
+                "mobster_parallel": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "Boolean value whether to run the fit in parallel."
+                },
+                "mobster_pi_cutoff": {
+                    "type": "number",
+                    "default": 0.02,
+                    "description": "The minimum mixing proportion of a cluster to be returned as output."
+                },
+                "mobster_n_cutoff": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "The minimum number of mutations assigned to a cluster to be returned as output."
+                },
+                "mobster_silent": {
+                    "type": "string",
+                    "default": "FALSE"
+                },
+                "mobster_auto_setup": {
+                    "type": "string",
+                    "default": "NULL",
+                    "description": "Overrides all the parameters with a predefined set of values, in order to implement different analyses."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "viber": {
+            "title": "viber",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "viber_K": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "The maximum number of clusters returned"
+                },
+                "viber_samples": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "The number of fits to be computed."
+                },
+                "viber_alpha_0": {
+                    "type": "number",
+                    "default": 1e-6,
+                    "description": "The concentration parameter of the Dirichlet mixture."
+                },
+                "viber_a_0": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The prior Beta hyperparameter for each Binomial component a"
+                },
+                "viber_b_0": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The prior Beta hyperparameter for each Binomial component b"
+                },
+                "viber_maxIter": {
+                    "type": "integer",
+                    "default": 5000,
+                    "description": "The maximum number of fit iterations"
+                },
+                "viber_epsilon_conv": {
+                    "type": "number",
+                    "default": 1e-10,
+                    "description": "The epsilon to measure convergence as ELBO absolute difference"
+                },
+                "viber_q_init": {
+                    "type": "string",
+                    "default": "prior",
+                    "description": "Initialization of the q-distribution to compute the approximation of the posterior distributions.",
+                    "help_text": "This can be set in three different waysL equal to the prior (q_init = 'prior'), via kmeans clustering (q_init = 'kmeans') and capturing points which are private to each dimension (q_init = 'private')."
+                },
+                "viber_trace": {
+                    "type": "string",
+                    "default": "FALSE",
+                    "description": "Boolean value whether to return the trace of model fit."
+                },
+                "viber_binomial_cutoff": {
+                    "type": "number",
+                    "default": 0.05,
+                    "description": "The minimum Binomial success probability when applying a heuristic procedure to filter clusters after Variational Inference."
+                },
+                "viber_pi_cutoff": {
+                    "type": "number",
+                    "default": 0.02,
+                    "description": "The minimum size of the mixture component when applying a heuristic procedure to filter clusters after Variational Inference."
+                },
+                "viber_re_assign": {
+                    "type": "string",
+                    "default": "FALSE",
+                    "description": "Boolean value whether point assigned to a cluster that is filtered our, are re-assigned from the density function."
+                },
+                "viber_dimensions_cutoff": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The minimum number of dimensions where we want to detect a Binomial component when applying a heuristic procedure to filter clusters after Variational Inference."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "ctree": {
+            "title": "ctree",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "ctree_sspace_cutoff": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "If there are less than this number of tree available, all the structures are examined in an exhaustive fashion. Otherwise, if there are more than this, a Monte Carlo sampler is used."
+                },
+                "ctree_n_sampling": {
+                    "type": "integer",
+                    "default": 5000,
+                    "description": "f a Monte Carlo sampler is used, n.sampling distinct trees are sampled and scored."
+                },
+                "ctree_store_max": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "When a number of trees are generated, scored and ranked, a maximum of store.max are returned to the user (these are selected following the ranking)."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "sparsesignature": {
+            "title": "SparseSignature",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "sparsesignatures_K": {
+                    "type": "string",
+                    "default": "2:10",
+                    "description": "The number of signatures (min. value = 2) to be fit to the dataset, including the background signature."
+                },
+                "sparsesignatures_background_signature": {
+                    "type": "string",
+                    "default": "NULL",
+                    "description": "A numeric vector of length 96 provided by the user. The parameter is ignored if beta is given instead. If NULL, it is estimated through NMF."
+                },
+                "sparsesignatures_beta": {
+                    "type": "string",
+                    "default": "NULL",
+                    "description": "The initial value of the signature matrix \u03b2. If NULL, it is estimated with a few runs of NMF. It must include the background signature as its first row."
+                },
+                "sparsesignatures_normalize_counts": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "If TRUE normalize the count matrix x row-wise before processing it. Useful for algorithm stability, when considerably different total counts of mutations are observed among the patients."
+                },
+                "sparsesignatures_iterations": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "The number of iterations of every single run of NMF LASSO."
+                },
+                "sparsesignatures_nmf_runs": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Number of iterations to estimate the length(K) matrices beta (including the background signature) in case the argument beta is NULL. Ignored if beta is given."
+                },
+                "sparsesignatures_max_iterations_lasso": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "The number of sub-iterations involved in the sparsification phase, within a full NMF LASSO iteration."
+                },
+                "sparsesignatures_num_processes": {
+                    "type": "string",
+                    "default": "all",
+                    "description": "The number of requested NMF worker subprocesses to spawn. If Inf, an adaptive maximum number is automatically chosen. If NA or NULL, the function is run as a single process."
+                },
+                "sparsesignatures_cross_validation_entries": {
+                    "type": "number",
+                    "default": 0.01,
+                    "description": "The cross-validation test size, i.e., the percentage of entries set to zero during NMF and used for validation."
+                },
+                "sparsesignatures_cross_validation_repetitions": {
+                    "type": "integer",
+                    "default": 50,
+                    "description": "The number of repetitions of the cross-validation procedure."
+                },
+                "sparsesignatures_cross_validation_iterations": {
+                    "type": "integer",
+                    "default": 5,
+                    "description": "The number of randomized restarts of a single cross-validation repetition, in case of poor fits."
+                },
+                "sparsesignatures_lambda_values_beta": {
+                    "type": "string",
+                    "default": "c(0.01, 0.05, 0.1, 0.2)",
+                    "description": "The candidate values of the sparsity parameter for the signature matrix 'beta' whose goodness of fit is assessed by cross-validation."
+                },
+                "sparsesignatures_lambda_rate_alpha": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries alpha whose goodness of fit is assessed by cross-validation."
+                },
+                "sparsesignatures_verbose": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "If TRUE, informative messages are printed on the R console over the execution."
+                },
+                "sparsesignatures_seed": {
+                    "type": "integer",
+                    "default": 12345,
+                    "description": "Seed for the random number generation. To be set for reproducibility."
+                },
+                "sparsesignatures_lambda_values_alpha": {
+                    "type": "string",
+                    "default": "c(0.00, 0.01, 0.05, 0.10)",
+                    "description": "The candidate values of the sparsity parameter for the exposure-matrix entries alpha whose goodness of fit is assessed by cross-validation."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "sigprofiler": {
+            "title": "SigProfiler",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "publish_dir_mode_genome_sigprofiler": {
+                    "type": "string",
+                    "default": "move",
+                    "description": "Mode of publishing the SigProfiler genome."
+                },
+                "download_sigprofiler_genome": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specify True if the reference genome should be downloaded."
+                },
+                "genome_installed_path": {
+                    "type": "string",
+                    "description": "Specify the path to the reference genome (if downloaded by the user), e.g. path/to/genome/tsb"
+                },
+                "sigprofiler_exome": {
+                    "type": "string",
+                    "description": "Downsamples mutational matrices to the exome regions of the genome."
+                },
+                "sigprofiler_input_type": {
+                    "type": "string",
+                    "default": "matrix",
+                    "description": "'matrix' is used for table format inputs using a tab separated file."
+                },
+                "sigprofiler_minimum_signatures": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The minimum number of signatures to be extracted."
+                },
+                "sigprofiler_maximum_signatures": {
+                    "type": "integer",
+                    "default": 25,
+                    "description": "The maximum number of signatures to be extracted."
+                },
+                "sigprofiler_context_type": {
+                    "type": "string",
+                    "default": "96,DINUC,ID",
+                    "description": "Mutation context name(s), separated by commas (,), that define the mutational contexts for signature extraction. In the default value, 96 represents the SBS96 context, DINUC represents the dinucleotide context, and ID represents the indel context."
+                },
+                "sigprofiler_nmf_replicates": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "The number of iteration to be performed to extract each number signature."
+                },
+                "sigprofiler_resample": {
+                    "type": "string",
+                    "default": true,
+                    "description": "If True, add poisson noise to samples by resampling."
+                },
+                "sigprofiler_matrix_normalization": {
+                    "type": "string",
+                    "default": "gmm",
+                    "description": "Method of normalizing the genome matrix before it is analyzed by NMF. Options are, 'log2', 'custom' or 'none'."
+                },
+                "sigprofiler_nmf_init": {
+                    "type": "string",
+                    "default": "random",
+                    "description": "The initialization algorithm for W and H matrix of NMF. Options are 'random', 'nndsvd', 'nndsvda', 'nndsvdar' and 'nndsvd_min'."
+                },
+                "sigprofiler_min_nmf_iterations": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Value defines the minimum number of iterations to be completed before NMF converges."
+                },
+                "sigprofiler_max_nmf_iterations": {
+                    "type": "integer",
+                    "default": 1000000,
+                    "description": "Value defines the maximum number of iterations to be completed before NMF converges ."
+                },
+                "sigprofiler_nmf_test_conv": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Value defines the number number of iterations to done between checking next convergence ."
+                },
+                "sigprofiler_seeds": {
+                    "type": "string",
+                    "default": "random",
+                    "description": "Ensures reproducible NMF replicate resamples. Provide the path to the Seeds.txt file (found in the results folder from a previous analysis) to reproduce results."
+                },
+                "sigprofiler_stability": {
+                    "type": "number",
+                    "default": 0.8,
+                    "description": "The cutoff thresh-hold of the average stability (default: 0.8). Solutions with average stabilities below this thresh-hold will not be considered."
+                },
+                "sigprofiler_cpu": {
+                    "type": "integer",
+                    "default": -1,
+                    "description": "The number of processors to be used to extract the signatures (default: all processors)."
+                },
+                "sigprofiler_min_stability": {
+                    "type": "number",
+                    "default": 0.2,
+                    "description": "The cutoff thresh-hold of the minimum stability (default: 0.2). Solutions with minimum stabilities below this thresh-hold will not be considered."
+                },
+                "sigprofiler_combined_stability": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "The cutoff thresh-hold of the combined stability (sum of average and minimum stability) (default: 1.0). Solutions with combined stabilities below this thresh-hold will not be considered."
+                },
+                "sigprofiler_make_decomposition_plots": {
+                    "type": "string",
+                    "default": true,
+                    "description": "Generate de novo to COSMIC signature decomposition plots as part of the results (default: True). Set to False to skip generating these plots."
+                },
+                "sigprofiler_collapse_to_SBS96": {
+                    "type": "string",
+                    "default": true,
+                    "description": "If True, SBS288 and SBS1536 de novo signatures will be mapped to SBS96 reference signatures (default: True). If False, those will be mapped to reference signatures of the same context."
+                },
+                "sigprofiler_cosmic_version": {
+                    "type": "number",
+                    "default": 3.4,
+                    "description": "Defines the version of the COSMIC reference signatures (default: 3.4). Takes a positive float among 1, 2, 3, 3.1, 3.2, 3.3, and 3.4."
+                },
+                "sigprofiler_get_all_signature_matrices": {
+                    "type": "string",
+                    "default": true,
+                    "description": "Write to output Ws and Hs from all the NMF iterations."
+                },
+                "sigprofiler_export_probabilities": {
+                    "type": "string",
+                    "default": true,
+                    "description": "Create the probability matrix."
+                },
+                "sigprofiler_chrom_based": {
+                    "type": "string",
+                    "description": "Outputs chromosome-based matrices."
+                },
+                "sigprofiler_bed_file": {
+                    "type": "string",
+                    "default": "None",
+                    "description": "Downsamples mutational matrices to custom regions of the genome. Requires the full path to the BED file."
+                },
+                "sigprofiler_plot": {
+                    "type": "string",
+                    "description": "Integrates with SigProfilerPlotting to output all available visualizations for each matrix."
+                },
+                "sigprofiler_seqInfo": {
+                    "type": "string",
+                    "description": "Ouputs original mutations into a text file that contains the SigProfilerMatrixGenerator classificaiton for each mutation."
+                },
+                "sigprofiler_precision": {
+                    "type": "string",
+                    "default": "single",
+                    "description": "Values should be single or double."
+                },
+                "sigprofiler_cushion": {
+                    "type": "integer",
+                    "default": 100,
+                    "description": "Adds an Xbp cushion to the exome/bed_file ranges for downsampling the mutations."
+                },
+                "sigprofiler_gpu": {
+                    "type": "string",
+                    "description": "Defines if the GPU resource will used if available. If True, the GPU resources will be used in the computation. Note: All available CPU processors are used by default, which may cause a memory error. This error can be resolved by reducing the number of CPU processes through the cpu parameter."
+                },
+                "sigprofiler_tsb_stat": {
+                    "type": "string",
+                    "description": "Outputs the results of a transcriptional strand bias test for the respective matrices."
+                },
+                "sigprofiler_batch_size": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Will be effective only if the GPU is used. Defines the number of NMF replicates to be performed by each CPU during the parallel processing. Note: For batch_size values greater than 1, each NMF replicate will update until max_nmf_iterations is reached."
+                },
+                "sigprofiler_allow_stability_drop": {
+                    "type": "string",
+                    "description": "Defines if solutions with a drop in stability with respect to the highest stable number of signatures will be considered."
+                },
+                "sigprofiler_nmf_tolerance": {
+                    "type": "number",
+                    "default": 1e-15,
+                    "description": "Value defines the tolerance to achieve to converge."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "tinc": {
+            "title": "TINC",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "tinc_normal_contamination_lv": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "A number that represent the normal contamination level for which the sample is considered passed or failed."
+                },
+                "tinc_vaf_range_tumour": {
+                    "type": "string",
+                    "default": "c(0, 0.7)",
+                    "description": "A range `[x, y]` so that only mutations with VAF in that range are actually used to determine the TIN/ TIT levels of the input."
+                },
+                "tinc_cutoff_miscalled_clonal": {
+                    "type": "number",
+                    "default": 0.6,
+                    "description": "An upper bound on the VAF of a cluster in the tumour data. Clusters above this value will be considered miscalled clonal clusters (e.g., due to LOH etc.)."
+                },
+                "tinc_cutoff_lv_assignment": {
+                    "type": "number",
+                    "default": 0.75,
+                    "description": "Consider only latent variables with responsibilities above this cutoff."
+                },
+                "tinc_N": {
+                    "type": "integer",
+                    "default": 20000,
+                    "description": "If there are more than `N` mutations in VAF range `VAF_range_tumour`, a random subset of size `N` is retained"
+                },
+                "tinc_fast": {
+                    "type": "string",
+                    "default": "TRUE",
+                    "description": "If `TRUE`, it runs the analysis with reduced sampling power and accuracy. Use this to obtain a result for preliminary inspection of your data, and then run `autofit` with this parameter set to `FALSE`."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "email": {
+                    "type": "boolean",
+                    "description": "Email address for completion summary."
+                },
+                "email_on_fail": {
+                    "type": "boolean",
+                    "description": "Email address for completion summary, only when pipeline fails."
+                },
+                "monochrome_logs": {
+                    "type": "boolean",
+                    "description": "Do not use coloured log outputs."
+                },
+                "plaintext_email": {
+                    "type": "boolean",
+                    "description": "Send plain-text email instead of HTML."
+                }
+            }
+        },
+        "other": {
+            "title": "Other",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "custom_config_version": {
+                    "type": "string",
+                    "default": "master",
+                    "description": "Git commit id for Institutional configs."
+                },
+                "custom_config_base": {
+                    "type": "string",
+                    "default": "https://raw.githubusercontent.com/nf-core/configs/master",
+                    "description": "Base directory for Institutional configs."
+                },
+                "config_profile_description": {
+                    "type": "boolean",
+                    "description": "Institutional config description."
+                },
+                "config_profile_contact": {
+                    "type": "boolean",
+                    "description": "Institutional config contact information."
+                },
+                "igenomes_base": {
+                    "type": "string",
+                    "default": "s3://ngi-igenomes/igenomes/"
+                },
+                "config_profile_url": {
+                    "type": "boolean",
+                    "description": "Institutional config URL link."
+                },
+                "igenomes_ignore": {
+                    "type": "boolean"
+                },
+                "tracedir": {
+                    "type": "string",
+                    "default": "null/pipeline_info"
+                },
+                "hostnames": {
+                    "type": "boolean"
+                },
+                "version": {
+                    "type": "boolean"
+                },
+                "hook_url": {
+                    "type": "string"
+                },
+                "pipelines_testdata_base_path": {
+                    "type": "string",
+                    "default": "https://raw.githubusercontent.com/nf-core/test-datasets/"
+                },
+                "trace_report_suffix": {
+                    "type": "string"
+                },
+                "validate_params": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "config_profile_name": {
+                    "type": "string"
+                }
+            },
+            "fa_icon": "fas fa-university"
         }
-      }
     },
-    "main_options": {
-      "title": "Main options",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "fasta": {
-          "type": "string",
-          "description": "Path to reference fast file."
+    "allOf": [
+        {
+            "$ref": "#/$defs/input_output_options"
         },
-        "genome": {
-          "type": "string",
-          "description": "Reference genome name."
+        {
+            "$ref": "#/$defs/main_options"
         },
-        "tools": {
-          "type": "string",
-          "default": "mobster,viber,pyclone-vi,sparsesignatures,sigprofiler",
-          "description": "List of tools for running the pipeline."
+        {
+            "$ref": "#/$defs/variant_annotation"
         },
-        "publish_dir_mode": {
-          "type": "string",
-          "default": "copy",
-          "description": "Method used to save pipeline results to output directory."
+        {
+            "$ref": "#/$defs/driver_annotation"
         },
-        "filter": {
-          "type": "string",
-          "description": "Flag for filtering QC mutations or not."
+        {
+            "$ref": "#/$defs/vcf2cnaqc"
+        },
+        {
+            "$ref": "#/$defs/cnaqc"
+        },
+        {
+            "$ref": "#/$defs/joincnaqc"
+        },
+        {
+            "$ref": "#/$defs/pyclone_vi"
+        },
+        {
+            "$ref": "#/$defs/mobster"
+        },
+        {
+            "$ref": "#/$defs/viber"
+        },
+        {
+            "$ref": "#/$defs/ctree"
+        },
+        {
+            "$ref": "#/$defs/sparsesignature"
+        },
+        {
+            "$ref": "#/$defs/sigprofiler"
+        },
+        {
+            "$ref": "#/$defs/tinc"
+        },
+        {
+            "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/other"
         }
-      },
-      "required": ["genome"],
-      "fa_icon": "fas fa-cog"
-    },
-    "variant_annotation": {
-      "title": "Variant Annotation",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "download_cache_vep": {
-          "type": "string"
-        },
-        "vep_cache": {
-          "type": "string",
-          "description": "Path to VEP cache."
-        },
-        "vep_cache_version": {
-          "type": "string",
-          "description": "VEP cache version."
-        },
-        "vep_species": {
-          "type": "string",
-          "description": "VEP species."
-        },
-        "vep_genome": {
-          "type": "string",
-          "description": "VEP reference genome name."
-        },
-        "vep_custom_args": {
-          "type": "string",
-          "default": "--everything --filter_common --per_gene --total_length --offline --format vcf",
-          "description": "Add an extra custom argument to VEP."
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "driver_annotation": {
-      "title": "Driver Annotation",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "drivers_table": {
-          "type": "string",
-          "default": "https://raw.githubusercontent.com/nicola-calonaci/test-datasets/evoverse/data/DRIVER_ANNOTATION/DNDSCV/RefCDS_human_GRCh38_GencodeV18_recommended.rda",
-          "description": "Path to driver table."
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "vcf2cnaqc": {
-      "title": "VCF2CNAqc",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "vcf_filter_mutations": {
-          "type": "string",
-          "default": "TRUE",
-          "description": "Flag for filtering mutations from vcf."
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "cnaqc": {
-      "title": "CNAqc",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "cnaqc_karyotypes": {
-          "type": "string",
-          "default": "c(\\'1:0\\', \\'1:1\\', \\'2:0\\', \\'2:1\\', \\'2:2\\')"
-        },
-        "cnaqc_min_karyotype_size": {
-          "type": "integer",
-          "default": 0
-        },
-        "cnaqc_min_absolute_karyotype_mutations": {
-          "type": "integer",
-          "default": 100
-        },
-        "cnaqc_p_binsize_peaks": {
-          "type": "number",
-          "default": 0.005
-        },
-        "cnaqc_matching_epsilon": {
-          "type": "string",
-          "default": "NULL"
-        },
-        "cnaqc_purity_error": {
-          "type": "number",
-          "default": 0.05
-        },
-        "cnaqc_vaf_tolerance": {
-          "type": "number",
-          "default": 0.015
-        },
-        "cnaqc_n_bootstrap": {
-          "type": "integer",
-          "default": 1
-        },
-        "cnaqc_matching_strategy": {
-          "type": "string",
-          "default": "rightmost"
-        },
-        "cnaqc_kde": {
-          "type": "string",
-          "default": "TRUE"
-        },
-        "cnaqc_starting_state_subclonal_evolution": {
-          "type": "string",
-          "default": "1:1"
-        },
-        "cnaqc_plot_cn": {
-          "type": "string",
-          "default": "absolute"
-        },
-        "cnaqc_muts_per_karyotype": {
-          "type": "integer",
-          "default": 25
-        },
-        "cnaqc_cutoff_QC_PASS": {
-          "type": "number",
-          "default": 0.1
-        },
-        "cnaqc_cluster_subclonal_CCF": {
-          "type": "string",
-          "default": "FALSE"
-        },
-        "cnaqc_method": {
-          "type": "string",
-          "default": "ENTROPY"
-        },
-        "cnaqc_kernel_adjust": {
-          "type": "integer",
-          "default": 1
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "joincnaqc": {
-      "title": "JoinCNAqc",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "joincnaqc_qc_filter": {
-          "type": "string",
-          "default": "FALSE"
-        },
-        "joincnaqc_keep_original": {
-          "type": "string",
-          "default": "TRUE"
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "pyclonevi": {
-      "title": "PyCloneVI",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "pyclonevi_density": {
-          "type": "string",
-          "default": "beta-binomial"
-        },
-        "pyclonevi_n_restarts": {
-          "type": "integer",
-          "default": 100
-        },
-        "pyclonevi_n_grid_point": {
-          "type": "integer",
-          "default": 100
-        },
-        "pyclonevi_n_cluster": {
-          "type": "integer",
-          "default": 20
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "mobster": {
-      "title": "Mobster",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "mobster_K": {
-          "type": "string",
-          "default": "1:5"
-        },
-        "mobster_init": {
-          "type": "string",
-          "default": "peaks"
-        },
-        "mobster_samples": {
-          "type": "integer",
-          "default": 5
-        },
-        "mobster_tail": {
-          "type": "string",
-          "default": "c(TRUE,FALSE)"
-        },
-        "mobster_epsilon": {
-          "type": "number",
-          "default": 1e-10
-        },
-        "mobster_maxIter": {
-          "type": "integer",
-          "default": 250
-        },
-        "mobster_fit_type": {
-          "type": "string",
-          "default": "MM"
-        },
-        "mobster_seed": {
-          "type": "integer",
-          "default": 12345
-        },
-        "mobster_model_selection": {
-          "type": "string",
-          "default": "reICL"
-        },
-        "mobster_trace": {
-          "type": "string",
-          "default": "FALSE"
-        },
-        "mobster_parallel": {
-          "type": "string",
-          "default": "TRUE"
-        },
-        "mobster_pi_cutoff": {
-          "type": "number",
-          "default": 0.02
-        },
-        "mobster_n_cutoff": {
-          "type": "integer",
-          "default": 10
-        },
-        "mobster_silent": {
-          "type": "string",
-          "default": "FALSE"
-        },
-        "mobster_auto_setup": {
-          "type": "string",
-          "default": "NULL"
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "viber": {
-      "title": "Viber",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "viber_K": {
-          "type": "integer",
-          "default": 10
-        },
-        "viber_samples": {
-          "type": "integer",
-          "default": 10
-        },
-        "viber_alpha_0": {
-          "type": "number",
-          "default": 1e-6
-        },
-        "viber_a_0": {
-          "type": "integer",
-          "default": 1
-        },
-        "viber_b_0": {
-          "type": "integer",
-          "default": 1
-        },
-        "viber_maxIter": {
-          "type": "integer",
-          "default": 5000
-        },
-        "viber_epsilon_conv": {
-          "type": "number",
-          "default": 1e-10
-        },
-        "viber_q_init": {
-          "type": "string",
-          "default": "prior"
-        },
-        "viber_trace": {
-          "type": "string",
-          "default": "FALSE"
-        },
-        "viber_binomial_cutoff": {
-          "type": "number",
-          "default": 0.05
-        },
-        "viber_pi_cutoff": {
-          "type": "number",
-          "default": 0.02
-        },
-        "viber_re_assign": {
-          "type": "string",
-          "default": "FALSE"
-        },
-        "viber_dimensions_cutoff": {
-          "type": "integer",
-          "default": 1
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "ctree": {
-      "title": "CTree",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "ctree_sspace_cutoff": {
-          "type": "integer",
-          "default": 10000
-        },
-        "ctree_n_sampling": {
-          "type": "integer",
-          "default": 5000
-        },
-        "ctree_store_max": {
-          "type": "integer",
-          "default": 100
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "sparsesignature": {
-      "title": "SparseSignature",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "sparsesignatures_K": {
-          "type": "string",
-          "default": "2:10"
-        },
-        "sparsesignatures_background_signature": {
-          "type": "string",
-          "default": "NULL"
-        },
-        "sparsesignatures_beta": {
-          "type": "string",
-          "default": "NULL"
-        },
-        "sparsesignatures_normalize_counts": {
-          "type": "string",
-          "default": "TRUE"
-        },
-        "sparsesignatures_iterations": {
-          "type": "integer",
-          "default": 30
-        },
-        "sparsesignatures_nmf_runs": {
-          "type": "integer",
-          "default": 10
-        },
-        "sparsesignatures_max_iterations_lasso": {
-          "type": "integer",
-          "default": 10000
-        },
-        "sparsesignatures_num_processes": {
-          "type": "string",
-          "default": "all"
-        },
-        "sparsesignatures_cross_validation_entries": {
-          "type": "number",
-          "default": 0.01
-        },
-        "sparsesignatures_cross_validation_repetitions": {
-          "type": "integer",
-          "default": 50
-        },
-        "sparsesignatures_cross_validation_iterations": {
-          "type": "integer",
-          "default": 5
-        },
-        "sparsesignatures_lambda_values_beta": {
-          "type": "string",
-          "default": "c(0.01, 0.05, 0.1, 0.2)"
-        },
-        "sparsesignatures_lambda_rate_alpha": {
-          "type": "integer",
-          "default": 0
-        },
-        "sparsesignatures_verbose": {
-          "type": "string",
-          "default": "TRUE"
-        },
-        "sparsesignatures_seed": {
-          "type": "integer",
-          "default": 12345
-        },
-        "sparsesignatures_lambda_values_alpha": {
-          "type": "string",
-          "default": "c(0.00, 0.01, 0.05, 0.10)"
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "sigprofiler": {
-      "title": "SigProfiler",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "publish_dir_mode_genome_sigprofiler": {
-          "type": "string",
-          "default": "move",
-          "description": "Mode of publishing the SigProfiler genome."
-        },
-        "download_sigprofiler_genome": {
-          "type": "boolean",
-          "default": true
-        },
-        "genome_installed_path": {
-          "type": "string"
-        },
-        "sigprofiler_exome": {
-          "type": "boolean"
-        },
-        "sigprofiler_input_type": {
-          "type": "string",
-          "default": "matrix"
-        },
-        "sigprofiler_minimum_signatures": {
-          "type": "integer",
-          "default": 1
-        },
-        "sigprofiler_maximum_signatures": {
-          "type": "integer",
-          "default": 25
-        },
-        "sigprofiler_context_type": {
-          "type": "string",
-          "default": "96,DINUC,ID"
-        },
-        "sigprofiler_nmf_replicates": {
-          "type": "integer",
-          "default": 100
-        },
-        "sigprofiler_resample": {
-          "type": "boolean",
-          "default": true
-        },
-        "sigprofiler_matrix_normalization": {
-          "type": "string",
-          "default": "gmm"
-        },
-        "sigprofiler_nmf_init": {
-          "type": "string",
-          "default": "random"
-        },
-        "sigprofiler_min_nmf_iterations": {
-          "type": "integer",
-          "default": 10000
-        },
-        "sigprofiler_max_nmf_iterations": {
-          "type": "integer",
-          "default": 1000000
-        },
-        "sigprofiler_nmf_test_conv": {
-          "type": "integer",
-          "default": 10000
-        },
-        "sigprofiler_seeds": {
-          "type": "string",
-          "default": "random"
-        },
-        "sigprofiler_stability": {
-          "type": "number",
-          "default": 0.8
-        },
-        "sigprofiler_cpu": {
-          "type": "integer",
-          "default": -1
-        },
-        "sigprofiler_min_stability": {
-          "type": "number",
-          "default": 0.2
-        },
-        "sigprofiler_combined_stability": {
-          "type": "integer",
-          "default": 1
-        },
-        "sigprofiler_make_decomposition_plots": {
-          "type": "boolean",
-          "default": true
-        },
-        "sigprofiler_collapse_to_SBS96": {
-          "type": "boolean",
-          "default": true
-        },
-        "sigprofiler_cosmic_version": {
-          "type": "number",
-          "default": 3.4
-        },
-        "sigprofiler_get_all_signature_matrices": {
-          "type": "boolean",
-          "default": true
-        },
-        "sigprofiler_export_probabilities": {
-          "type": "boolean",
-          "default": true
-        },
-        "sigprofiler_chrom_based": {
-          "type": "boolean"
-        },
-        "sigprofiler_bed_file": {
-          "type": "string",
-          "default": "None"
-        },
-        "sigprofiler_plot": {
-          "type": "boolean"
-        },
-        "sigprofiler_seqInfo": {
-          "type": "boolean"
-        },
-        "sigprofiler_precision": {
-          "type": "string",
-          "default": "single"
-        },
-        "sigprofiler_cushion": {
-          "type": "integer",
-          "default": 100
-        },
-        "sigprofiler_gpu": {
-          "type": "boolean"
-        },
-        "sigprofiler_tsb_stat": {
-          "type": "boolean"
-        },
-        "sigprofiler_batch_size": {
-          "type": "integer",
-          "default": 1
-        },
-        "sigprofiler_allow_stability_drop": {
-          "type": "boolean"
-        },
-        "sigprofiler_nmf_tolerance": {
-          "type": "number",
-          "default": 1e-15
-        },
-        "igenomes_base": {
-          "type": "string",
-          "default": "s3://ngi-igenomes/igenomes/"
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "tinc": {
-      "title": "TINC",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "tinc_normal_contamination_lv": {
-          "type": "integer",
-          "default": 3
-        },
-        "tinc_cutoff_lv_assignment": {
-          "type": "number",
-          "default": 0.75
-        },
-        "tinc_vaf_range_tumour": {
-          "type": "string",
-          "default": "c(0, 0.7)"
-        },
-        "tinc_cutoff_miscalled_clonal": {
-          "type": "number",
-          "default": 0.6
-        },
-        "tinc_N": {
-          "type": "integer",
-          "default": 20000
-        },
-        "tinc_fast": {
-          "type": "string",
-          "default": "TRUE"
-        }
-      },
-      "fa_icon": "fas fa-briefcase"
-    },
-    "generic_options": {
-      "title": "Generic options",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "email": {
-          "type": "boolean",
-          "description": "Email address for completion summary."
-        },
-        "email_on_fail": {
-          "type": "boolean",
-          "description": "Email address for completion summary, only when pipeline fails."
-        },
-        "name": {
-          "type": "boolean"
-        },
-        "monochrome_logs": {
-          "type": "boolean",
-          "description": "Do not use coloured log outputs."
-        },
-        "plaintext_email": {
-          "type": "boolean",
-          "description": "Send plain-text email instead of HTML."
-        }
-      }
-    },
-    "new_group_3": {
-      "title": "New Group 3",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "custom_config_version": {
-          "type": "string",
-          "default": "master",
-          "description": "Git commit id for Institutional configs."
-        },
-        "custom_config_base": {
-          "type": "string",
-          "default": "https://raw.githubusercontent.com/nf-core/configs/master",
-          "description": "Base directory for Institutional configs."
-        },
-        "config_profile_description": {
-          "type": "boolean",
-          "description": "Institutional config description."
-        },
-        "config_profile_contact": {
-          "type": "boolean",
-          "description": "Institutional config contact information."
-        },
-        "config_profile_url": {
-          "type": "boolean",
-          "description": "Institutional config URL link."
-        }
-      },
-      "fa_icon": "fas fa-university"
-    },
-    "new_group_2": {
-      "title": "New Group 2",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "max_memory": {
-          "type": "string",
-          "default": "128 GB",
-          "description": "Maximum amount of memory that can be requested for any single job."
-        },
-        "max_cpus": {
-          "type": "integer",
-          "default": 16,
-          "description": "Maximum number of CPUs that can be requested for any single job."
-        },
-        "max_time": {
-          "type": "string",
-          "default": "10d",
-          "description": "Maximum amount of time that can be requested for any single job."
-        }
-      }
-    }
-  },
-  "allOf": [
-    {
-      "$ref": "#/$defs/input_output_options"
-    },
-    {
-      "$ref": "#/$defs/main_options"
-    },
-    {
-      "$ref": "#/$defs/variant_annotation"
-    },
-    {
-      "$ref": "#/$defs/driver_annotation"
-    },
-    {
-      "$ref": "#/$defs/vcf2cnaqc"
-    },
-    {
-      "$ref": "#/$defs/cnaqc"
-    },
-    {
-      "$ref": "#/$defs/joincnaqc"
-    },
-    {
-      "$ref": "#/$defs/pyclonevi"
-    },
-    {
-      "$ref": "#/$defs/mobster"
-    },
-    {
-      "$ref": "#/$defs/viber"
-    },
-    {
-      "$ref": "#/$defs/ctree"
-    },
-    {
-      "$ref": "#/$defs/sparsesignature"
-    },
-    {
-      "$ref": "#/$defs/sigprofiler"
-    },
-    {
-      "$ref": "#/$defs/tinc"
-    },
-    {
-      "$ref": "#/$defs/generic_options"
-    },
-    {
-      "$ref": "#/$defs/new_group_3"
-    },
-    {
-      "$ref": "#/$defs/new_group_2"
-    }
-  ],
-  "properties": {
-    "igenomes_ignore": {
-      "type": "boolean"
-    },
-    "tracedir": {
-      "type": "string",
-      "default": "null/pipeline_info"
-    },
-    "hostnames": {
-      "type": "boolean"
-    }
-  }
+    ]
 }

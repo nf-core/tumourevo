@@ -16,9 +16,8 @@ nextflow_workflow {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 joinCNAqc_rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
                 // Create a tuple with metadata and file paths
                 input[0] = tuple(meta, joinCNAqc_rds, meta.tumour_sample)
@@ -30,6 +29,5 @@ nextflow_workflow {
             assert workflow.success
             //assert snapshot(workflow.out).match()
         }
-    
     }
 }

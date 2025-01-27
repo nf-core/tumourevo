@@ -1,5 +1,4 @@
 process VCF2MAF {
-
     tag "$meta.id"
     label 'process_low'
 

@@ -1,24 +1,24 @@
 process VIBER {
-  tag "$meta.id"
-  // container='file:///fast/cdslab/ebusca00/singularity/cdslab.sif'
-  container = 'docker://elenabuscaroli/viber:latest'
+    tag "$meta.id"
+    label "process_single"
+    container = 'docker://elenabuscaroli/viber:version0.1'
 
-  input:
-    tuple val(meta), path(rds_join), val(tumour_samples) //rds from either JOIN_CNAQC or JOIN_FIT, should be always grouped
+    input:
+        tuple val(meta), path(rds_join), val(tumour_samples) //rds from either JOIN_CNAQC or JOIN_FIT, should be always grouped
 
-  output:
-    tuple val(meta), path("*_viber_best_st_fit.rds"), emit: viber_rds
-    tuple val(meta), path("*_viber_best_st_heuristic_fit.rds"), emit: viber_heuristic_rds
-    tuple val(meta), path("*_${plot1}"), emit: viber_plots_rds
-    tuple val(meta), path("*_${plot2}"), emit: viber_heuristic_plots_rds
-    tuple val(meta), path("*_REPORT_plots_viber.rds"), emit: viber_report_rds
-    tuple val(meta), path("*_REPORT_plots_viber.pdf"), emit: viber_report_pdf
-    tuple val(meta), path("*_REPORT_plots_viber.png"), emit: viber_report_png
+    output:
+        tuple val(meta), path("*_viber_best_st_fit.rds"), emit: viber_rds
+        tuple val(meta), path("*_viber_best_st_heuristic_fit.rds"), emit: viber_heuristic_rds
+        tuple val(meta), path("*_${plot1}"), emit: viber_plots_rds
+        tuple val(meta), path("*_${plot2}"), emit: viber_heuristic_plots_rds
+        tuple val(meta), path("*_REPORT_plots_viber.rds"), emit: viber_report_rds
+        tuple val(meta), path("*_REPORT_plots_viber.pdf"), emit: viber_report_pdf
+        tuple val(meta), path("*_REPORT_plots_viber.png"), emit: viber_report_png
+        path "versions.yml", emit: versions
 
-  script:
+    script:
     // viber fit params
     def args = task.ext.args ?: ""
-    // def prefix = task.ext.prefix ?:"${meta.id}_remove_tail_$args.remove_tail"
     def prefix = task.ext.prefix ?:"${meta.id}"
     def K = args!="" && args.K ? "$args.K" : ""
     def alpha_0 = args!="" && args.alpha_0 ? "$args.alpha_0" : ""
@@ -38,11 +38,11 @@ process VIBER {
     def n_samples = tumour_samples.size()
 
     if (n_samples==1) {
-      plot1 = "viber_best_st_mixing_plots.rds"
-      plot2 = "viber_best_st_heuristic_mixing_plots.rds"
+        plot1 = "viber_best_st_mixing_plots.rds"
+        plot2 = "viber_best_st_heuristic_mixing_plots.rds"
     } else {
-      plot1 = "viber_best_st_fit_plots.rds"
-      plot2 = "viber_best_st_heuristic_fit_plots.rds"
+        plot1 = "viber_best_st_fit_plots.rds"
+        plot2 = "viber_best_st_heuristic_fit_plots.rds"
     }
 
     """
@@ -65,21 +65,21 @@ process VIBER {
     print(samples)
 
     if ( grepl(".rds\$", tolower("$rds_join")) ) {
-      input_obj = readRDS("$rds_join")
-      if (class(input_obj) == "m_cnaqc") {
-        shared = input_obj %>% get_sample(sample=samples, which_obj="shared")
-        joint_table = lapply(names(shared), 
-                             function(sample_name) 
-                              shared[[sample_name]] %>% 
-                                  # keep only mutations on the diploid karyotype
-                                  CNAqc::subset_by_segment_karyotype("1:1") %>% 
-                                  CNAqc::Mutations() %>% 
-                                  dplyr::mutate(sample_id=sample_name)
-                             ) %>% dplyr::bind_rows()
-      } else {
+        input_obj = readRDS("$rds_join")
+        if (class(input_obj) == "m_cnaqc") {
+            shared = input_obj %>% get_sample(sample=samples, which_obj="shared")
+            joint_table = lapply(names(shared),
+                            function(sample_name)
+                            shared[[sample_name]] %>%
+                                # keep only mutations on the diploid karyotype
+                                CNAqc::subset_by_segment_karyotype("1:1") %>%
+                                CNAqc::Mutations() %>%
+                                dplyr::mutate(sample_id=sample_name)
+                            ) %>% dplyr::bind_rows()
+    } else {
         cli::cli_alert_warning("Object of class {class(input_obj)} not supported.")
         return()
-      }
+        }
     }
 
     print("Subset joint done")
@@ -87,36 +87,36 @@ process VIBER {
     ## TODO : add drivers to `input_tab`
 
     ## Read input joint table
-    input_tab = joint_table %>% 
-      dplyr::mutate(VAF=replace(VAF, VAF==0, 1e-7))
+    input_tab = joint_table %>%
+    dplyr::mutate(VAF=replace(VAF, VAF==0, 1e-7))
 
     ## Convert the input table into longer format
     reads_data = input_tab %>%
-      dplyr::select(chr, from, ref, alt, NV, DP, VAF, sample_id) %>% 
-      tidyr::pivot_wider(names_from="sample_id",
-                         values_from=c("NV","DP","VAF"), names_sep=".")
+    dplyr::select(chr, from, ref, alt, NV, DP, VAF, sample_id) %>%
+    tidyr::pivot_wider(names_from="sample_id",
+                        values_from=c("NV","DP","VAF"), names_sep=".")
 
     ## Extract DP (depth)
-    dp = reads_data %>%  
-      # dplyr::filter(mutation_id %in% non_tail) %>% ## this step should be managed before by other module
-      dplyr::select(dplyr::starts_with("DP")) %>% 
-      dplyr::mutate(dplyr::across(.cols=dplyr::everything(), 
-                                  .fns=function(x) replace(x, is.na(x), 0))) %>% 
-      dplyr::rename_all(function(x) stringr::str_remove_all(x,"DP."))
+    dp = reads_data %>%
+    # dplyr::filter(mutation_id %in% non_tail) %>% ## this step should be managed before by other module
+    dplyr::select(dplyr::starts_with("DP")) %>%
+    dplyr::mutate(dplyr::across(.cols=dplyr::everything(),
+                                .fns=function(x) replace(x, is.na(x), 0))) %>%
+    dplyr::rename_all(function(x) stringr::str_remove_all(x,"DP."))
 
     ## Extract NV (alt_counts)
-    nv = reads_data %>% 
-      # dplyr::filter(mutation_id %in% non_tail) %>% ## this step should be managed before by other module
-      dplyr::select(dplyr::starts_with("NV")) %>% 
-      dplyr::mutate(dplyr::across(.cols=dplyr::everything(), 
-                                  .fns=function(x) replace(x, is.na(x), 0))) %>% 
-      dplyr::rename_all(function(x) stringr::str_remove_all(x,"NV."))
+    nv = reads_data %>%
+    # dplyr::filter(mutation_id %in% non_tail) %>% ## this step should be managed before by other module
+    dplyr::select(dplyr::starts_with("NV")) %>%
+    dplyr::mutate(dplyr::across(.cols=dplyr::everything(),
+                                .fns=function(x) replace(x, is.na(x), 0))) %>%
+    dplyr::rename_all(function(x) stringr::str_remove_all(x,"NV."))
 
     # Standard fit
-    viber_K = eval(parse(text="$K")) 
+    viber_K = eval(parse(text="$K"))
     viber_K[which.min(viber_K)] = 2
-    st_fit = VIBER::variational_fit(nv, dp, 
-                                    K=viber_K, 
+    st_fit = VIBER::variational_fit(nv, dp,
+                                    K=viber_K,
                                     data=reads_data,
                                     # %>% dplyr::filter(mutation_id %in% non_tail)
                                     alpha_0=as.numeric("$alpha_0"),
@@ -131,19 +131,19 @@ process VIBER {
                                     )
 
     best_fit = best_fit_heuristic = st_fit
-    
+
     # If all clusters are removed -> keep the origianl best fit
     tryCatch(expr = {
-      # Apply the heuristic
-      best_fit_heuristic = VIBER::choose_clusters(st_fit, 
-                                                  binomial_cutoff=as.numeric("$binomial_cutoff"),
-                                                  dimensions_cutoff=as.integer("$dimensions_cutoff"),
-                                                  pi_cutoff=as.numeric("$pi_cutoff"),
-                                                  re_assign=as.logical("$re_assign")
-                                                  )
+    # Apply the heuristic
+    best_fit_heuristic = VIBER::choose_clusters(st_fit,
+        binomial_cutoff=as.numeric("$binomial_cutoff"),
+        dimensions_cutoff=as.integer("$dimensions_cutoff"),
+        pi_cutoff=as.numeric("$pi_cutoff"),
+        re_assign=as.logical("$re_assign")
+        )
     }, error = function(e) {
-      print(e)
-      best_fit_heuristic <<- st_fit
+    print(e)
+    best_fit_heuristic <<- st_fit
     } )
 
     # Save fits
@@ -152,18 +152,18 @@ process VIBER {
 
     # Save plots
     if ("$n_samples" >1) { #mutlisample mode on
-      print("multisample mode on")
-      plot_fit = plot(best_fit)
-      plot_fit_heuristic = plot(best_fit_heuristic)
-      
-      saveRDS(plot_fit, file=paste0("$prefix", "_viber_best_st_fit_plots.rds"))
-      saveRDS(plot_fit_heuristic, file=paste0("$prefix", "_viber_best_st_heuristic_fit_plots.rds"))
-    } else {
-      plot_fit_mixing = plot_mixing_proportions(best_fit)
-      plot_fit_mixing_heuristic = plot_mixing_proportions(best_fit_heuristic)
+    print("multisample mode on")
+    plot_fit = plot(best_fit)
+    plot_fit_heuristic = plot(best_fit_heuristic)
 
-      saveRDS(plot_fit_mixing, file=paste0("$prefix", "_viber_best_st_mixing_plots.rds"))
-      saveRDS(plot_fit_mixing_heuristic, file=paste0("$prefix", "_viber_best_st_heuristic_mixing_plots.rds"))
+    saveRDS(plot_fit, file=paste0("$prefix", "_viber_best_st_fit_plots.rds"))
+    saveRDS(plot_fit_heuristic, file=paste0("$prefix", "_viber_best_st_heuristic_fit_plots.rds"))
+    } else {
+    plot_fit_mixing = plot_mixing_proportions(best_fit)
+    plot_fit_mixing_heuristic = plot_mixing_proportions(best_fit_heuristic)
+
+    saveRDS(plot_fit_mixing, file=paste0("$prefix", "_viber_best_st_mixing_plots.rds"))
+    saveRDS(plot_fit_mixing_heuristic, file=paste0("$prefix", "_viber_best_st_heuristic_mixing_plots.rds"))
     }
 
     # Save report plot
@@ -190,5 +190,16 @@ process VIBER {
     ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_viber.pdf"), height=210, width=210, units="mm", dpi = 200)
     ggplot2::ggsave(plot=report_fig, filename=paste0("$prefix", "_REPORT_plots_viber.png"), height=210, width=210, units="mm", dpi = 200)
 
+
+    # version export
+    f = file("versions.yml","w")
+    cnaqc_version = sessionInfo()\$otherPkgs\$CNAqc\$Version
+    viber_version = sessionInfo()\$otherPkgs\$VIBER\$Version
+    writeLines(paste0('"', "$task.process", '"', ":"), f)
+    writeLines(paste("    CNAqc:", cnaqc_version), f)
+    writeLines(paste("    VIBER:", viber_version), f)
+    close(f)
+
     """
+
 }

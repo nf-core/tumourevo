@@ -17,9 +17,8 @@ nextflow_process {
                     patient : "Set06",
                     tumour_sample: "Set6_42",
                     normal_sample: "54_N",
-                    cancer_type: "PANCANCER" 
+                    cancer_type: "PANCANCER"
                 ]
-                
                 vcf = file(params.local_testdata_base_path + "/from_ensembleVEP/MSeq_Set06_Set6_42.vcf.gz", checkIfExists: true)
                 tbi = file(params.local_testdata_base_path + "/from_ensembleVEP/MSeq_Set06_Set6_42.vcf.gz.tbi", checkIfExists: true)
                 // Create a tuple with metadata and file path

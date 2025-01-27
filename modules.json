@@ -1,51 +1,65 @@
 {
-  "name": "nf-core/tumourevo",
+    "name": "nf-core/tumourevo",
     "homePage": "https://github.com/nf-core/tumourevo",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
-          "bcftools/mpileup": {
-            "branch": "master",
-            "git_sha": "a5ba4d59c2b248c0379b0f8aeb4e7e754566cd1f",
-            "installed_by": ["modules"]
-          },
-          "ensemblvep/download": {
-            "branch": "master",
-            "git_sha": "6e3585d9ad20b41adc7d271009f8cb5e191ecab4",
-            "installed_by": ["modules"]
-          },
-          "ensemblvep/vep": {
-            "branch": "master",
-            "git_sha": "b42fec6f7c6e5d0716685cabb825ef6bf6e386b5",
-            "installed_by": ["modules", "vcf_annotate_ensemblvep"]
-          },
-          "tabix/tabix": {
-            "branch": "master",
-            "git_sha": "9502adb23c0b97ed8e616bbbdfa73b4585aec9a1",
-            "installed_by": ["vcf_annotate_ensemblvep"]
-          },
-          "untar": {
-            "branch": "master",
-            "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
-            "installed_by": ["modules"]
-          },
-          "vcf2maf": {
-            "branch": "master",
-            "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
-            "installed_by": ["modules"]
-          }
+                    "bcftools/mpileup": {
+                        "branch": "master",
+                        "git_sha": "a5ba4d59c2b248c0379b0f8aeb4e7e754566cd1f",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/bcftools/mpileup/bcftools-mpileup.diff"
+                    },
+                    "ensemblvep/download": {
+                        "branch": "master",
+                        "git_sha": "6e3585d9ad20b41adc7d271009f8cb5e191ecab4",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/ensemblvep/download/ensemblvep-download.diff"
+                    },
+                    "ensemblvep/vep": {
+                        "branch": "master",
+                        "git_sha": "b42fec6f7c6e5d0716685cabb825ef6bf6e386b5",
+                        "installed_by": ["modules", "vcf_annotate_ensemblvep"],
+                        "patch": "modules/nf-core/ensemblvep/vep/ensemblvep-vep.diff"
+                    },
+                    "fastqc": {
+                        "branch": "master",
+                        "git_sha": "dc94b6ee04a05ddb9f7ae050712ff30a13149164",
+                        "installed_by": ["modules"]
+                    },
+                    "multiqc": {
+                        "branch": "master",
+                        "git_sha": "cf17ca47590cc578dfb47db1c2a44ef86f89976d",
+                        "installed_by": ["modules"]
+                    },
+                    "tabix/tabix": {
+                        "branch": "master",
+                        "git_sha": "9502adb23c0b97ed8e616bbbdfa73b4585aec9a1",
+                        "installed_by": ["vcf_annotate_ensemblvep"]
+                    },
+                    "untar": {
+                        "branch": "master",
+                        "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+                        "installed_by": ["modules"]
+                    },
+                    "vcf2maf": {
+                        "branch": "master",
+                        "git_sha": "3f5420aa22e00bd030a2556dfdffc9e164ec0ec5",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/vcf2maf/vcf2maf.diff"
+                    }
+                }
+            },
+            "subworkflows": {
+                "nf-core": {
+                    "vcf_annotate_ensemblvep": {
+                        "branch": "master",
+                        "git_sha": "cfd937a668919d948f6fcbf4218e79de50c2f36f",
+                        "installed_by": ["subworkflows"]
+                    }
+                }
+            }
         }
-      },
-      "subworkflows": {
-        "nf-core": {
-          "vcf_annotate_ensemblvep": {
-            "branch": "master",
-            "git_sha": "cfd937a668919d948f6fcbf4218e79de50c2f36f",
-            "installed_by": ["subworkflows"]
-          }
-        }
-      }
     }
-  }
 }
