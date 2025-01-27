@@ -1,0 +1,14 @@
+Changes in component 'nf-core/vcf2maf'
+'modules/nf-core/vcf2maf/environment.yml' is unchanged
+'modules/nf-core/vcf2maf/meta.yml' is unchanged
+Changes in 'vcf2maf/main.nf':
+--- modules/nf-core/vcf2maf/main.nf
++++ modules/nf-core/vcf2maf/main.nf
+@@ -1,5 +1,4 @@
+ process VCF2MAF {
+-
+     tag "$meta.id"
+     label 'process_low'
+ 
+
+************************************************************

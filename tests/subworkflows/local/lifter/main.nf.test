@@ -1,0 +1,36 @@
+nextflow_workflow {
+
+    name "Test Workflow LIFTER"
+
+    script "subworkflows/local/lifter/main.nf"
+    workflow "LIFTER"
+
+    test("Run without failures") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER"
+                ]
+                rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
+                fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
+
+                // Create a tuple with metadata and file paths
+                input[0] = Channel.of(meta, rds, bam, bai)
+                input[1] = fasta
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            //assert snapshot(workflow.out).match()
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "Should run without failures": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "MSeq_Set06_Set6_42",
+                            "dataset": "MSeq",
+                            "patient": "Set06",
+                            "tumour_sample": "Set6_42",
+                            "normal_sample": "54_N",
+                            "cancer_type": "PANCANCER"
+                        },
+                        "MSeq_Set06_Set6_42_all_positions.rds:md5,af193f793262106018e3d946bf36fc69"
+                    ]
+                ],
+                "all_pos": [
+                    [
+                        {
+                            "id": "MSeq_Set06_Set6_42",
+                            "dataset": "MSeq",
+                            "patient": "Set06",
+                            "tumour_sample": "Set6_42",
+                            "normal_sample": "54_N",
+                            "cancer_type": "PANCANCER"
+                        },
+                        "MSeq_Set06_Set6_42_all_positions.rds:md5,af193f793262106018e3d946bf36fc69"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "23.10.1"
+        },
+        "timestamp": "2024-09-16T12:27:04.35969047"
+    }
+}

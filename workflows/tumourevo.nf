@@ -3,13 +3,15 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { FASTQC                 } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                } from '../modules/nf-core/multiqc/main'
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_tumourevo_pipeline'
-
+include { VCF_ANNOTATE_ENSEMBLVEP } from '../subworkflows/nf-core/vcf_annotate_ensemblvep/main'
+include { FORMATTER as FORMATTER_CNA } from "${baseDir}/subworkflows/local/formatter/main"
+include { FORMATTER as FORMATTER_VCF} from "${baseDir}/subworkflows/local/formatter/main"
+include { LIFTER } from "${baseDir}/subworkflows/local/lifter/main"
+include { DRIVER_ANNOTATION } from "${baseDir}/subworkflows/local/annotate_driver/main"
+include { FORMATTER as FORMATTER_RDS} from "${baseDir}/subworkflows/local/formatter/main"
+include { QC } from "${baseDir}/subworkflows/local/QC/main"
+include { SUBCLONAL_DECONVOLUTION } from "${baseDir}/subworkflows/local/subclonal_deconvolution/main"
+include { SIGNATURE_DECONVOLUTION } from "${baseDir}/subworkflows/local/signature_deconvolution/main"
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -19,74 +21,79 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_tumo
 workflow TUMOUREVO {
 
     take:
-    ch_samplesheet // channel: samplesheet read in from --input
-    main:
+    input_samplesheet
+    fasta
+    drivers_table
+    vep_cache
 
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
-    //
-    // MODULE: Run FastQC
-    //
-    FASTQC (
-        ch_samplesheet
-    )
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
-    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
-
-    //
-    // Collate and save software versions
-    //
-    softwareVersionsToYAML(ch_versions)
-        .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
-            name: 'nf_core_'  +  'tumourevo_software_'  + 'mqc_'  + 'versions.yml',
-            sort: true,
-            newLine: true
-        ).set { ch_collated_versions }
+main:
+    input = input_samplesheet.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra ->
+            meta = meta + [id: "${meta.dataset}_${meta.patient}_${meta.tumour_sample}"]
+            [meta.dataset + meta.patient, meta, vcf, tbi, bam, bai, cna_segs, cna_extra] }
+            | groupTuple
+            | map { id, meta, vcf, tbi, bam, bai, cna_segs, cna_extra ->
+                n = vcf.baseName.unique().size()
+                [id, meta, vcf, tbi, bam, bai, cna_segs, cna_extra, n ]}
+            | transpose
+            | map { id, meta, vcf, tbi, bam, bai, cna_segs, cna_extra, n  ->
+                if (n > 1 && bam){
+                    meta = meta + [lifter:true]
+                } else {
+                    meta = meta + [lifter:false]
+                }
+                [meta, vcf, tbi, bam, bai, cna_segs, cna_extra]
+            }
 
 
-    //
-    // MODULE: MultiQC
-    //
-    ch_multiqc_config        = Channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
+    input_vcf = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  ->
+            [ meta, vcf, tbi ]
+            }
 
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = Channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
+    input_cna = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  ->
+            [ meta, [cna_segs, cna_extra] ]
+            }
 
-    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
-    )
+    input_bam = input.map{ meta, vcf, tbi, bam, bai, cna_segs, cna_extra  ->
+            [ meta, bam, bai ]
+            }
 
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
-    )
+    ch_extra_files = []
+    VCF_ANNOTATE_ENSEMBLVEP(input_vcf,
+                            fasta,
+                            params.vep_genome,
+                            params.vep_species,
+                            params.vep_cache_version,
+                            vep_cache,
+                            ch_extra_files)
 
-    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    vcf_file = FORMATTER_VCF(VCF_ANNOTATE_ENSEMBLVEP.out.vcf_tbi, "vcf")
+    cna_file = FORMATTER_CNA(input_cna, "cna")
+
+    join_input = vcf_file.join(input_bam).map{ meta, rds, bam, bai ->
+            [ meta, rds, bam, bai ] }
+            .branch { meta, rds, bam, bai ->
+                to_lift: meta.lifter == true
+                multisample: meta.lifter == false
+            }
+
+    out_lifter = LIFTER(join_input.to_lift, fasta)
+
+    rds_input = join_input.multisample.map{ meta, rds, bam, bai ->
+            [meta, rds]
+            }
+    vcf_rds = rds_input.concat(out_lifter)
+    annotation = DRIVER_ANNOTATION(vcf_rds, drivers_table)
+
+    in_cnaqc = cna_file.join(annotation)
+    QC(in_cnaqc)
+
+    if (params.filter == true){
+        SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_PASS)
+        SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_PASS)
+    } else {
+        SUBCLONAL_DECONVOLUTION(QC.out.join_cnaqc_ALL)
+        SIGNATURE_DECONVOLUTION(QC.out.join_cnaqc_ALL)
+    }
 
 }
 
