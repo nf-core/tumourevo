@@ -1,8 +1,9 @@
-nf_core_version: 3.1.0
+nf_core_version: 3.2.0
 repository_type: pipeline
 template:
   author: Nicola Calonaci, Elena Buscaroli, Katsiaryna Davydzenka, Giorgia Gandolfi,
-    Virginia Gazziero, Brandon Hastings, Asad Sadr, Rodolfo Tolloi, Lucrezia Valeriani and Giulio Caravagna
+    Virginia Gazziero, Brandon Hastings, Davide Rambaldi, Rodolfo Tolloi, Lucrezia Valeriani
+    and Giulio Caravagna
   description: Analysis pipleine to model tumour clonal evolution from WGS data (driver
     annotation, quality control of copy number calls, subclonal and mutational signature
     deconvolution)
