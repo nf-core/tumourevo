@@ -13,3 +13,7 @@ template:
   org: nf-core
   outdir: .
   version: 1.0dev
+lint:
+  modules_config: False
+  files_exist:
+    - conf/modules.config
