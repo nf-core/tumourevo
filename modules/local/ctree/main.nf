@@ -1,7 +1,9 @@
 process CTREE {
     tag "$meta.id"
     label "process_low"
-    container = 'docker://elenabuscaroli/ctree:version1.1'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://elenabuscaroli/ctree:version1.1' :
+        'docker.io/elenabuscaroli/ctree:version1.1' }"
 
     input:
         tuple val(meta), path(ctree_input)

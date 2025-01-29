@@ -1,7 +1,9 @@
 process SIGPROFILER {
     tag "$meta.id"
     label "process_high"
-    container = 'docker://katiad/sigprofiler:version1.0'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://katiad/sigprofiler:version1.0' :
+        'docker.io/katiad/sigprofiler:version1.0' }"
 
     input:
         tuple val(meta), path(tsv_list, stageAs: '*.tsv')
@@ -61,7 +63,6 @@ process SIGPROFILER {
     from SigProfilerExtractor import sigpro as sig
     from SigProfilerMatrixGenerator.scripts import SigProfilerMatrixGeneratorFunc as matGen
 
-
     if __name__ == '__main__':
 
         dataset_id = "$meta.dataset"
@@ -72,9 +73,7 @@ process SIGPROFILER {
 
         output_path = os.path.join("output", "SBS", f"{dataset_id}.SBS96.all")
 
-
         # input data preprocessing
-
         def process_tsv_join(tsv_list):
             patients_tsv = tsv_list.split()
             # Read each file into a pandas DataFrame and ensure all columns are of type 'string'

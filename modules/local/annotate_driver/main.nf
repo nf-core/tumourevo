@@ -1,8 +1,9 @@
-
 process ANNOTATE_DRIVER {
     tag "$meta.id"
     label "process_single"
-    container = 'docker://lvaleriani/cnaqc:version1.0'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://lvaleriani/cnaqc:version1.0' :
+        'docker.io/lvaleriani/cnaqc:version1.0' }"
 
     input:
     tuple val(meta), path(rds), path(driver_list)
@@ -10,7 +11,6 @@ process ANNOTATE_DRIVER {
     output:
     tuple val(meta), path("*.rds"),     emit: rds
     path "versions.yml",                emit: versions
-
 
     script:
     def args    =   task.ext.args   ?: ''
