@@ -16,4 +16,4 @@ template:
 lint:
   modules_config: false
   files_exist:
-  - conf/modules.config
+    - conf/modules.config
