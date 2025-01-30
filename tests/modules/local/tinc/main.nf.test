@@ -1,0 +1,46 @@
+nextflow_process {
+
+    name "Test Process TINC"
+    script "modules/local/tinc/main.nf"
+    process "TINC"
+
+    test("Should run without failures") {
+
+        when {
+            params {
+                // define module specific parameters here. Example:
+                // outdir = "tests/results"
+            }
+            process {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "Set6_54_N",
+                    cancer_type: "PANCANCER"
+                ]
+                // From cna2cnaqc
+                cna_rds = file(params.local_testdata_base_path + "/from_cna2CNAqc/MSeq_Set06_Set6_42_cna.rds", checkIfExists: true)
+                // From vcf2cnaqc
+                snv_rds = file(params.local_testdata_base_path + "/from_dndscv/MSeq_Set06_Set6_42_dnds.rds", checkIfExists: true)
+                // Create a tuple with metadata and file path
+                input[0] = tuple(meta, cna_rds, snv_rds)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            //assert snapshot(process.out).match()
+        }
+
+    }
+
+}
+
+
+/** Infos:
+*   it requires at least 4 cores to run!
+*/

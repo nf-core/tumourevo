@@ -1,0 +1,35 @@
+nextflow_process {
+    name "Test Process MOBSTERh"
+    script "modules/local/mobsterh/main.nf"
+    process "MOBSTERh"
+
+    test("Should run without failures") {
+        when {
+            params {
+                // define module specific parameters here. Example:
+                // outdir = "tests/results"
+            }
+            process {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER"
+                ]
+                joinCNAqc_rds = file(params.local_testdata_base_path + "/from_joinCNAqc/MSeq_Set06_multi_cnaqc.rds", checkIfExists: true)
+                input[0] = tuple(meta, joinCNAqc_rds)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            //assert snapshot(process.out).match()
+        }
+
+    }
+
+}

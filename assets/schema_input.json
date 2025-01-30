@@ -1,0 +1,194 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/tumourevo/dev/assets/schema_input.json",
+    "title": "nf-core/tumourevo pipeline - params.input schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "dataset": {
+                "errorMessage": "Dataset ID must be provided and cannot contain spaces",
+                "meta": ["dataset"],
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+$"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            },
+            "patient": {
+                "errorMessage": "Patient ID must be provided and cannot contain spaces",
+                "meta": ["patient"],
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+$"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            },
+            "tumour_sample": {
+                "errorMessage": "Tumour sample ID must be provided and cannot contain spaces",
+                "meta": ["tumour_sample"],
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+$"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            },
+            "normal_sample": {
+                "errorMessage": "Normal sample ID must be provided and cannot contain spaces",
+                "meta": ["normal_sample"],
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+$"
+                    },
+                    {
+                        "type": "integer"
+                    }
+                ]
+            },
+            "cancer_type": {
+                "errorMessage": "Cancer type cannot contain spaces",
+                "meta": ["cancer_type"],
+                "default": "PANCANCER",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ]
+            },
+            "cna_caller": {
+                "errorMessage": "CNA caller not supported",
+                "meta": ["cna_caller"],
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^sequenza$"
+                    },
+                    {
+                        "type": "string",
+                        "pattern": "^ASCAT$"
+                    }
+                ]
+            },
+            "vcf": {
+                "errorMessage": "VCF file cannot contain spaces and must have extension '.vcf' or '.vcf.gz'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+\\.vcf(\\.gz)?$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "tbi": {
+                "errorMessage": "VCF index file cannot contain spaces and must have extension '.tbi'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+\\.tbi$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "tumour_alignment": {
+                "errorMessage": "Tumour BAM or CRAM file cannot contain spaces and must have extension '.bam' or '.cram'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+\\.(bam|cram)$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "tumour_alignment_index": {
+                "errorMessage": "Tumour BAI or CRAI index file cannot contain spaces and must have extension '.bai' or '.crai'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "^\\S+\\.(bai|crai)$"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "cna_segments": {
+                "errorMessage": "CNA segments file cannot contain spaces'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "Seg|segments"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            },
+            "cna_extra": {
+                "errorMessage": "CNA extra file cannot contain spaces'",
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "pattern": "confints_CP|purityploidy"
+                    },
+                    {
+                        "type": "string",
+                        "maxLength": 0
+                    }
+                ],
+                "format": "file-path",
+                "exists": true
+            }
+        },
+        "required": [
+            "dataset",
+            "patient",
+            "tumour_sample",
+            "normal_sample",
+            "vcf",
+            "tbi",
+            "cna_segments",
+            "cna_extra",
+            "cna_caller"
+        ]
+    }
+}

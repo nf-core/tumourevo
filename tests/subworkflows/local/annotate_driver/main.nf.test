@@ -1,0 +1,78 @@
+nextflow_workflow {
+
+    name "Test Workflow DRIVER_ANNOTATION"
+    script "subworkflows/local/annotate_driver/main.nf"
+    workflow "DRIVER_ANNOTATION"
+
+    test("Should run without failures with custom rda") {
+
+        when {
+            params {
+                // define parameters here. Example:
+                // outdir = "tests/results"
+                dndscv_refcds_rda = "https://raw.githubusercontent.com/nicola-calonaci/test-datasets/evoverse/data/DRIVER_ANNOTATION/DNDSCV/RefCDS_human_GRCh37_dNdScv.0.1.0.rda"
+            }
+            workflow {
+                // should not have to provide cds and genome here? Are take commands defined in given subworkflow optional?
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    tumour_sample: "Set6_42",
+                    cancer_type: "PANCANCER"
+                ]
+                snv_rds = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/VCF.rds', checkIfExists: true)
+                driver_list = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/driver_list.txt', checkIfExists: true)
+                cds_table = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/BioMart_human_GRCh37_chr3_segment.txt', checkIfExists: true)
+                genome_fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
+                // Create a tuple with metadata and file path
+                input[0] = Channel.from([tuple(meta, snv_rds)])
+                input[1] = Channel.from(driver_list)
+                input[2] = cds_table
+                input[3] = genome_fasta
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                {assert workflow.success},
+                // {assert snapshot(workflow.out).match()}
+            )
+        }
+
+    }
+
+    test("Should run without failures without custom rda") {
+
+        when {
+            workflow {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    tumour_sample: "Set6_42",
+                    cancer_type: "PANCANCER"
+                ]
+                snv_rds = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/VCF.rds', checkIfExists: true)
+                driver_list = file(params.testdata_base_path + '/DRIVER_ANNOTATION/DNDSCV/driver_list.txt', checkIfExists: true)
+                cds_table = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/BioMart_human_GRCh37_chr3_segment.txt', checkIfExists: true)
+                genome_fasta = file(params.testdata_base_path + '/DRIVER_ANNOTATION/BUILD_REFERENCE/chr3_segment.fa', checkIfExists: true)
+                // Create a tuple with metadata and file path
+                input[0] = Channel.from([tuple(meta, snv_rds)])
+                input[1] = Channel.from(driver_list)
+                input[2] = cds_table
+                input[3] = genome_fasta
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                {assert workflow.success}
+                // {assert snapshot(workflow.out).match()}
+            )
+        }
+
+    }
+
+
+}

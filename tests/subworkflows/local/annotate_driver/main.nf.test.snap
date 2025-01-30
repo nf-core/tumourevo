@@ -1,0 +1,23 @@
+{
+    "Should run without failures with custom rda": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "MSeq_Set06_Set6_42",
+                            "tumour_sample": "Set6_42",
+                            "cancer_type": "PANCANCER"
+                        },
+                        "MSeq_Set06_Set6_42_dnds.rds:md5,29f545272b3b8caad8fa9d44d696206f"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.0",
+            "nextflow": "23.10.1"
+        },
+        "timestamp": "2024-09-24T15:56:28.34982845"
+    }
+}

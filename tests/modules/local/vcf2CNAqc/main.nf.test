@@ -1,0 +1,37 @@
+nextflow_process {
+    name "Test Process VCF_PROCESSING (vcf2CNAqc)"
+    script "modules/local/vcf2CNAqc/main.nf"
+    process "VCF_PROCESSING"
+
+    test("Should run without failures") {
+        when {
+            params {
+                // define module specific parameters here. Example:
+                // outdir = "tests/results"
+            }
+            process {
+                """
+                meta = [
+                    id : "MSeq_Set06_Set6_42",
+                    dataset : "MSeq",
+                    patient : "Set06",
+                    tumour_sample: "Set6_42",
+                    normal_sample: "54_N",
+                    cancer_type: "PANCANCER"
+                ]
+                vcf = file(params.local_testdata_base_path + "/from_ensembleVEP/MSeq_Set06_Set6_42.vcf.gz", checkIfExists: true)
+                tbi = file(params.local_testdata_base_path + "/from_ensembleVEP/MSeq_Set06_Set6_42.vcf.gz.tbi", checkIfExists: true)
+                // Create a tuple with metadata and file path
+                input[0] = tuple(meta, vcf, tbi)
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out).match()
+        }
+
+    }
+
+}
