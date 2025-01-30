@@ -23,16 +23,6 @@
                         "installed_by": ["modules", "vcf_annotate_ensemblvep"],
                         "patch": "modules/nf-core/ensemblvep/vep/ensemblvep-vep.diff"
                     },
-                    "fastqc": {
-                        "branch": "master",
-                        "git_sha": "08108058ea36a63f141c25c4e75f9f872a5b2296",
-                        "installed_by": ["modules"]
-                    },
-                    "multiqc": {
-                        "branch": "master",
-                        "git_sha": "f0719ae309075ae4a291533883847c3f7c441dad",
-                        "installed_by": ["modules"]
-                    },
                     "tabix/tabix": {
                         "branch": "master",
                         "git_sha": "9502adb23c0b97ed8e616bbbdfa73b4585aec9a1",

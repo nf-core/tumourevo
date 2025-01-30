@@ -1,7 +1,9 @@
 process CNAQC {
     tag "$meta.id"
     label "process_low"
-    container = 'docker://lvaleriani/cnaqc:version1.0'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://lvaleriani/cnaqc:version1.0' :
+        'docker.io/lvaleriani/cnaqc:version1.0' }"
 
     input:
     tuple val(meta), path(cna_rds), path(snv_rds)
@@ -12,7 +14,6 @@ process CNAQC {
     tuple val(meta), path("*_data.pdf"),                                emit: plot_pdf_data
     tuple val(meta), path("*_qc.pdf"),                                  emit: plot_pdf_qc
     path "versions.yml",                                                emit: versions
-
 
     script:
     def args                                = task.ext.args

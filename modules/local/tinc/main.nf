@@ -1,7 +1,9 @@
 process TINC {
     tag "$meta.id"
     label "process_single"
-    container 'docker://vvvirgy/tinc:v2' // define the running container
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://vvvirgy/tinc:v2' :
+        'docker.io/vvvirgy/tinc:v2' }"
     // conda "${moduleDir}/environment.yml"
 
     input:

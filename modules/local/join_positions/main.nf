@@ -1,7 +1,9 @@
 process JOIN_POSITIONS {
     tag "$meta.id"
     label "process_single"
-    container = 'docker://lvaleriani/cnaqc:version1.0'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://lvaleriani/cnaqc:version1.0' :
+        'docker.io/lvaleriani/cnaqc:version1.0' }"
 
     input:
     tuple val(meta), path(rds), path(vcf_pileup), path(positions)

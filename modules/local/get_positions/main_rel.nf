@@ -1,7 +1,9 @@
 process GET_POSITIONS_REL {
     tag "$meta.id"
     label "process_single"
-    container = 'docker://lvaleriani/cnaqc:dev1'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://lvaleriani/cnaqc:version1.0' :
+        'docker.io/lvaleriani/cnaqc:version1.0' }"
 
     input:
     tuple val(meta), path(rds), path(all_pos)
@@ -9,7 +11,6 @@ process GET_POSITIONS_REL {
     output:
     tuple val(meta), path("*_positions_missing"),   emit: bed
     path "versions.yml",                            emit: versions
-
 
     script:
     def args    = task.ext.args     ?:  ''
