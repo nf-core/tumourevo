@@ -6,68 +6,172 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+**tumourevo** is a workflow to infer a tumour evolution model from whole-genome sequencing (WGS) data.
+
+Through the analysis of variant and copy-number calls, it reconstructs the evolutionary process leading to the observed tumour genome. Most of the analyses can be done at multiple levels: single sample, multiple samples from the same patient (multi-region/longitudinal assays), and multiple patients from distinct cohorts.
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 10 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 10 columns to match those defined in the table below.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+It is recommended to use the absolute path of the files, but a relative path should also work.
+
+For the joint analysis of multiple samples, a tumour BAM/CRAM (with its corresponding BAI/CRAI) file is required for each sample, such that the number of reads of a private mutation can be retrieved for all the samples thorugh `mpileup`.
+
+Multiple samples from the same patient must be specified with the same `dataset` ID, `patient` ID, and a different `tumour_sample` ID. The `normal_sample` ID column is also required.
+
+Multiple patients from the same dataset must be specified with the same `dataset` ID, and a different `patient` ID.
+
+**tumourevo** will output sample-specific results in a different directory for _each sample_, patient-specific results in a common directory for _each patient_, and dataset-specific results in a common directory for _each dataset_.
+
+Output from different workflows, subworkflows and modules will be in a specific directory for each dataset, patient, sample and tool configuration.
+
+A minimal input sample sheet example for two samples from the same patient:
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,sample1,N1,patient1_sample1.vcf.gz,patient1_sample1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER
+dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+#### Overview: Samplesheet Columns
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+| Column                                     | Description                                                                                                                                                                                                             |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dataset` <br /> _Required_                | **Dataset ID**; when sequencing data from multiple datasets is analysed, it designates the source dataset of each patient; must be unique for each dataset, but one dataset can contain samples from multiple patients. |
+| `patient` <br /> _Required_                | **Patient ID**; designates the patient/subject; must be unique for each patient, but one patient can have multiple samples (e.g. from multiple regions or multiple time points).                                        |
+| `tumour_sample` <br /> _Required_          | **Sample ID** for each sample; more than one sample for each subject is possible. Must match the sample ID present in the VCF.                                                                                          |
+| `normal_sample` <br /> _Required_          | **Normal sample ID** of each sample. Must match the normal sample ID present in the VCF.                                                                                                                                |
+| `vcf` <br /> _Required_                    | Full path to the vcf file from supported vcf callers (Mutect2, Strelka, Platypus).                                                                                                                                      |
+| `tbi` <br /> _Required_                    | Full path to the vcf `tabix` index file.                                                                                                                                                                                |
+| `cna_caller` <br /> _Required_             | Name of the copy number caller used to generate your data (ASCAT, sequenza, Battenberg).                                                                                                                                |
+| `cna_segments` <br /> _Required_           | Full path to the segmentation files and copy number state from the supported allele-specific copy-number caller.                                                                                                        |
+| `cna_extra` <br /> _Required_              | Full path to files including the ploidy and purity estimate from the supported copy-number caller.                                                                                                                      |
+| `cancer_type` <br /> _Required_            | Tumour type (either `PANCANCER` or one of the tumour type present in the driver table).                                                                                                                                 |
+| `tumour_alignment` <br /> _Optional_       | Full path to the tumour bam/cram file.                                                                                                                                                                                  |
+| `tumour_alignment_index` <br /> _Optional_ | Full path to the tumour bam/cram index file.                                                                                                                                                                            |
+
+### Pipeline modalities
+
+The tumourevo pipeline supports variant annotation, driver annotation, quality control processes, subclonal deconvolution and signature deconvolution analysis through various tools. It can be used to analyse both single sample experiments and longitudinal/multi-region assays, in which multiple samples from the same patient are avaiable.
+
+As input, you must provide at least information on the samples, the VCF file from one of the supported callers and the output of one of the supported copy number callers. By default, if multiple samples from the same patient are provided, they will be analysed in a multivariate framework (which affects in particular the subclonal deconvolution steps) to retrieve information useful in the reconstruction of the evolutionary process. Depending on the variant calling strategy (single sample or multi sample) and the provided input files, different strategies will be applied.
+
+#### Variant calling
+
+##### 1. Multi-sample variant calling
+
+Tools such as Platypus and Mutect2 allow to perform variant calling directly in multisample mode. If the VCFs provided as input are already multisample, no additional step is required.
+
+###### Examples
+
+Running the pipeline
+
+```bash
+nextflow run nf-core/tumourevo \
+ -r <VERSION> \
+ -profile <PROFILE> \
+ --input <INPUT CSV> \
+ --outdir results \
+ --tools pyclonevi,mobster,viber,sparsesignature,sigprofiler
+```
+
+Minimal input file, two samples from the same patient with joint variant calling vcf file:
+
+```csv
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,sample1,N1,patient1.vcf.gz,patient1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER
+dataset1,patient1,sample2,N1,patient1.vcf.gz,patient1.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER
+```
+
+##### 2. Single sample variant calling
+
+If the variant calling has been performed independently on each sample, even if coming from the same patient, you can provide the alignment files (both bam and cram are accepted) and their indexes from each tumour sample. In this way, a classical pileup strategy will be used in order to retrieve the depth for all samples of private mutations, in order to correctly perform the subclonal deconvolution analysis.
+
+Input file for two patients without joint variant calling, bam/cram files available:
+
+```csv
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type,tumour_alignment,tumour_alignment_index
+dataset1,patient1,sample1,N1,patient1_sample1.vcf.gz,patient1_sample1.vcf.gz.tbi,/CNA/patient1/sample1/segments.txt,CNA/patient1/sample1/purity_ploidy.txt,caller,PANCANCER,patient1/BAM/sample1.bam,patient1/BAM/sample1.bam.bai
+dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi,/CNA/patient1/sample2/segments.txt,CNA/patient1/sample2/purity_ploidy.txt,caller,PANCANCER,patient1/BAM/sample2.bam,patient1/BAM/sample2.bam.bai
+```
+
+If you can not include the alignment files in the input csv, the pipeline will run anyway, treating each sample as independent.
+
+#### 3. Filtering data
+
+During the QC step, the pipeline will combine purity, copy number and mutation data to perform quality control on the copy number calls, by applying the [CNAqc algorithm](https://caravagnalab.github.io/CNAqc/). Each segment (for each sample) will be flagged as passing or not passing the QC, in the given combination of estimated purity and ploidy. According to CNAqc, a badly called segment should be recalled with a different purity estimation, in order to obtain more reliable results.
+
+After CNAqc quality control, all the segments (coming from samples of the same patient) are used to build a multi-sample CNAqc object, in which a common segmentation is applied.
+In this way, only those regions that are shared among all samples will be kept in the new object.
+It is possible to control whether to include or not in the new segmentation the segments, for each sample, that do not pass the QC test using the `--filter` flag.
+If it is set to true, only QC passing segments for each sample will be used to build the mCNAqc object and will then be passed to the subclonal deconvolution steps. This will lead to exclude some regions of the genome and the mutations that sit on it, but should result in more precise analyses. Otherwise, keeping also the segments that do not pass the QC will result in not losing any mutations but might lead to less precise results in the subclonal deconvolution steps.
+
+#### 4. Driver annotation
+
+You can retrieve tumour-specific drivers in the driver annotation step by specifying the tumour type in the input csv. Pan-cancer drivers will be retrieved by specifying `PANCANCER` as tumour type in the input csv file.
+
+For this step, we currently refer to [IntOGen latest release](https://www.nature.com/articles/s41568-020-0290-x), but it is also possible to provide a custom driver table that will be used in the analysis.
+
+Please note that the tumour types reported in the input file must correspond to those present in the table used for the annotation (default driver table used can be found [here](https://raw.githubusercontent.com/nf-core/test-datasets/refs/heads/tumourevo/data/DRIVER_ANNOTATION/ANNOTATE_DRIVER/Compendium_Cancer_Genes.tsv))
+
+### 5. Available tools
+
+1. **Gene annotation**
+   - [EnsemblVEP](https://www.ensembl.org/info/docs/tools/vep/index.html)
+
+2. **Driver annotation**
+   - [Custom made algorithm](https://github.com/nf-core/tumourevo/blob/dev/modules/local/annotate_driver/main.nf)
+
+3. **Quality control**
+   - [TINC](https://caravagnalab.github.io/TINC/)
+   - [CNAqc](https://caravagnalab.github.io/CNAqc/)
+
+4. **Subclonal deconvolution**
+   - [MOBSTER](https://caravagnalab.github.io/mobster/)
+   - [PyClone-VI](https://github.com/Roth-Lab/pyclone-vi)
+   - [VIBER](https://caravagnalab.github.io/VIBER/index.html)
+   - [Ctree](https://caravagnalab.github.io/ctree/)
+
+5. **Signature deconvolution**
+   - [SparseSignatures](https://github.com/danro9685/SparseSignatures)
+   - [SigProfiler](https://cancer.sanger.ac.uk/signatures/tools/)
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/tumourevo --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/tumourevo \
+ -r <VERSION> \
+ -profile <PROFILE> \
+ --input <INPUT CSV> \
+ --outdir ./results
+ --tools <TOOLS>
 ```
 
-This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+`-r <VERSION>` is optional but strongly recommended for reproducibility and should match the latest version.
+
+`-profile <PROFILE>` is mandatory and should reflect either your own institutional profile or any pipeline profile specified in the [profile section](#-profile).
+
+This will launch the pipeline and perform variant calling with the tools specified in `--tools`, see the [parameter section](https://nf-co.re/tumourevo/dev/parameters/) for details on the available tools.
+
+Unless running with the `test` profile, the paths of input files must be provided within the `<INPUT CSV>` file specified in `--input`, see the [input section](#samplesheet-input) for input requirements.
 
 Note that the pipeline will create the following files in your working directory:
 
 ```bash
-work                # Directory containing the nextflow working files
-<OUTDIR>            # Finished results in specified location (defined with --outdir)
-.nextflow_log       # Log file from Nextflow
+work            # Directory containing the nextflow working files
+results         # Finished results (configurable, see below)
+.nextflow_log   # Log file from Nextflow
 # Other nextflow hidden files, eg. history of pipeline runs and old logs.
 ```
 
@@ -81,7 +185,10 @@ Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run nf-core/tumourevo -profile docker -params-file params.yaml
+nextflow run nf-core/tumourevo \
+ -r <VERSION> \
+ -profile <PROFILE> \
+ -params-file params.yaml
 ```
 
 with:
@@ -89,7 +196,7 @@ with:
 ```yaml title="params.yaml"
 input: './samplesheet.csv'
 outdir: './results/'
-genome: 'GRCh37'
+genome: 'GRCh38'
 <...>
 ```
 
@@ -155,7 +262,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `wave`
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker or Singularity.
 
 ### `-resume`
 
@@ -177,7 +284,7 @@ To change the resource requests, please see the [max resources](https://nf-co.re
 
 ### Custom Containers
 
-In some cases, you may wish to change the container or conda environment used by a pipeline steps for a particular tool. By default, nf-core pipelines use containers and software from the [biocontainers](https://biocontainers.pro/) or [bioconda](https://bioconda.github.io/) projects. However, in some cases the pipeline specified version maybe out of date.
+In some cases, you may wish to change the container or conda environment used by a pipeline steps for a particular tool. By default, nf-core pipelines use containers and software from the [seqera containers](https://seqera.io/containers/), [biocontainers](https://biocontainers.pro/) or [bioconda](https://bioconda.github.io/) projects. However, in some cases the pipeline specified version maybe out of date.
 
 To use a different container from the default container or conda environment specified in a pipeline, please see the [updating tool versions](https://nf-co.re/docs/usage/configuration#updating-tool-versions) section of the nf-core website.
 

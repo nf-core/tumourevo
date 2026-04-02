@@ -1,0 +1,19 @@
+Changes in component 'nf-core/ctree'
+Changes in 'ctree/main.nf':
+--- modules/nf-core/ctree/main.nf
++++ modules/nf-core/ctree/main.nf
+@@ -1,6 +1,7 @@
+ process CTREE {
+     tag "$meta.id"
+     label "process_medium"
++    label "error_ignore"
+ 
+     conda "${moduleDir}/environment.yml"
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+
+'modules/nf-core/ctree/environment.yml' is unchanged
+'modules/nf-core/ctree/meta.yml' is unchanged
+'modules/nf-core/ctree/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/ctree/tests/main.nf.test' is unchanged
+'modules/nf-core/ctree/templates/main_script.R' is unchanged
+************************************************************
