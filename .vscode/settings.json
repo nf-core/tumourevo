@@ -1,0 +1,4 @@
+{
+    "markdown.styles": ["public/vscode_markdown.css"],
+    "r.lsp.promptToInstall": false
+}

@@ -1,0 +1,103 @@
+{
+    "name": "nf-core/tumourevo",
+    "homePage": "https://github.com/nf-core/tumourevo",
+    "repos": {
+        "https://github.com/nf-core/modules.git": {
+            "modules": {
+                "nf-core": {
+                    "bcftools/mpileup": {
+                        "branch": "master",
+                        "git_sha": "feef37435aea56816adf4b3bde1fc76aac327a8d",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/bcftools/mpileup/bcftools-mpileup.diff"
+                    },
+                    "bcftools/view": {
+                        "branch": "master",
+                        "git_sha": "6383d8fe58f9498eecd5aa303e71a4a932d1e9f6",
+                        "installed_by": ["modules"]
+                    },
+                    "cnaqc": {
+                        "branch": "master",
+                        "git_sha": "0041db49284f44eaeba5b861acdb7d076771d244",
+                        "installed_by": ["modules"]
+                    },
+                    "ctree": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/ctree/ctree.diff"
+                    },
+                    "ensemblvep/download": {
+                        "branch": "master",
+                        "git_sha": "0567eee9276d4a358e5f9f01c810a149fbd241f8",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/ensemblvep/download/ensemblvep-download.diff"
+                    },
+                    "ensemblvep/vep": {
+                        "branch": "master",
+                        "git_sha": "34505e1fc5e9f4fd641210ca440acff6bd33b842",
+                        "installed_by": ["modules"]
+                    },
+                    "mobster": {
+                        "branch": "master",
+                        "git_sha": "a31e49804d5ef8b9babb0afb64d655132247cd34",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/mobster/mobster.diff"
+                    },
+                    "pyclonevi": {
+                        "branch": "master",
+                        "git_sha": "6579da34bf64dbb4736c9a34108177c1d6363430",
+                        "installed_by": ["modules"]
+                    },
+                    "sigprofiler": {
+                        "branch": "master",
+                        "git_sha": "2a355c816f06b834fadd05fd444cbea171f7bdee",
+                        "installed_by": ["modules"]
+                    },
+                    "sparsesignatures": {
+                        "branch": "master",
+                        "git_sha": "6d46786420b4d7bc88eba026eb389c0c5535d120",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/sparsesignatures/sparsesignatures.diff"
+                    },
+                    "tinc": {
+                        "branch": "master",
+                        "git_sha": "0d51a4601da86148964f3c6b28709f0f5d047719",
+                        "installed_by": ["modules"]
+                    },
+                    "untar": {
+                        "branch": "master",
+                        "git_sha": "00ee87ebb541af0008596400ce6d5f66d79d5408",
+                        "installed_by": ["modules"]
+                    },
+                    "vcf2maf": {
+                        "branch": "master",
+                        "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/vcf2maf/vcf2maf.diff"
+                    },
+                    "viber": {
+                        "branch": "master",
+                        "git_sha": "48c74fe5b0ea96833674e794d563da282e55aab2",
+                        "installed_by": ["modules"],
+                        "patch": "modules/nf-core/viber/viber.diff"
+                    }
+                }
+            },
+            "subworkflows": {
+                "nf-core": {
+                    "utils_nfcore_pipeline": {
+                        "branch": "master",
+                        "git_sha": "271e7fc14eb1320364416d996fb077421f3faed2",
+                        "installed_by": ["subworkflows"]
+                    },
+                    "utils_nfschema_plugin": {
+                        "branch": "master",
+                        "git_sha": "e753770db613ce014b3c4bc94f6cba443427b726",
+                        "installed_by": ["subworkflows"]
+                    }
+                }
+            }
+        }
+    }
+}
