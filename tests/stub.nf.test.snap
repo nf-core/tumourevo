@@ -583,10 +583,10 @@
                 "variant_annotation/vep/SCOUT/SPN01_SS_nobam/SPN01_100X_0.9p_Sample_C/SCOUT_SPN01_SS_nobam_SPN01_100X_0.9p_Sample_C.annotated_summary.html"
             ]
         ],
-        "timestamp": "2026-09-04T16:42:14.924477851",
+        "timestamp": "2026-09-09T09:14:52.631743347",
         "meta": {
             "nf-test": "0.9.4",
-            "nextflow": "25.10.0"
+            "nextflow": "26.04.0"
         }
     }
 }
