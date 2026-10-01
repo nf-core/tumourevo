@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process CNA2CNAQC"
+    script "../main.nf"
+    process "CNA2CNAQC"
+
+    tag "modules"
+    tag "modules_local"
+    tag "cna2cnaqc"
+
+    test("cna2cnaqc - PURPLE") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', tumour_sample:'SYNTH_T', cna_caller:'PURPLE' ],
+                    file(params.modules_testdata_base_path + 'CNA/PURPLE/SYNTH_T.purple.cnv.somatic.tsv', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'CNA/PURPLE/SYNTH_T.purple.purity.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("cna2cnaqc - PURPLE - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', tumour_sample:'SYNTH_T', cna_caller:'PURPLE' ],
+                    file(params.modules_testdata_base_path + 'CNA/PURPLE/SYNTH_T.purple.cnv.somatic.tsv', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'CNA/PURPLE/SYNTH_T.purple.purity.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

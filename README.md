@@ -33,6 +33,7 @@ installed from [nf-core/modules](https://github.com/nf-core/modules) in order to
 The tumourevo pipeline supports variant annotation, driver annotation, quality control processes, subclonal deconvolution and signature deconvolution analysis through various tools.
 It can be used to analyse both single sample experiments and longitudinal/multi-region assays, in which multiple samples of the same patient are avaiable.
 As input, you must provide at least information on the samples, the VCF file from one of the supported callers and the output of one of the supported copy number caller.
+Supported variant callers are Mutect2, Strelka, Platypus, TNscope and SAGE/PURPLE; supported copy number callers are ASCAT, Sequenza, Battenberg, FACETS and PURPLE, so the somatic outputs of Hartwig's WiGiTS tools (for example from [nf-core/oncoanalyser](https://nf-co.re/oncoanalyser)) can be used directly.
 By default, if multiple samples from the same patient are provided, they will be analysed in a multivariate framework (which affects in particular the subclonal deconvolution deconvolution steps)
 to retrieve information useful in the reconstruction of the evolutionary process. Depending on the variant calling strategy (single sample or multi sample) and the provided input files,
 different strategies will be applied.

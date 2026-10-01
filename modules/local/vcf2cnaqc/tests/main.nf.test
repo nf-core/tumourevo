@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process VCF2CNAQC"
+    script "../main.nf"
+    process "VCF2CNAQC"
+
+    tag "modules"
+    tag "modules_local"
+    tag "vcf2cnaqc"
+
+    test("vcf2cnaqc - PURPLE vcf") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', tumour_sample:'SYNTH_T', normal_sample:'SYNTH_N' ],
+                    file(params.modules_testdata_base_path + 'VCF/PURPLE/SYNTH_T.purple.somatic.vep.vcf.gz', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'VCF/PURPLE/SYNTH_T.purple.somatic.vep.vcf.gz.tbi', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+
+    test("vcf2cnaqc - PURPLE vcf - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test', tumour_sample:'SYNTH_T', normal_sample:'SYNTH_N' ],
+                    file(params.modules_testdata_base_path + 'VCF/PURPLE/SYNTH_T.purple.somatic.vep.vcf.gz', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'VCF/PURPLE/SYNTH_T.purple.somatic.vep.vcf.gz.tbi', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

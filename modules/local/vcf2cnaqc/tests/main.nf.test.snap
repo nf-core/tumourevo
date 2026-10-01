@@ -1,0 +1,76 @@
+{
+    "vcf2cnaqc - PURPLE vcf - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test",
+                            "tumour_sample": "SYNTH_T",
+                            "normal_sample": "SYNTH_N"
+                        },
+                        "test.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,d896d25f50cad3d6deece832b8f1a7d7"
+                ],
+                "rds": [
+                    [
+                        {
+                            "id": "test",
+                            "tumour_sample": "SYNTH_T",
+                            "normal_sample": "SYNTH_N"
+                        },
+                        "test.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,d896d25f50cad3d6deece832b8f1a7d7"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-30T19:21:30.097931",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
+    "vcf2cnaqc - PURPLE vcf": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test",
+                            "tumour_sample": "SYNTH_T",
+                            "normal_sample": "SYNTH_N"
+                        },
+                        "test_snv.rds:md5,3767885e626f4c6c7183f2c8e1388510"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,1b3909d38dd045afff69e3d6cc9fb7b8"
+                ],
+                "rds": [
+                    [
+                        {
+                            "id": "test",
+                            "tumour_sample": "SYNTH_T",
+                            "normal_sample": "SYNTH_N"
+                        },
+                        "test_snv.rds:md5,3767885e626f4c6c7183f2c8e1388510"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,1b3909d38dd045afff69e3d6cc9fb7b8"
+                ]
+            }
+        ],
+        "timestamp": "2026-09-30T19:21:23.55051",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}
