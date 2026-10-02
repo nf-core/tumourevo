@@ -89,6 +89,10 @@
                     {
                         "type": "string",
                         "pattern": "^facets$"
+                    },
+                    {
+                        "type": "string",
+                        "pattern": "^PURPLE$"
                     }
                 ]
             },
@@ -157,7 +161,7 @@
                 "anyOf": [
                     {
                         "type": "string",
-                        "pattern": "Seg|segments|subclones|vcf"
+                        "pattern": "Seg|segments|subclones|vcf|purple\\.cnv\\.somatic"
                     },
                     {
                         "type": "string",
@@ -172,7 +176,7 @@
                 "anyOf": [
                     {
                         "type": "string",
-                        "pattern": "confints_CP|purityploidy|rho_and_psi"
+                        "pattern": "confints_CP|purityploidy|rho_and_psi|purple\\.purity"
                     },
                     {
                         "type": "string",

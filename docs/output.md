@@ -91,7 +91,7 @@ This step starts from VCF files.
 
 ## Formatter
 
-The Formatter subworkflow is used to convert files to other formats and to standardize the output files resulting from different mutation (Mutect2, Strelka, Platypus) and cna callers (ASCAT, Sequenza, Battenberg).
+The Formatter subworkflow is used to convert files to other formats and to standardize the output files resulting from different mutation (Mutect2, Strelka, Platypus, TNscope, SAGE/PURPLE) and cna callers (ASCAT, Sequenza, Battenberg, FACETS, PURPLE).
 
 ### vcf2cnaqc
 
@@ -209,7 +209,7 @@ According to the specified tumour type, potential driver mutations are identifie
 
 ## QC
 
-The QC subworkflows requires in input a segmentation file from allele-specific copy number callers (either [Sequenza](https://sequenzatools.bitbucket.io/#/home), [ASCAT](https://github.com/VanLoo-lab/ascat) and [Battenberg](https://github.com/Wedge-lab/battenberg)) and the joint VCF file.
+The QC subworkflows requires in input a segmentation file from allele-specific copy number callers (either [Sequenza](https://sequenzatools.bitbucket.io/#/home), [ASCAT](https://github.com/VanLoo-lab/ascat), [Battenberg](https://github.com/Wedge-lab/battenberg), [FACETS](https://github.com/mskcc/facets) or [PURPLE](https://github.com/hartwigmedical/hmftools/tree/master/purple)) and the joint VCF file.
 As a first step, the QC subworkflow provides an estimate of normal and tumour samples contamination in [TINC](#tinc) step, in order to have a measure of experimental quality.
 Then, it first conducts a quality control on copy number and somatic mutation data for individual samples in [CNAqc](#cnaqc) step, and subsequently summarize validated information at patient level in [join CNAqc](#join_cnaqc) step.
 
