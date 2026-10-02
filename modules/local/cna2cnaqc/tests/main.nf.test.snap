@@ -46,7 +46,7 @@
                             "tumour_sample": "SYNTH_T",
                             "cna_caller": "PURPLE"
                         },
-                        "test_cna.rds:md5,95e73daaf27ddec3c4e09954717d430c"
+                        "test_cna.rds:md5,2af0f096e78e6289007a6702501edfd7"
                     ]
                 ],
                 "1": [
@@ -59,7 +59,7 @@
                             "tumour_sample": "SYNTH_T",
                             "cna_caller": "PURPLE"
                         },
-                        "test_cna.rds:md5,95e73daaf27ddec3c4e09954717d430c"
+                        "test_cna.rds:md5,2af0f096e78e6289007a6702501edfd7"
                     ]
                 ],
                 "versions": [
@@ -67,7 +67,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-02T16:04:56.364936944",
+        "timestamp": "2026-09-30T19:20:26.450361",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
