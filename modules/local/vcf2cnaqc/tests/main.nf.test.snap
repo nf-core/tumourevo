@@ -46,7 +46,7 @@
                             "tumour_sample": "SYNTH_T",
                             "normal_sample": "SYNTH_N"
                         },
-                        "test_snv.rds:md5,3767885e626f4c6c7183f2c8e1388510"
+                        "test_snv.rds:md5,5ac50a72301c6fc107de23e235fba385"
                     ]
                 ],
                 "1": [
@@ -59,7 +59,7 @@
                             "tumour_sample": "SYNTH_T",
                             "normal_sample": "SYNTH_N"
                         },
-                        "test_snv.rds:md5,3767885e626f4c6c7183f2c8e1388510"
+                        "test_snv.rds:md5,5ac50a72301c6fc107de23e235fba385"
                     ]
                 ],
                 "versions": [
@@ -67,7 +67,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-09-30T19:21:23.55051",
+        "timestamp": "2026-10-02T16:06:03.357248036",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.4"
