@@ -4,4 +4,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bioconda::multiqc=1.35
+  - bioconda::ensembl-vep=113.3
+  - bioconda::vcf2maf=1.6.22
