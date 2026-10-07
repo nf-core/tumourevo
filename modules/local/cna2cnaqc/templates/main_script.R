@@ -89,6 +89,24 @@ parse_facets = function(segments_file, extra_file){
     return(list(segments = seg, purity = purity_d, ploidy = ploidy_d))
 }
 
+parse_PURPLE = function(segments_file, extra_file){
+    # PURPLE reports continuous allele copy numbers; CNAqc needs integer karyotypes
+    segments = readr::read_tsv(segments_file, col_types = readr::cols()) %>%
+        dplyr::mutate(
+            chr = chromosome,
+            from = start,
+            to = end,
+            Major = as.integer(round(majorAlleleCopyNumber)),
+            minor = as.integer(round(minorAlleleCopyNumber))) %>%
+        dplyr::filter(!is.na(Major), !is.na(minor), Major >= 0, minor >= 0) %>%
+        dplyr::select(chr, from, to, Major, minor)
+
+    solutions = readr::read_tsv(extra_file, col_types = readr::cols())
+    purity = solutions[["purity"]][1]
+    ploidy = solutions[["ploidy"]][1]
+    return(list(segments = segments, purity = purity, ploidy = ploidy))
+}
+
 if ("$meta.cna_caller" == 'sequenza'){
 CNA = parse_Sequenza(segments = "$cna_segs", extra = "$cna_extra")
 
@@ -100,6 +118,9 @@ CNA = parse_Battenberg(segments = "$cna_segs", extra = "$cna_extra")
 
 } else if ("$meta.cna_caller" == 'facets'){
 CNA = parse_facets(segments = "$cna_segs", extra = "$cna_extra")
+
+} else if ("$meta.cna_caller" == 'PURPLE'){
+CNA = parse_PURPLE(segments = "$cna_segs", extra = "$cna_extra")
 
 } else {
 stop('Copy Number Caller not supported.')
