@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- Test profile: set `sparsesignatures_k` (it was spelled `sparsesignatures_K`, which the pipeline does not read), so `SPARSE_SIGNATURES` runs with the intended `K = 2:3` instead of the default `3:10` ([#92](https://github.com/nf-core/tumourevo/issues/92))
+
 ### `Dependencies`
 
 ### `Deprecated`
