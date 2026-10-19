@@ -30,9 +30,17 @@
 
   > Caravagna, G., Heide, T., Williams, M.J. et al. Subclonal reconstruction of tumors by using machine learning and population genetics. Nat Genet 52, 898–907 (2020). <https://doi.org/10.1038/s41588-020-0675-5>
 
+- [PURPLE](https://doi.org/10.1038/s41586-019-1689-y)
+
+  > Priestley P, Baber J, Lolkema MP, et al. Pan-cancer whole-genome analyses of metastatic solid tumours. Nature 575, 210–216 (2019). <https://doi.org/10.1038/s41586-019-1689-y>
+
 - [PyClone-VI](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03919-2)
 
   > Gillis, S., Roth, A. PyClone-VI: scalable inference of clonal population structures using whole genome data. BMC Bioinformatics 21, 571 (2020). <https://doi.org/10.1186/s12859-020-03919-2>
+
+- [SAGE](https://github.com/hartwigmedical/hmftools/tree/master/sage)
+
+  > Hartwig Medical Foundation. SAGE: somatic alterations in genome, part of the hmftools / WiGiTS suite. <https://github.com/hartwigmedical/hmftools/tree/master/sage>
 
 - [SigProfiler](https://www.sciencedirect.com/science/article/pii/S2666979X22001240)
 

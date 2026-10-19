@@ -5,9 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.1.0dev - to be released
 
-### `Added`
+### Added
 
-### `Fixed`
+- Support for Hartwig WiGiTS / oncoanalyser somatic outputs: SAGE/PURPLE somatic VCFs in `vcf2cnaqc` and PURPLE copy number (`purple.cnv.somatic.tsv`, `purple.purity.tsv`, `cna_caller` `PURPLE`) in `cna2cnaqc`.
 
 ### `Dependencies`
 

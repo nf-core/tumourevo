@@ -347,6 +347,88 @@ parse_TNscope = function(vcf, tumour_id, normal_id){
 }
 
 
+parse_PURPLE = function(vcf, tumour_id, normal_id){
+  tb = vcfR::vcfR2tidy(vcf)
+
+  if (any(grepl(",.*,", tb[["gt"]][["gt_AD"]])))
+    stop("Multi-allelic records found in PURPLE/SAGE VCF, split them (e.g. bcftools norm -m -) before running the pipeline.")
+
+  # SAGE DP is not the sum of AD; SAGE AF is alt AD / DP
+  gt_field = tb[["gt"]] %>%
+    tidyr::separate(gt_AD, sep = ",", into = c("AD_ref", "AD_alt"), remove = FALSE) %>%
+    dplyr::mutate(
+      NV = as.numeric(AD_alt),
+      DP = as.numeric(gt_DP),
+      NR = DP - NV,
+      VAF = NV/DP) %>%
+    dplyr::select(-AD_ref, -AD_alt) %>%
+    dplyr::rename(sample = Indiv)
+
+  # PAVE writes an INFO/IMPACT field that clashes with the VEP CSQ IMPACT column
+  fix_field = tb[["fix"]]
+  if ("IMPACT" %in% colnames(fix_field)) fix_field = dplyr::rename(fix_field, PAVE_IMPACT = IMPACT)
+
+  fix_field = fix_field %>%
+    dplyr::rename(
+      chr = CHROM,
+      from = POS,
+      ref = REF,
+      alt = ALT) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      from = as.numeric(from),
+      to = from + nchar(alt)) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(chr, from, to, ref, alt, dplyr::everything(), -ChromKey)
+
+  samples_list = gt_field[["sample"]] %>% unique
+
+  calls = lapply(
+    samples_list,
+    function(s){
+      gt_field_s = gt_field %>% dplyr::filter(sample == s)
+
+      if(nrow(fix_field) != nrow(gt_field_s))
+        stop("Mismatch between the VCF fixed fields and the genotypes, will not process this file.")
+
+      fits = list()
+      fits[["sample"]] = s
+      fits[["mutations"]] = dplyr::bind_cols(fix_field, gt_field_s) %>%
+        dplyr::select(chr, from, to, ref, alt, NV, DP, VAF, dplyr::everything())
+      fits
+    })
+
+  names(calls) = samples_list
+  if (normal_id == '[]'){
+    samples = c(tumour_id)
+  } else{
+    samples = c(tumour_id, normal_id)
+  }
+  calls = calls[samples]
+
+  if ("CSQ" %in% tb[["meta"]][["ID"]]){
+    vep_field = tb[['meta']] %>%
+      dplyr::filter(ID == "CSQ") %>%
+      dplyr::select(Description) %>%
+      dplyr::pull()
+
+    tmp_vep_field = strsplit(vep_field, split = "|", fixed = TRUE) %>% unlist()
+    vep_field = tmp_vep_field[1:length(tmp_vep_field)-1]
+
+    calls[[tumour_id]][['mutations']] = calls[[tumour_id]][['mutations']] %>%
+      dplyr::mutate(CSQ = strsplit(CSQ, ",")) %>%
+      tidyr::unnest(CSQ) %>%
+      tidyr::separate(CSQ, vep_field, sep = "\\\\|") %>%
+      dplyr::select(chr, from, to, ref, alt, IMPACT, SYMBOL, Gene, dplyr::everything())
+
+    if (normal_id != '[]'){
+      calls[[normal_id]][['mutations']] = calls[[normal_id]][['mutations']] %>% dplyr::select(-CSQ) %>% dplyr::distinct()
+    }
+  }
+  return(calls)
+}
+
+
 library(dplyr)
 library(tidyr)
 library(vcfR)
@@ -358,7 +440,10 @@ vcf = vcfR::read.vcfR("$vcf")
 # Check from which caller the .vcf has been produced
 caller_sig <- if (length(vcf@meta)) paste(vcf@meta, collapse = "\n") else ""
 
-if (grepl(pattern = 'TNscope|TNhaplotyper2', x = caller_sig, ignore.case = TRUE)) {
+if (grepl(pattern = '^##(purpleVersion|sageVersion)=', x = vcf@meta) %>% any()) {
+  calls <- parse_PURPLE(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample")
+
+} else if (grepl(pattern = 'TNscope|TNhaplotyper2', x = caller_sig, ignore.case = TRUE)) {
   calls <- parse_TNscope(vcf, tumour_id = "$meta.tumour_sample", normal_id = "$meta.normal_sample")
 
 } else if (grepl(pattern = 'Mutect', x = caller_sig, ignore.case = TRUE)) {

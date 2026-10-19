@@ -50,9 +50,9 @@ dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi
 | `patient` <br /> _Required_                | **Patient ID**; designates the patient/subject; must be unique for each patient, but one patient can have multiple samples (e.g. from multiple regions or multiple time points).                                        |
 | `tumour_sample` <br /> _Required_          | **Sample ID** for each sample; more than one sample for each subject is possible. Must match the sample ID present in the VCF.                                                                                          |
 | `normal_sample` <br /> _Optional_          | **Normal sample ID** of each sample. Must match the normal sample ID present in the VCF.                                                                                                                                |
-| `vcf` <br /> _Required_                    | Full path to the vcf file from supported vcf callers (Mutect2, Strelka, Platypus, TNscope).                                                                                                                             |
+| `vcf` <br /> _Required_                    | Full path to the vcf file from supported vcf callers (Mutect2, Strelka, Platypus, TNscope, SAGE/PURPLE).                                                                                                                |
 | `tbi` <br /> _Required_                    | Full path to the vcf index (csi or tbi) file.                                                                                                                                                                           |
-| `cna_caller` <br /> _Required_             | Name of the copy number caller used to generate your data (ASCAT, sequenza, Battenberg, facets).                                                                                                                        |
+| `cna_caller` <br /> _Required_             | Name of the copy number caller used to generate your data (ASCAT, sequenza, Battenberg, facets, PURPLE).                                                                                                                |
 | `cna_segments` <br /> _Required_           | Full path to the segmentation files and copy number state from the supported allele-specific copy-number caller.                                                                                                        |
 | `cna_extra` <br /> _Optional_              | Full path to files including the ploidy and purity estimate from the supported copy-number caller.                                                                                                                      |
 | `cancer_type` <br /> _Required_            | Tumour type (either `PANCANCER` or one of the tumour type present in the driver table).                                                                                                                                 |
@@ -105,6 +105,22 @@ dataset1,patient1,sample2,N1,patient1_sample2.vcf.gz,patient1_sample2.vcf.gz.tbi
 ```
 
 If you can not include the alignment files in the input csv, the pipeline will run anyway, treating each sample as independent.
+
+#### Hartwig WiGiTS / oncoanalyser input
+
+Somatic outputs from the Hartwig Medical Foundation WiGiTS tools, for example as produced by [nf-core/oncoanalyser](https://nf-co.re/oncoanalyser), can be used directly:
+
+- `vcf` / `tbi`: `<tumour>.purple.somatic.vcf.gz` and its index (SAGE calls annotated by PURPLE)
+- `cna_segments`: `<tumour>.purple.cnv.somatic.tsv`
+- `cna_extra`: `<tumour>.purple.purity.tsv`
+- `cna_caller`: `PURPLE`
+
+The `tumour_sample` and `normal_sample` IDs must match the sample columns of the PURPLE VCF, and `--genome` must match the reference used by oncoanalyser (GRCh38 runs use `chr`-prefixed contigs). Read counts are taken from the SAGE `AD` and `DP` fields, so `PURPLE_AF` is not used. PURPLE allele copy numbers are rounded to the nearest integer, and segments with a negative rounded minor allele copy number are discarded. Multi-allelic records are not supported and must be split first (e.g. `bcftools norm -m -`).
+
+```csv
+dataset,patient,tumour_sample,normal_sample,vcf,tbi,cna_segments,cna_extra,cna_caller,cancer_type
+dataset1,patient1,PATIENT1-T,PATIENT1-N,PATIENT1-T.purple.somatic.vcf.gz,PATIENT1-T.purple.somatic.vcf.gz.tbi,PATIENT1-T.purple.cnv.somatic.tsv,PATIENT1-T.purple.purity.tsv,PURPLE,PANCANCER
+```
 
 #### 3. Filtering data and QC by chromosome
 
