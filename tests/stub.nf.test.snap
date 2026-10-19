@@ -96,7 +96,7 @@
                     "ggplot2": "3.5.2"
                 },
                 "Workflow": {
-                    "nf-core/tumourevo": "v1.0.0"
+                    "nf-core/tumourevo": "v1.1.0dev"
                 }
             },
             [
@@ -583,10 +583,10 @@
                 "variant_annotation/vep/SCOUT/SPN01_SS_nobam/SPN01_100X_0.9p_Sample_C/SCOUT_SPN01_SS_nobam_SPN01_100X_0.9p_Sample_C.annotated_summary.html"
             ]
         ],
-        "timestamp": "2026-09-09T09:14:52.631743347",
+        "timestamp": "2026-10-12T16:25:37.414975058",
         "meta": {
             "nf-test": "0.9.4",
-            "nextflow": "26.04.0"
+            "nextflow": "25.10.4"
         }
     }
 }

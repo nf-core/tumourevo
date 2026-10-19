@@ -80,7 +80,7 @@
                     "vcfR": "1.15.0"
                 },
                 "Workflow": {
-                    "nf-core/tumourevo": "v1.0.0"
+                    "nf-core/tumourevo": "v1.1.0dev"
                 }
             },
             [
@@ -496,10 +496,10 @@
                 "variant_annotation/vep/SCOUT/SPN01_SS_nobam/SPN01_100X_0.9p_Sample_C/SCOUT_SPN01_SS_nobam_SPN01_100X_0.9p_Sample_C.annotated.vcf.gz"
             ]
         ],
-        "timestamp": "2026-09-04T16:30:57.543275016",
+        "timestamp": "2026-10-12T17:02:57.684125566",
         "meta": {
             "nf-test": "0.9.4",
-            "nextflow": "25.10.0"
+            "nextflow": "25.10.4"
         }
     }
 }
