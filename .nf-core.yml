@@ -4,7 +4,7 @@ lint:
   files_unchanged:
     - .github/workflows/branch.yml
     - .github/workflows/linting.yml
-nf_core_version: 4.1.0
+nf_core_version: 4.2.1
 repository_type: pipeline
 template:
   author: Nicola Calonaci, Elena Buscaroli, Katsiaryna Davydzenka, Giorgia Gandolfi,
@@ -18,4 +18,4 @@ template:
   name: tumourevo
   org: nf-core
   outdir: .
-  version: 1.0.0
+  version: 1.1.0dev
