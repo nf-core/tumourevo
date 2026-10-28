@@ -1,0 +1,20 @@
+Changes in component 'nf-core/sparsesignatures'
+Changes in 'sparsesignatures/main.nf':
+--- modules/nf-core/sparsesignatures/main.nf
++++ modules/nf-core/sparsesignatures/main.nf
+@@ -1,6 +1,6 @@
+ process SPARSE_SIGNATURES {
+     tag "$meta.id"
+-    label "process_long"
++    label "process_high"
+ 
+     conda "${moduleDir}/environment.yml"
+     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+
+'modules/nf-core/sparsesignatures/environment.yml' is unchanged
+'modules/nf-core/sparsesignatures/meta.yml' is unchanged
+'modules/nf-core/sparsesignatures/tests/nextflow.config' is unchanged
+'modules/nf-core/sparsesignatures/tests/main.nf.test.snap' is unchanged
+'modules/nf-core/sparsesignatures/tests/main.nf.test' is unchanged
+'modules/nf-core/sparsesignatures/templates/main_script.R' is unchanged
+************************************************************
