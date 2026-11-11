@@ -4,45 +4,45 @@
             74,
             {
                 "ANNOTATE_DRIVER": {
-                    "readr": "2.1.5",
                     "dplyr": "1.1.4",
+                    "readr": "2.1.5",
                     "tidyr": "1.3.1"
                 },
                 "BCFTOOLS_MPILEUP": {
                     "bcftools": 1.22
                 },
                 "CNA2CNAQC": {
-                    "readr": "2.1.5",
-                    "dplyr": "1.1.4"
-                },
-                "CNAQC2TSV": {
-                    "dplyr": "1.2.1",
-                    "CNAqc": "1.1.2"
+                    "dplyr": "1.1.4",
+                    "readr": "2.1.5"
                 },
                 "CNAQC": {
                     "CNAqc": "1.1.4",
                     "dplyr": "1.2.1",
                     "gridExtra": null
                 },
+                "CNAQC2TSV": {
+                    "CNAqc": "1.1.2",
+                    "dplyr": "1.2.1"
+                },
                 "CTREE_MOBSTER": {
-                    "ctree": "1.1.0",
-                    "mobster": "0.1.1",
                     "VIBER": "1.0.0",
                     "cli": "3.6.5",
+                    "ctree": "1.1.0",
                     "dplyr": "1.1.4",
-                    "tidyr": "1.3.1",
                     "ggplot2": "3.5.2",
-                    "ggpubr": "0.6.1"
+                    "ggpubr": "0.6.1",
+                    "mobster": "0.1.1",
+                    "tidyr": "1.3.1"
                 },
                 "CTREE_PYCLONEVI": {
-                    "ctree": "1.1.0",
-                    "mobster": "0.1.1",
                     "VIBER": "1.0.0",
                     "cli": "3.6.5",
+                    "ctree": "1.1.0",
                     "dplyr": "1.1.4",
-                    "tidyr": "1.3.1",
                     "ggplot2": "3.5.2",
-                    "ggpubr": "0.6.1"
+                    "ggpubr": "0.6.1",
+                    "mobster": "0.1.1",
+                    "tidyr": "1.3.1"
                 },
                 "GET_POSITIONS_ALL": {
                     "dplyr": "1.1.4"
@@ -61,18 +61,18 @@
                 },
                 "MOBSTER": {
                     "CNAqc": "1.1.3",
-                    "mobster": "0.1.1",
                     "cli": "3.6.5",
                     "dplyr": "1.2.0",
-                    "ggplot2": "3.5.2"
+                    "ggplot2": "3.5.2",
+                    "mobster": "0.1.1"
                 },
                 "PYCLONEVI": {
                     "pyclonevi": "0.2.0"
                 },
                 "TINC": {
                     "CNAqc": "1.1.2",
-                    "tidyverse": "2.0.0",
-                    "TINC": "0.1.0"
+                    "TINC": "0.1.0",
+                    "tidyverse": "2.0.0"
                 },
                 "VCF2CNAQC": {
                     "dplyr": "1.1.4",
