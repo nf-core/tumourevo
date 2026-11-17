@@ -133,6 +133,23 @@
             },
             "fa_icon": "fas fa-briefcase"
         },
+        "cna2cnaqc": {
+            "title": "CNA2CNAqc",
+            "type": "object",
+            "description": "Parameters for converting copy number calls to CNAqc input.",
+            "default": "",
+            "properties": {
+                "purple_max_cn_deviation": {
+                    "type": "number",
+                    "default": 0.25,
+                    "minimum": 0,
+                    "maximum": 0.5,
+                    "description": "PURPLE input only: segments where an allele copy number is further than this from an integer are removed instead of rounded.",
+                    "help_text": "PURPLE reports continuous allele copy numbers, while CNAqc, PyClone-VI and MOBSTER consume integer clonal karyotypes. This conservative compatibility filter removes segments that cannot be assigned an integer karyotype without substantial rounding. The default 0.25 uses the same numerical cutoff as PURPLE's `polyclonalProportion`, but is applied per allele and does not reproduce PURPLE's confidence weighting. Set to 0.5 to keep every segment (rounding only)."
+                }
+            },
+            "fa_icon": "fas fa-briefcase"
+        },
         "cnaqc": {
             "title": "CNAqc",
             "type": "object",
@@ -563,6 +580,9 @@
         },
         {
             "$ref": "#/$defs/vcf2cnaqc"
+        },
+        {
+            "$ref": "#/$defs/cna2cnaqc"
         },
         {
             "$ref": "#/$defs/cnaqc"

@@ -1,0 +1,103 @@
+nextflow_process {
+
+    name "Test Process CNA2CNAQC"
+    tag "modules"
+    tag "modules_local"
+    tag "cna2cnaqc"
+    script "../main.nf"
+    process "CNA2CNAQC"
+
+    test("PURPLE - NORMAL fit, off-integer segment removed") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'normal', cna_caller: 'PURPLE'],
+                    file("${moduleDir}/tests/data/purple.cnv.somatic.tsv", checkIfExists: true),
+                    file("${moduleDir}/tests/data/normal.purple.purity.tsv", checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def commandErr = path(process.out.rds.get(0).get(1)).parent.resolve('.command.err').text
+            assertAll(
+                { assert process.success },
+                { assert commandErr.contains("PURPLE: removing 1 of 2 segments") },
+                { assert !commandErr.contains("PURPLE fit method is") },
+                { assert !commandErr.contains("PURPLE purity is") }
+            )
+        }
+    }
+
+    test("PURPLE - HIGHLY_DIPLOID fit warns") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'highly_diploid', cna_caller: 'PURPLE'],
+                    file("${moduleDir}/tests/data/purple.cnv.somatic.tsv", checkIfExists: true),
+                    file("${moduleDir}/tests/data/highly_diploid.purple.purity.tsv", checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def commandErr = path(process.out.rds.get(0).get(1)).parent.resolve('.command.err').text
+            assertAll(
+                { assert process.success },
+                { assert commandErr.contains("PURPLE fit method is HIGHLY_DIPLOID") }
+            )
+        }
+    }
+
+    test("PURPLE - low purity warns") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'low_purity', cna_caller: 'PURPLE'],
+                    file("${moduleDir}/tests/data/purple.cnv.somatic.tsv", checkIfExists: true),
+                    file("${moduleDir}/tests/data/low_purity.purple.purity.tsv", checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def commandErr = path(process.out.rds.get(0).get(1)).parent.resolve('.command.err').text
+            assertAll(
+                { assert process.success },
+                { assert commandErr.contains("PURPLE purity is 0.15") },
+                { assert !commandErr.contains("PURPLE fit method is") }
+            )
+        }
+    }
+
+    test("PURPLE - NO_TUMOR fit stops") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [id: 'no_tumor', cna_caller: 'PURPLE'],
+                    file("${moduleDir}/tests/data/purple.cnv.somatic.tsv", checkIfExists: true),
+                    file("${moduleDir}/tests/data/no_tumor.purple.purity.tsv", checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.failed },
+                { assert process.errorReport.contains("PURPLE fit method is NO_TUMOR") }
+            )
+        }
+    }
+}
