@@ -1,0 +1,3 @@
+chromosome	start	end	majorAlleleCopyNumber	minorAlleleCopyNumber
+chr1	1	1000	1.00	1.00
+chr1	1001	2000	1.32	1.00
